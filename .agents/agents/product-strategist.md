@@ -31,3 +31,4 @@ Drive the discovery, positioning, market validation, and strategic differentiati
 ## Authority & Handoff
 - **Authority**: Level 1 for research and strategy drafting. Level 2 for MVP scope adjustments.
 - **Handoff**: Handoff to `chief-orchestrator` and `requirements-analyst` via the Standard Agent Handoff Report.
+

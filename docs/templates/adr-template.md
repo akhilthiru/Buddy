@@ -47,3 +47,4 @@ Chosen option: **[Option Name]**, because [justification linking to drivers].
 ## 6. Implementation Notes & Follow-ups
 - [Specific implementation guidelines for Backend / Frontend / DevOps]
 - [Required migrations or tooling updates]
+

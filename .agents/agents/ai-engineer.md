@@ -30,3 +30,4 @@ Design and implement targeted, cost-effective, and safe AI integrations (using G
 ## Authority & Handoff
 - **Authority**: Level 1 for prompt refinement, model eval scripts, and schema tuning. Level 2 review required for external AI API changes or prompt security updates.
 - **Handoff**: Handoff to `backend-engineer`, `security-reviewer`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

@@ -51,3 +51,4 @@ flowchart TD
 - [ ] Responsive Wireframes (`docs/ux/wireframes-and-specs.md`)
 - [ ] Threat Model (`docs/architecture/threat-model.md`)
 - [ ] Formal Human Sign-off recorded in `docs/DECISION_LOG.md`
+

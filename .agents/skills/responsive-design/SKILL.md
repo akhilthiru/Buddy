@@ -45,3 +45,4 @@ Ensure Flatmate provides a first-class mobile experience while adapting graceful
 ## Relevant References
 - [design-systems](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/design-systems/SKILL.md)
 - [frontend-engineering](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/frontend-engineering/SKILL.md)
+

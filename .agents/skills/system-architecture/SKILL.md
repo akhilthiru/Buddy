@@ -49,3 +49,4 @@ Design, evaluate, and maintain a clean, resilient, modular monolith system archi
 - [ADR Template](file:///home/akhil/Vibe%20Coding/Flatmate/docs/templates/adr-template.md)
 - [database-design](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/database-design/SKILL.md)
 - [api-design](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/api-design/SKILL.md)
+

@@ -24,3 +24,4 @@ trigger: always_on
 - Input prompt sanitization to prevent prompt injection.
 - Structured output enforcement using strict JSON schemas.
 - No PII (real names, phone numbers, exact addresses) may be passed to external LLM providers without explicit hashing/anonymization.
+

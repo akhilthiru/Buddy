@@ -39,3 +39,4 @@ Convert strategic product concepts into exhaustive, unambiguous, structured Prod
 ## Relevant References
 - [PRD Template](file:///home/akhil/Vibe%20Coding/Flatmate/docs/templates/prd-template.md)
 - [AGENTS.md](file:///home/akhil/Vibe%20Coding/Flatmate/AGENTS.md)
+

@@ -49,3 +49,4 @@ Build, maintain, and verify continuous integration and deployment automation pip
 - [cloud-infrastructure](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/cloud-infrastructure/SKILL.md)
 - [security-engineering](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/security-engineering/SKILL.md)
 - [test-automation](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/test-automation/SKILL.md)
+

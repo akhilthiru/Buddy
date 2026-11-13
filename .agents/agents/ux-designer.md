@@ -35,3 +35,4 @@ Craft an intuitive, engaging, mobile-first discovery and compatibility experienc
 ## Authority & Handoff
 - **Authority**: Level 1 for wireframes, flows, and specs. Level 2 for design system token changes.
 - **Handoff**: Handoff to `frontend-engineer`, `solution-architect`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

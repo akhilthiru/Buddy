@@ -30,3 +30,4 @@ Build high-performance, mobile-first responsive web interfaces and PWA component
 ## Authority & Handoff
 - **Authority**: Level 1 for frontend code and test execution within approved contracts. Level 2 review required for API contract change requests.
 - **Handoff**: Handoff to `qa-engineer`, `ux-designer`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

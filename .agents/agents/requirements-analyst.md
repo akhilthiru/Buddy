@@ -32,3 +32,4 @@ Translate strategic product hypotheses into unambiguous, testable, and traceable
 ## Authority & Handoff
 - **Authority**: Level 1 for drafting stories and specs. Level 2 for PRD sign-off.
 - **Handoff**: Handoff to `ux-designer`, `solution-architect`, and `chief-orchestrator` using the Standard Agent Handoff Report.
+

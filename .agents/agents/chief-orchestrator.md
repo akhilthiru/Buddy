@@ -29,3 +29,4 @@ You govern and coordinate the complete product development lifecycle of Flatmate
 
 ## Handoff Contract
 Always emit the Standard Agent Handoff Report when completing a phase or delegating work.
+

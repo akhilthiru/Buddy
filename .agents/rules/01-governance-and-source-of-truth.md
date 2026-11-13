@@ -16,3 +16,4 @@ trigger: always_on
 
 3. **No Unverified Claims**:
    - An agent must never output "Tests passed", "Build succeeded", or "Feature complete" without citing actual test execution output, compiler/linter logs, or git diffs demonstrating completion.
+

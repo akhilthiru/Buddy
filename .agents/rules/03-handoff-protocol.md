@@ -27,3 +27,4 @@ Whenever an agent completes a task, blocks on a dependency, or transfers ownersh
 1. Never pass vague references (e.g. "updated the API"). Cite the exact file path and line numbers.
 2. Link dependencies explicitly to ensure downstream agents know what to validate.
 3. If blocked, specify the blocking agent, the required resource, and the impact.
+

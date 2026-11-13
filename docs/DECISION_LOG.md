@@ -12,3 +12,5 @@ This document records all architectural, governance, product, and process decisi
 | **DEC-004** | 2026-11-13 | Product | Person-First Matching with Optional Accommodation | Solve root cause of roommate incompatibility; distinct from transactional real estate portals | **Approved** | Product Strategist |
 | **DEC-005** | 2026-11-13 | Market | Initial Launch Focused on Thiruvananthapuram, Kerala | High student density (CET, University of Kerala) and tech workforce concentration (Technopark Phases I-III) | **Approved** | Product Strategist |
 | **DEC-006** | 2026-11-13 | Multi-Agent | 11 Specialist Agents & 17 Reusable Skills Configuration | Clean separation of concerns with dual registration (workspace `.agents/` + runtime `define_subagent`) | **Approved** | Antigravity Specialist |
+| **DEC-007** | 2026-11-13 | Product Scope | Workflow A Ideation Package & 7-Vector Compatibility Model | Comprehensive validation across 4 modalities, Trivandrum micro-markets, MoSCoW MVP scope, and DPDP compliance | **Pending Human Review** | Chief Orchestrator / Human User |
+

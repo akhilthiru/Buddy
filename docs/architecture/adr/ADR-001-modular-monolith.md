@@ -47,3 +47,4 @@ Chosen option: **Modular Monolith Architecture**.
 ### Option 3: Modular Monolith
 - Good: Clean boundaries, rapid developer velocity, ACID transactions, easy local testing, simple deployment.
 - Good: Clear path to extract high-scale modules (e.g. real-time messaging) into dedicated services later if needed.
+

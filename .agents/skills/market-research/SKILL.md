@@ -37,3 +37,4 @@ Gather, structure, and analyze market data on flatmate searching behavior, renta
 ## Relevant References
 - [product-discovery](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/product-discovery/SKILL.md)
 - [AGENTS.md](file:///home/akhil/Vibe%20Coding/Flatmate/AGENTS.md)
+

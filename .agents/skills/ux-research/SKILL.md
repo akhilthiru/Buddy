@@ -42,3 +42,4 @@ Research, model, and optimize the end-to-end user experience, psychological safe
 ## Relevant References
 - [design-systems](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/design-systems/SKILL.md)
 - [responsive-design](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/responsive-design/SKILL.md)
+

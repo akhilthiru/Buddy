@@ -74,3 +74,4 @@ Every agent completing a task or transitioning work to another agent must emit a
 - **Backend**: Node.js, TypeScript, RESTful APIs, PostgreSQL (relational modeling).
 - **AI Integration**: AI (Gemini API) serves as an assistant for compatibility explanations and onboarding assistance. AI must NEVER replace deterministic matching filters or business rules.
 - **Privacy & Compliance**: Compliance with India's Digital Personal Data Protection (DPDP) Act. Strict PII sanitization.
+

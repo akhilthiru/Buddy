@@ -47,3 +47,4 @@ Scenario 3: Boundary / Permission Case - [Scenario Title]
 - **API Endpoint**: [e.g., `POST /api/v1/swipes`]
 - **UI Spec / Component**: [Link to wireframe or design system component]
 - **Security Check**: [e.g., Rate limit max 100 requests/min]
+

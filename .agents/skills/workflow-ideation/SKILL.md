@@ -42,3 +42,4 @@ flowchart LR
 - [ ] Value Proposition Canvas (`docs/product/value-proposition.md`)
 - [ ] MVP Hypotheses (`docs/product/mvp-scope.md`)
 - [ ] Formal Human Sign-off in `docs/DECISION_LOG.md`
+

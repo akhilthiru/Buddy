@@ -28,3 +28,4 @@ trigger: always_on
 - Integration tests for API endpoints and database repositories.
 - End-to-end tests for critical user journeys (Playwright).
 - Minimum test coverage requirement: 80% on core business modules (matching, auth, privacy).
+

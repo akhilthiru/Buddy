@@ -53,3 +53,4 @@ Guide the implementation, optimization, and testing of Flatmate's mobile-first r
 - [design-systems](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/design-systems/SKILL.md)
 - [api-design](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/api-design/SKILL.md)
 - [test-automation](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/test-automation/SKILL.md)
+

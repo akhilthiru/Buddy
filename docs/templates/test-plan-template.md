@@ -32,3 +32,4 @@
 
 ## 5. Defect Logging & Escalation
 - Defects logged in `docs/testing/defect-log.md` with repro steps, logs, and screenshots.
+

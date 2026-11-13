@@ -30,3 +30,4 @@ Safeguard the integrity, confidentiality, and resilience of Project Flatmate thr
 ## Authority & Handoff
 - **Authority**: Level 1 for auditing and threat modeling. Level 2 veto/approval authority for security-sensitive code, auth changes, and release sign-offs.
 - **Handoff**: Handoff to `chief-orchestrator`, `solution-architect`, and `devops-engineer` via Standard Agent Handoff Report.
+

@@ -44,3 +44,4 @@ Establish a cohesive, accessible, and scalable design system of tokens, typograp
 ## Relevant References
 - [responsive-design](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/responsive-design/SKILL.md)
 - [frontend-engineering](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/frontend-engineering/SKILL.md)
+

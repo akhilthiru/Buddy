@@ -31,3 +31,4 @@ Develop a secure, high-throughput, and clean modular backend service using Node.
 ## Authority & Handoff
 - **Authority**: Level 1 for backend feature implementation within approved contracts. Level 2 review required for schema migrations and API changes.
 - **Handoff**: Handoff to `frontend-engineer`, `qa-engineer`, `solution-architect`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

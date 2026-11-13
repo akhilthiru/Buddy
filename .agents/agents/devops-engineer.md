@@ -31,3 +31,4 @@ Establish deterministic, automated, and secure containerization, continuous inte
 ## Authority & Handoff
 - **Authority**: Level 1 for local docker scripts, CI config drafting. Level 2 review required for pipeline modifications. Level 3 human approval mandatory for production deployments and infrastructure changes.
 - **Handoff**: Handoff to `security-reviewer`, `qa-engineer`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

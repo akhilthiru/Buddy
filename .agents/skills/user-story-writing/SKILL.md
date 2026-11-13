@@ -44,3 +44,4 @@ Decompose high-level PRD requirements into testable, independent, and developer-
 ## Relevant References
 - [User Story Template](file:///home/akhil/Vibe%20Coding/Flatmate/docs/templates/user-story-template.md)
 - [requirements-engineering](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/requirements-engineering/SKILL.md)
+

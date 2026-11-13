@@ -64,3 +64,4 @@ Accommodation is strictly optional. A user may:
 - **Phase 1 (Initial)**: Mobile-First Responsive Web Application optimized for mobile browsers.
 - **Phase 2**: Progressive Web App (PWA) with offline caching and native-like home screen installation.
 - **Phase 3**: Cross-platform native mobile applications (React Native / Flutter) once PMF is achieved.
+

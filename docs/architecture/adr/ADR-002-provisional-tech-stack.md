@@ -43,3 +43,4 @@ Chosen provisional stack:
 
 ### Negative Consequences / Trade-offs
 - Node.js CPU-bound operations (if matching algorithm becomes massively complex) would require background worker offloading.
+

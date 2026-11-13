@@ -1,8 +1,8 @@
 # Project Flatmate – System Status & Roadmap
 
-**Current State**: Multi-Agent Engineering Environment Established (Ready for Product Discovery)  
-**Active Milestone**: Milestone 0: System Initialization & Multi-Agent Architecture  
-**Next Milestone**: Milestone 1: Ideation & Product Discovery (Workflow A)  
+**Current State**: Workflow A (Ideation) Deliverables Complete — Awaiting Human Approval Gate  
+**Active Milestone**: Milestone 1: Ideation & Product Discovery (Workflow A)  
+**Next Milestone**: Milestone 2: Requirements Engineering (Workflow B)  
 **Last Updated**: 2026-11-13
 
 ---
@@ -29,8 +29,8 @@
 
 | Workflow | Name | State | Current Gate | Target Deliverable |
 | :--- | :--- | :--- | :--- | :--- |
-| **Workflow A** | Ideation | Ready to Trigger | Awaiting Human Trigger | Problem Statement, Personas, Market Research, MVP Scope |
-| **Workflow B** | Requirements | Standby | Prerequisite: Workflow A | PRD, FR/NFRs, Gherkin User Stories |
+| **Workflow A** | Ideation | **In Review** | Awaiting Human Sign-off | Problem Statement, Personas, Market Research, Value Prop, MVP Scope |
+| **Workflow B** | Requirements | Standby | Prerequisite: Workflow A Sign-off | PRD, FR/NFRs, Gherkin User Stories |
 | **Workflow C** | Architecture & Design | Standby | Prerequisite: Workflow B | Modular Monolith Spec, OpenAPI Spec, Database Schema, Design Tokens |
 | **Workflow D** | Development | Standby | Prerequisite: Workflow C | Contract-adherent Frontend, Backend, AI Services |
 | **Workflow E** | Testing | Standby | Prerequisite: Workflow D | E2E, Contract, Responsive Tests, Defect Zero |
@@ -45,4 +45,5 @@
 ---
 
 ## 4. Immediate Next Step
-Trigger **Workflow A (Ideation)** with `product-strategist` to initiate market discovery and persona mapping for the Thiruvananthapuram launch market.
+Chief Orchestrator presents Workflow A Ideation package ([problem-statement.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/product/problem-statement.md), [market-research.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/product/market-research.md), [user-personas.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/product/user-personas.md), [value-proposition.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/product/value-proposition.md), [mvp-scope.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/product/mvp-scope.md)) to the Human User for Level 3 approval before proceeding to Workflow B (Requirements).
+

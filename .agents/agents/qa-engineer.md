@@ -31,3 +31,4 @@ Establish a rigorous, automated testing pyramid across all layers of Flatmate, v
 ## Authority & Handoff
 - **Authority**: Level 1 for writing tests, running suites, and logging defects. Level 2 review sign-off for release quality gating.
 - **Handoff**: Handoff to `chief-orchestrator`, `frontend-engineer`, `backend-engineer`, and `security-reviewer` via Standard Agent Handoff Report.
+

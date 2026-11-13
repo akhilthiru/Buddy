@@ -52,3 +52,4 @@ flowchart TD
 - [ ] Defect Log (`docs/testing/defect-log.md`) with 0 open Critical/Blocker bugs
 - [ ] Security Sign-off Document (`docs/testing/security-signoff.md`)
 - [ ] Formal Go / No-Go Recommendation from Solution Architect
+

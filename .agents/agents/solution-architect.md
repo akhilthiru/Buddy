@@ -32,3 +32,4 @@ Design a robust, scalable, maintainable, and pragmatic system architecture for F
 ## Authority & Handoff
 - **Authority**: Level 1 for drafting architecture proposals. Level 2 sign-off authority for all database migrations, API changes, and system modifications.
 - **Handoff**: Handoff to `frontend-engineer`, `backend-engineer`, `devops-engineer`, and `chief-orchestrator` via Standard Agent Handoff Report.
+

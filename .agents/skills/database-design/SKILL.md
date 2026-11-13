@@ -51,3 +51,4 @@ Model, optimize, and maintain the PostgreSQL relational database schema for Flat
 ## Relevant References
 - [system-architecture](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/system-architecture/SKILL.md)
 - [backend-engineering](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/backend-engineering/SKILL.md)
+

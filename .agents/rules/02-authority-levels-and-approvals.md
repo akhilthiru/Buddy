@@ -27,3 +27,4 @@ Every action in Project Flatmate is governed by three authority levels:
   - External financial transactions or paid cloud resource provisioning.
   - Handling, storing, or exporting unmasked user PII.
 - **Protocol**: The Chief Orchestrator halts execution and explicitly requests human authorization before proceeding. Autonomous execution of Level 3 actions is strictly prohibited.
+

@@ -39,3 +39,4 @@ Systematically discover, validate, and document customer problems, target person
 ## Relevant References
 - [AGENTS.md](file:///home/akhil/Vibe%20Coding/Flatmate/AGENTS.md)
 - [workflow-ideation](file:///home/akhil/Vibe%20Coding/Flatmate/.agents/skills/workflow-ideation/SKILL.md)
+
