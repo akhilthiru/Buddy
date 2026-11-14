@@ -19,6 +19,7 @@ import {
   BadRequestError,
 } from './common/errors/problem-details.ts';
 import { renderTestConsoleHtml } from './app/test-console.html.ts';
+import { renderClientAppHtml } from './app/client-app.html.ts';
 
 export interface HttpRequest {
   method: string;
@@ -239,7 +240,17 @@ export class FlatmateApp {
       });
     }
 
-    if (method === 'GET' && (path === '/' || path === '/test-console')) {
+    if (method === 'GET' && (path === '/' || path === '/app')) {
+      const html = renderClientAppHtml();
+      res.writeHead(200, {
+        ...responseHeaders,
+        'Content-Type': 'text/html; charset=utf-8',
+      });
+      res.end(html);
+      return;
+    }
+
+    if (method === 'GET' && path === '/test-console') {
       const html = renderTestConsoleHtml();
       res.writeHead(200, {
         ...responseHeaders,

@@ -66,8 +66,9 @@ if (process.env.NODE_ENV !== 'test') {
   seedDevelopmentData();
   server.listen(env.PORT, () => {
     console.log(`Flatmate Modular Monolith API listening on port ${env.PORT} [${env.NODE_ENV}]`);
-    console.log(`Interactive Web Testing Console: http://localhost:${env.PORT}/`);
-    console.log(`Real-Time WebSocket Gateway ready on ws://localhost:${env.PORT}/ws`);
+    console.log(`📱 Real Flatmate User App:      http://localhost:${env.PORT}/`);
+    console.log(`⚡ Developer API Test Console:  http://localhost:${env.PORT}/test-console`);
+    console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${env.PORT}/ws`);
   });
 }
 
