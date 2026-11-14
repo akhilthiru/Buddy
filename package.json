@@ -16,7 +16,8 @@
     "test:security": "node --experimental-strip-types --test tests/security.test.ts",
     "test:backend": "node --experimental-strip-types --test tests/scoring.test.ts tests/auth.test.ts tests/api.test.ts",
     "test:e2e": "node --experimental-strip-types --test tests/e2e-user-journeys.test.ts",
-    "test:ai": "node --experimental-strip-types --test tests/ai/*.test.ts"
+    "test:ai": "node --experimental-strip-types --test tests/ai/*.test.ts",
+    "test:manual": "node --experimental-strip-types scripts/manual-walkthrough.ts"
   },
   "dependencies": {
     "argon2": "^0.40.3",

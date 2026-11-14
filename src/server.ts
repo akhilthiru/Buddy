@@ -3,6 +3,7 @@ import { app } from './app.ts';
 import { env } from './config/env.ts';
 import { wsGateway, type WsClient } from './modules/messaging/websocket.gateway.ts';
 import { JwtUtil } from './common/utils/jwt.ts';
+import { seedDevelopmentData } from './database/seeds.ts';
 
 const server = http.createServer((req, res) => {
   app.handleRequest(req, res);
@@ -62,8 +63,10 @@ server.on('upgrade', (req, socket) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
+  seedDevelopmentData();
   server.listen(env.PORT, () => {
     console.log(`Flatmate Modular Monolith API listening on port ${env.PORT} [${env.NODE_ENV}]`);
+    console.log(`Interactive Web Testing Console: http://localhost:${env.PORT}/`);
     console.log(`Real-Time WebSocket Gateway ready on ws://localhost:${env.PORT}/ws`);
   });
 }

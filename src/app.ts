@@ -7,6 +7,8 @@ import { DiscoveryService } from './modules/discovery/discovery.service.ts';
 import { MessagingService } from './modules/messaging/messaging.service.ts';
 import { ListingsService } from './modules/listings/listings.service.ts';
 import { SafetyService } from './modules/safety/safety.service.ts';
+import { ScoringEngine } from './modules/matching/scoring.engine.ts';
+import { geminiAIService } from './modules/ai/gemini.client.ts';
 import { JwtUtil } from './common/utils/jwt.ts';
 import { env } from './config/env.ts';
 import {
@@ -16,6 +18,7 @@ import {
   NotFoundError,
   BadRequestError,
 } from './common/errors/problem-details.ts';
+import { renderTestConsoleHtml } from './app/test-console.html.ts';
 
 export interface HttpRequest {
   method: string;
@@ -218,6 +221,35 @@ export class FlatmateApp {
     };
 
     // ==========================================
+    // SYSTEM & HEALTH CHECKS
+    // ==========================================
+    if (method === 'GET' && path === '/healthz') {
+      return json(200, {
+        status: 'UP',
+        timestamp: new Date().toISOString(),
+        service: 'flatmate-modular-monolith',
+        version: '1.0.0',
+        environment: env.NODE_ENV,
+        database: {
+          usersCount: db.users.size,
+          profilesCount: db.userProfiles.size,
+          listingsCount: db.roomListings.size,
+          matchesCount: db.matches.length,
+        },
+      });
+    }
+
+    if (method === 'GET' && (path === '/' || path === '/test-console')) {
+      const html = renderTestConsoleHtml();
+      res.writeHead(200, {
+        ...responseHeaders,
+        'Content-Type': 'text/html; charset=utf-8',
+      });
+      res.end(html);
+      return;
+    }
+
+    // ==========================================
     // DOMAIN 1: AUTHENTICATION
     // ==========================================
     if (method === 'POST' && path === '/api/v1/auth/otp/send') {
@@ -341,9 +373,10 @@ export class FlatmateApp {
 
     if (method === 'POST' && path === '/api/v1/discovery/swipe') {
       this.authenticate(req);
+      const candidateId = req.body.candidateUserId || req.body.targetUserId;
       const result = DiscoveryService.swipe(
         req.user!.userId,
-        req.body.candidateUserId,
+        candidateId,
         req.body.action
       );
       return json(200, result);
@@ -457,7 +490,11 @@ export class FlatmateApp {
     // ==========================================
     if (method === 'POST' && path === '/api/v1/safety/blocks') {
       this.authenticate(req);
-      const result = SafetyService.blockUser(req.user!.userId, req.body);
+      const targetUserId = req.body.targetUserId || req.body.blockedUserId;
+      const result = SafetyService.blockUser(req.user!.userId, {
+        targetUserId,
+        reason: req.body.reason,
+      });
       return json(201, result);
     }
 
@@ -470,8 +507,84 @@ export class FlatmateApp {
 
     if (method === 'POST' && path === '/api/v1/safety/reports') {
       this.authenticate(req);
-      const result = SafetyService.reportUser(req.user!.userId, req.body);
+      const targetUserId = req.body.targetUserId || req.body.reportedUserId;
+      let category = req.body.category;
+      if (category === 'HARASSMENT') category = 'HARASSMENT_OR_ABUSE';
+      if (category === 'SPAM_COMMERCIAL') category = 'SPAM_OR_COMMERCIAL_BROKER';
+      if (category === 'FAKE_PROFILE') category = 'FAKE_PROFILE_IMPERSONATION';
+
+      const result = SafetyService.reportUser(req.user!.userId, {
+        targetUserId,
+        category,
+        details: req.body.details,
+      });
       return json(201, result);
+    }
+
+    // ==========================================
+    // DOMAIN 10: ASSISTIVE AI ASSISTANT
+    // ==========================================
+    if (method === 'POST' && path === '/api/v1/ai/harmony-explanation') {
+      this.authenticate(req);
+      const candidateId = req.body.candidateUserId;
+      if (!candidateId) {
+        throw new BadRequestError('candidateUserId is required');
+      }
+
+      const userProfile = db.userProfiles.get(req.user!.userId);
+      const candProfile = db.userProfiles.get(candidateId);
+      const userLife = db.lifestyleProfiles.get(req.user!.userId);
+      const candLife = db.lifestyleProfiles.get(candidateId);
+
+      if (!userProfile || !candProfile || !userLife || !candLife) {
+        throw new NotFoundError('Profiles or lifestyle data not found for AI evaluation');
+      }
+
+      const comp = ScoringEngine.calculateCompatibility(
+        userProfile,
+        userLife,
+        candProfile,
+        candLife
+      );
+
+      const aiResult = await geminiAIService.generateHarmonyExplanation({
+        userA: {
+          userId: req.user!.userId,
+          displayName: userProfile.displayName,
+          suburb: userProfile.preferredSuburbs[0] || 'KAZHAKKOOTTAM',
+          modality: userProfile.modality,
+          bio: userProfile.bio,
+          vectors: {
+            sleep: userLife.sleep.sleepPattern,
+            cleanliness: userLife.cleanliness.cleanlinessLevel,
+            dietary: userLife.dietary.dietType,
+            social: userLife.social.guestFrequency,
+            substances: userLife.substances.smokingHabit,
+            financial: userLife.financial.rentPaymentHabit,
+            work: userLife.work.workMode,
+          },
+        },
+        userB: {
+          userId: candidateId,
+          displayName: candProfile.displayName,
+          suburb: candProfile.preferredSuburbs[0] || 'KAZHAKKOOTTAM',
+          modality: candProfile.modality,
+          bio: candProfile.bio,
+          vectors: {
+            sleep: candLife.sleep.sleepPattern,
+            cleanliness: candLife.cleanliness.cleanlinessLevel,
+            dietary: candLife.dietary.dietType,
+            social: candLife.social.guestFrequency,
+            substances: candLife.substances.smokingHabit,
+            financial: candLife.financial.rentPaymentHabit,
+            work: candLife.work.workMode,
+          },
+        },
+        compatibilityScore: comp.overallScore,
+        vectorBreakdown: comp.vectors as any,
+      });
+
+      return json(200, aiResult.data);
     }
 
     // 404 Route Not Found
