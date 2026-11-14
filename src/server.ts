@@ -64,12 +64,29 @@ server.on('upgrade', (req, socket) => {
 
 if (process.env.NODE_ENV !== 'test') {
   seedDevelopmentData();
-  server.listen(env.PORT, () => {
-    console.log(`Flatmate Modular Monolith API listening on port ${env.PORT} [${env.NODE_ENV}]`);
-    console.log(`📱 Real Flatmate User App:      http://localhost:${env.PORT}/`);
-    console.log(`⚡ Developer API Test Console:  http://localhost:${env.PORT}/test-console`);
-    console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${env.PORT}/ws`);
-  });
+
+  const startServer = (port: number) => {
+    const onError = (err: any) => {
+      if (err.code === 'EADDRINUSE') {
+        console.warn(`Port ${port} is in use, trying port ${port + 1}...`);
+        server.removeListener('error', onError);
+        startServer(port + 1);
+      } else {
+        console.error('Server error:', err);
+      }
+    };
+
+    server.once('error', onError);
+    server.listen(port, () => {
+      server.removeListener('error', onError);
+      console.log(`Flatmate Modular Monolith API listening on port ${port} [${env.NODE_ENV}]`);
+      console.log(`📱 Real Flatmate User App:      http://localhost:${port}/`);
+      console.log(`⚡ Developer API Test Console:  http://localhost:${port}/test-console`);
+      console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${port}/ws`);
+    });
+  };
+
+  startServer(env.PORT);
 }
 
 export { server };

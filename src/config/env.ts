@@ -15,7 +15,7 @@ export interface Env {
 
 export const env: Env = {
   NODE_ENV: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development',
-  PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 4000,
+  PORT: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/flatmate',
   JWT_SECRET: process.env.JWT_SECRET || 'flatmate-super-secret-jwt-access-key-2026',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'flatmate-super-secret-refresh-key-2026',
