@@ -105,7 +105,7 @@ export const PII_PATTERNS = {
   socialHandle: /(?:^|[\s,;:])@([a-zA-Z0-9._]{3,30})\b/g,
 
   // Delimiter Escape & Prompt Injection Sequences
-  promptInjectionPhrases: /(?:ignore\s+(?:all\s+)?previous\s+instructions|forget\s+(?:all\s+)?previous\s+instructions|system\s+prompt|disregard\s+(?:the\s+above|all\s+prior)|dan\s+mode|jailbreak|new\s+system\s+directive|developer\s+mode|you\s+are\s+now\s+an?\s+unrestricted|override\s+instructions|act\s+as\s+an?\s+unrestricted|system\s*:|instructions?\s*:|assistant\s*:|output\s+the\s+system\s+prompt|reveal\s+your\s+prompt)/gi,
+  promptInjectionPhrases: /(?:ignore\s+(?:all\s+)?previous\s+instructions|forget\s+(?:all\s+)?previous\s+instructions|system\s+prompt|system\s+override:?|disregard\s+(?:the\s+above|all\s+prior)|dan\s+mode|jailbreak|new\s+system\s+directive|developer\s+mode|you\s+are\s+now|override\s+instructions|act\s+as\s+an?\s+unrestricted|system\s*:|instructions?\s*:|assistant\s*:|output\s+the\s+system\s+prompt|reveal\s+your\s+prompt|do\s+anything\s+now)/gi,
 
   // XML / HTML tags that could break prompt boundaries
   xmlTags: /<\/?[a-zA-Z0-9_:\-]+(?:\s+[^>]*?)?\/?>/g,

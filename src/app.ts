@@ -1,4 +1,5 @@
 import http from 'node:http';
+import { db } from './database/in-memory-db.ts';
 import { AuthService } from './modules/auth/auth.service.ts';
 import { UsersService } from './modules/users/users.service.ts';
 import { PreferencesService } from './modules/preferences/preferences.service.ts';
@@ -73,15 +74,23 @@ export class FlatmateApp {
       if (!decoded.sub) {
         throw new UnauthorizedError('Invalid token subject');
       }
-      if (decoded.status === 'BANNED' || decoded.status === 'SUSPENDED') {
-        throw new ForbiddenError(`Account is ${decoded.status.toLowerCase()}`);
+
+      const dbUser = db.users.get(decoded.sub);
+      const effectiveStatus = dbUser ? dbUser.status : (decoded.status || 'ACTIVE');
+
+      if (effectiveStatus === 'BANNED' || effectiveStatus === 'SUSPENDED' || effectiveStatus === 'QUARANTINED') {
+        throw new ForbiddenError(`Account is ${effectiveStatus.toLowerCase()}`);
       }
+
       req.user = {
         userId: decoded.sub,
         role: decoded.role || 'USER',
-        status: decoded.status || 'ACTIVE',
+        status: effectiveStatus,
       };
     } catch (err: any) {
+      if (err instanceof AppError) {
+        throw err;
+      }
       if (err.name === 'TokenExpiredError') {
         throw new UnauthorizedError('Access token has expired');
       }
@@ -224,7 +233,7 @@ export class FlatmateApp {
 
       const cookieHeader = [
         `refresh_token=${rawRefreshToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
-        `__Host-refresh_token=${rawRefreshToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
+        `__Host-refresh_token=${rawRefreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
       ];
 
       return json(200, session, { 'Set-Cookie': cookieHeader });
@@ -237,7 +246,7 @@ export class FlatmateApp {
 
       const cookieHeader = [
         `refresh_token=${newRawRefreshToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
-        `__Host-refresh_token=${newRawRefreshToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
+        `__Host-refresh_token=${newRawRefreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${env.JWT_REFRESH_EXPIRY_SECONDS}`,
       ];
 
       return json(200, response, { 'Set-Cookie': cookieHeader });

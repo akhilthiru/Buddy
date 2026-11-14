@@ -8,6 +8,7 @@ import {
   UnauthorizedError,
   AccountLockedError,
   ForbiddenError,
+  RateLimitError,
 } from '../../common/errors/problem-details.ts';
 import type {
   SendOtpResponse,
@@ -20,6 +21,8 @@ export class AuthService {
   private static readonly PHONE_REGEX = /^\+91[6-9]\d{9}$/;
   private static readonly OTP_EXPIRY_SECONDS = 300; // 5 minutes
   private static readonly MAX_OTP_ATTEMPTS = 3;
+  private static readonly OTP_RATE_LIMIT_WINDOW_SECONDS = 900; // 15 minutes
+  private static readonly MAX_OTP_SEND_REQUESTS = 3; // max 3 requests per 15 minutes per phone (TH-S-01, TH-D-02)
 
   /**
    * Dispatches 6-digit OTP to Indian mobile phone number (FR-01).
@@ -30,6 +33,18 @@ export class AuthService {
     }
 
     const phoneHash = CryptoUtil.hashDeterministic(phoneNumber);
+
+    // Sliding window rate limiting: max 3 requests per 15 minutes per phone number
+    const windowStart = new Date(Date.now() - this.OTP_RATE_LIMIT_WINDOW_SECONDS * 1000);
+    const recentRequests = db.authOtps.filter(
+      (r) => r.phoneHash === phoneHash && r.createdAt >= windowStart
+    );
+
+    if (recentRequests.length >= this.MAX_OTP_SEND_REQUESTS) {
+      throw new RateLimitError(
+        'Too many OTP requests. Maximum 3 requests allowed per 15 minutes for this phone number.'
+      );
+    }
     // In development or test, allow 123456 or random OTP
     const isProd = env.NODE_ENV === 'production';
     const otp = isProd ? crypto.randomInt(100000, 999999).toString() : '123456';

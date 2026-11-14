@@ -81,6 +81,15 @@ export class UsersService {
     const now = new Date();
 
     if (!profile) {
+      const existingVerification = db.institutionVerifications.find(
+        (v) => v.userId === userId && v.status === 'VERIFIED'
+      );
+      const initialBadge = existingVerification
+        ? existingVerification.institutionType === 'ACADEMIC'
+          ? 'VERIFIED_STUDENT'
+          : 'VERIFIED_PROFESSIONAL'
+        : 'UNVERIFIED';
+
       profile = {
         id: crypto.randomUUID(),
         userId,
@@ -95,7 +104,7 @@ export class UsersService {
         minBudget: req.minBudget,
         maxBudget: req.maxBudget,
         moveInFlexibility: req.moveInFlexibility,
-        verificationBadge: 'UNVERIFIED',
+        verificationBadge: initialBadge,
         isOnboardingCompleted: true,
         preferredSuburbs: req.preferredSuburbs,
         photos: [],
