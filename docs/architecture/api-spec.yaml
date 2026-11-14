@@ -1,0 +1,1798 @@
+openapi: 3.1.0
+info:
+  title: Flatmate API
+  description: |
+    Production RESTful API contract for Project Flatmate – a person-first flatmate discovery and lifestyle compatibility platform initially serving Thiruvananthapuram (Trivandrum), Kerala, India.
+    This contract strictly governs frontend-backend integration, error handling (RFC 7807), pagination, and authentication.
+  version: 1.0.0
+  contact:
+    name: Flatmate Solution Architecture Team
+    email: architecture@flatmate.in
+servers:
+  - url: https://api.flatmate.in/api/v1
+    description: Production Cluster
+  - url: https://staging-api.flatmate.in/api/v1
+    description: Staging Environment
+  - url: http://localhost:4000/api/v1
+    description: Local Development Server
+
+paths:
+  # ==========================================
+  # DOMAIN 1: AUTHENTICATION & IDENTITY (FR-01 to FR-03)
+  # ==========================================
+  /auth/otp/send:
+    post:
+      summary: Request 6-digit phone verification OTP
+      description: Sends a time-limited 6-digit numeric OTP to an Indian mobile phone number via SMS (FR-01).
+      operationId: sendOtp
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+      responses:
+        '200':
+          description: OTP dispatched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendOtpResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '429':
+          $ref: '#/components/responses/429TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+
+  /auth/otp/verify:
+    post:
+      summary: Verify phone OTP and create session
+      description: Validates submitted OTP. Upon success, returns JWT access token and sets httpOnly refresh token cookie (FR-01).
+      operationId: verifyOtp
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "refresh_token=...; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=1209600"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '423':
+          description: Account locked due to excessive failed attempts
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /auth/refresh:
+    post:
+      summary: Refresh JWT access token
+      description: Rotates refresh token and issues a new access token using httpOnly cookie (NFR-SEC-01).
+      operationId: refreshSession
+      tags: [Authentication]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Session refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /auth/logout:
+    post:
+      summary: Terminate session and revoke refresh token
+      operationId: logout
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Logged out successfully
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /auth/institution/verify-request:
+    post:
+      summary: Request domain email verification token
+      description: Dispatches verification link/token to recognized academic or corporate email domain (FR-02).
+      operationId: requestInstitutionVerification
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstitutionVerifyRequest'
+      responses:
+        '202':
+          description: Verification email dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccessResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '429':
+          $ref: '#/components/responses/429TooManyRequests'
+
+  /auth/institution/verify-confirm:
+    post:
+      summary: Confirm institution email verification token
+      description: Validates email token and assigns student/corporate trust badge to user profile (FR-02, FR-03).
+      operationId: confirmInstitutionVerification
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstitutionConfirmRequest'
+      responses:
+        '200':
+          description: Badge awarded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstitutionVerificationResult'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  # ==========================================
+  # DOMAIN 2 & 3: PROFILES & LIFESTYLE (FR-04 to FR-13, FR-19)
+  # ==========================================
+  /profiles/me:
+    get:
+      summary: Retrieve current authenticated user profile
+      operationId: getMyProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+    put:
+      summary: Create or update current user profile & modality
+      description: Updates demographics, modality (1..4), micro-markets, and budget (FR-04, FR-05, FR-06).
+      operationId: updateMyProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /profiles/me/photos:
+    post:
+      summary: Upload profile photo
+      description: Uploads a photo to secure storage and links to profile (FR-05). Max 4 photos.
+      operationId: uploadProfilePhoto
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [photo, orderIndex]
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                  description: JPEG/PNG/WebP image file (max 5MB)
+                orderIndex:
+                  type: integer
+                  minimum: 0
+                  maximum: 3
+                isPrimary:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          description: Photo uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilePhotoItem'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /profiles/me/photos/{photoId}:
+    delete:
+      summary: Remove a profile photo
+      operationId: deleteProfilePhoto
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Photo deleted successfully
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /profiles/{userId}:
+    get:
+      summary: Retrieve candidate detailed profile
+      description: Returns full profile sheet, lifestyle comparisons, badges, and attached room (FR-19).
+      operationId: getCandidateProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detailed candidate profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateDetailResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /lifestyle/me:
+    get:
+      summary: Retrieve current user's 7-vector lifestyle profile
+      operationId: getMyLifestyleProfile
+      tags: [Lifestyle]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User's lifestyle profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifestyleProfileResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+    put:
+      summary: Set or update 7-vector lifestyle preferences & dealbreakers
+      description: Captures Sleep, Cleanliness, Dietary, Social, Substances, Financial, and Work habits (FR-07 to FR-13).
+      operationId: updateMyLifestyleProfile
+      tags: [Lifestyle]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLifestyleRequest'
+      responses:
+        '200':
+          description: Lifestyle preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifestyleProfileResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  # ==========================================
+  # DOMAIN 4 & 5: DISCOVERY & SWIPING (FR-14 to FR-18)
+  # ==========================================
+  /discovery/feed:
+    get:
+      summary: Fetch ranked discovery card deck batch
+      description: Returns up to 20 candidate profile cards ranked by deterministic compatibility score (FR-14, FR-15, FR-17).
+      operationId: getDiscoveryFeed
+      tags: [Discovery]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Opaque cursor for feed pagination
+      responses:
+        '200':
+          description: Feed cards batch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoveryFeedResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /discovery/swipe:
+    post:
+      summary: Record swipe decision on a candidate card
+      description: Records LIKE, PASS, or SUPERLIKE. Evaluates mutual match atomically (FR-18, FR-20).
+      operationId: recordSwipe
+      tags: [Discovery]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwipeRequest'
+      responses:
+        '200':
+          description: Swipe recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SwipeResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '409':
+          description: Candidate already swiped
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /discovery/rewind:
+    post:
+      summary: Rewind the immediately preceding swipe action
+      description: Allows reverting the last swipe action once per session (FR-18).
+      operationId: rewindSwipe
+      tags: [Discovery]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Swipe rewound successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RewindResponse'
+        '400':
+          description: Rewind quota exhausted or no previous swipe
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /discovery/compatibility/{candidateId}:
+    get:
+      summary: Retrieve itemized compatibility score & breakdown
+      description: Returns mathematical 0-100% score, 7-vector status, and optional Gemini assistive harmony note (FR-14, FR-16).
+      operationId: getCompatibilityBreakdown
+      tags: [Discovery]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: candidateId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Itemized compatibility breakdown
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityBreakdownResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  # ==========================================
+  # DOMAIN 6 & 7: MATCHES & MESSAGING (FR-20 to FR-24)
+  # ==========================================
+  /matches:
+    get:
+      summary: List all active mutual matches
+      description: Returns list of mutually unlocked matches for the authenticated user (FR-20, FR-21).
+      operationId: listMatches
+      tags: [Matches]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of mutual matches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchesListResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /matches/{matchId}:
+    get:
+      summary: Get details of a specific match
+      operationId: getMatchDetails
+      tags: [Matches]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Match details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchItem'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+    delete:
+      summary: Unmatch a connected flatmate
+      description: Terminates match, archives conversation, and prevents future messaging (FR-24).
+      operationId: unmatch
+      tags: [Matches]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Match terminated successfully
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /conversations:
+    get:
+      summary: List all user conversations (Chat Inbox)
+      description: Returns active conversations sorted by most recent message (FR-22, FR-24).
+      operationId: listConversations
+      tags: [Messaging]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationsListResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /conversations/{conversationId}/messages:
+    get:
+      summary: Get message history for a conversation
+      description: Returns paginated chat messages in reverse chronological order (FR-22).
+      operationId: getConversationMessages
+      tags: [Messaging]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: beforeCursor
+          in: query
+          schema:
+            type: string
+          description: Timestamp or ID cursor for loading older messages
+      responses:
+        '200':
+          description: Message history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageHistoryResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+    post:
+      summary: Send a text message (HTTP fallback)
+      description: Sends a chat message. Validates DPDP contact masking rules (FR-22, FR-23).
+      operationId: sendMessage
+      tags: [Messaging]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message accepted and queued/dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageItem'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          description: Cannot send message to terminated or unblocked conversation
+
+  /conversations/{conversationId}/archive:
+    patch:
+      summary: Archive a conversation
+      description: Hides conversation from active inbox without unmatching (FR-24).
+      operationId: archiveConversation
+      tags: [Messaging]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Conversation archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccessResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  # ==========================================
+  # DOMAIN 8: ROOM LISTINGS (FR-25, FR-26)
+  # ==========================================
+  /rooms/me:
+    get:
+      summary: Retrieve current user's room listing
+      operationId: getMyRoomListing
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Host room listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListingResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          description: No room listing attached to this profile
+    post:
+      summary: Create optional room listing (Modalities 1 & 3)
+      operationId: createRoomListing
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoomListingRequest'
+      responses:
+        '201':
+          description: Room listing created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListingResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+    put:
+      summary: Update current user's room listing
+      operationId: updateRoomListing
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoomListingRequest'
+      responses:
+        '200':
+          description: Room listing updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListingResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+    delete:
+      summary: Delete current user's room listing
+      operationId: deleteRoomListing
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Room listing deleted
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /rooms/me/photos:
+    post:
+      summary: Upload photo for room listing
+      description: Uploads up to 4 interior room photos (FR-25).
+      operationId: uploadRoomPhoto
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [photo, orderIndex]
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                orderIndex:
+                  type: integer
+                  minimum: 0
+                  maximum: 3
+      responses:
+        '201':
+          description: Room photo added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomPhotoItem'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /rooms/{listingId}:
+    get:
+      summary: Get candidate room listing details
+      description: View public room listing information for candidate card (FR-26).
+      operationId: getRoomListingById
+      tags: [RoomListings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Room listing details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListingResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  # ==========================================
+  # DOMAIN 9: TRUST & SAFETY (FR-27, FR-28)
+  # ==========================================
+  /safety/blocks:
+    post:
+      summary: Block a user instantly
+      description: Bidirectionally hides profiles from discovery and terminates messaging (FR-27).
+      operationId: blockUser
+      tags: [Safety]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockUserRequest'
+      responses:
+        '201':
+          description: User blocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccessResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /safety/blocks/{blockedUserId}:
+    delete:
+      summary: Unblock a previously blocked user
+      operationId: unblockUser
+      tags: [Safety]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: blockedUserId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: User unblocked
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /safety/reports:
+    post:
+      summary: Submit abuse or harassment report
+      description: Submits a structured report against a user. Triggers auto-quarantine on threshold breach (FR-28).
+      operationId: reportUser
+      tags: [Safety]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportUserRequest'
+      responses:
+        '201':
+          description: Report recorded and queued for moderation review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportUserResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+# ==========================================
+# COMPONENTS & SCHEMAS
+# ==========================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access JWT token with 15-minute validity passed in Authorization header.
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+      description: Secure httpOnly refresh token cookie for session renewal.
+
+  responses:
+    400BadRequest:
+      description: Bad Request / Schema Validation Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    401Unauthorized:
+      description: Unauthorized - Valid JWT session required
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    404NotFound:
+      description: Resource Not Found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    429TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    500InternalError:
+      description: Internal Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+
+  schemas:
+    # Error Model (RFC 7807)
+    ProblemDetails:
+      type: object
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          example: "https://flatmate.in/errors/validation-failed"
+        title:
+          type: string
+          example: "Validation Error"
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: "The request payload failed schema validation."
+        instance:
+          type: string
+          example: "/api/v1/auth/otp/verify"
+        invalidParams:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "otp"
+              reason:
+                type: string
+                example: "OTP must be exactly 6 numeric digits."
+
+    GenericSuccessResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Operation completed successfully."
+
+    # Auth Models
+    SendOtpRequest:
+      type: object
+      required: [phoneNumber]
+      properties:
+        phoneNumber:
+          type: string
+          pattern: '^\+91[6-9]\d{9}$'
+          example: "+919876543210"
+          description: E.164 formatted 10-digit Indian phone number with +91 prefix.
+
+    SendOtpResponse:
+      type: object
+      required: [success, message, expiresInSeconds]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "OTP sent successfully."
+        expiresInSeconds:
+          type: integer
+          example: 300
+
+    VerifyOtpRequest:
+      type: object
+      required: [phoneNumber, otp]
+      properties:
+        phoneNumber:
+          type: string
+          pattern: '^\+91[6-9]\d{9}$'
+          example: "+919876543210"
+        otp:
+          type: string
+          pattern: '^\d{6}$'
+          example: "482910"
+
+    AuthSessionResponse:
+      type: object
+      required: [accessToken, expiresIn, isNewUser, user]
+      properties:
+        accessToken:
+          type: string
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6..."
+        expiresIn:
+          type: integer
+          example: 900
+        isNewUser:
+          type: boolean
+          example: false
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum: [ACTIVE, QUARANTINED, BANNED, SUSPENDED]
+            isOnboardingCompleted:
+              type: boolean
+
+    RefreshTokenResponse:
+      type: object
+      required: [accessToken, expiresIn]
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+          example: 900
+
+    InstitutionVerifyRequest:
+      type: object
+      required: [institutionEmail]
+      properties:
+        institutionEmail:
+          type: string
+          format: email
+          example: "adarsh@cet.ac.in"
+
+    InstitutionConfirmRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          example: "389201"
+
+    InstitutionVerificationResult:
+      type: object
+      required: [verified, badge, institutionName]
+      properties:
+        verified:
+          type: boolean
+          example: true
+        badge:
+          type: string
+          enum: [VERIFIED_STUDENT, VERIFIED_PROFESSIONAL]
+          example: "VERIFIED_STUDENT"
+        institutionName:
+          type: string
+          example: "College of Engineering Trivandrum (CET)"
+
+    # Profile Models
+    DiscoveryModalityEnum:
+      type: string
+      enum: [MODALITY_1, MODALITY_2, MODALITY_3, MODALITY_4]
+      description: |
+        MODALITY_1: Has room available, seeking flatmate.
+        MODALITY_2: Seeking accommodation and flatmate.
+        MODALITY_3: Has flat, wants to relocate with new flatmate.
+        MODALITY_4: Seeking compatible person first to search together.
+
+    TrivandrumSuburbEnum:
+      type: string
+      enum:
+        - KAZHAKKOOTTAM
+        - KARIAVATTOM
+        - SREEKARYAM
+        - ULLOOR
+        - PATTOM
+        - KOWDIAR
+        - MANACAUD
+        - VELLAYAMBALAM
+
+    UserProfileResponse:
+      type: object
+      required: [id, userId, displayName, gender, age, occupation, modality, preferredGender, minBudget, maxBudget, preferredSuburbs, photos, verificationBadge, isOnboardingCompleted]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+          example: "Adarsh N."
+        gender:
+          type: string
+          enum: [MALE, FEMALE, NON_BINARY]
+        age:
+          type: integer
+          example: 24
+        occupation:
+          type: string
+          example: "Software Engineer"
+        collegeOrCompany:
+          type: string
+          example: "UST Global / Technopark"
+        bio:
+          type: string
+          example: "Techie at Technopark looking to team up for a flat in Kazhakkoottam. Quiet, clean, weekend gamer."
+        modality:
+          $ref: '#/components/schemas/DiscoveryModalityEnum'
+        preferredGender:
+          type: string
+          enum: [MALE, FEMALE, ANY]
+        minBudget:
+          type: integer
+          example: 6000
+        maxBudget:
+          type: integer
+          example: 8500
+        moveInFlexibility:
+          type: string
+          enum: [WITHIN_15_DAYS, ONE_MONTH, TWO_MONTHS, FLEXIBLE]
+        preferredSuburbs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrivandrumSuburbEnum'
+        verificationBadge:
+          type: string
+          enum: [UNVERIFIED, VERIFIED_STUDENT, VERIFIED_PROFESSIONAL]
+        avatarUrl:
+          type: string
+          format: uri
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfilePhotoItem'
+        isOnboardingCompleted:
+          type: boolean
+
+    ProfilePhotoItem:
+      type: object
+      required: [id, photoUrl, orderIndex, isPrimary]
+      properties:
+        id:
+          type: string
+          format: uuid
+        photoUrl:
+          type: string
+          format: uri
+        orderIndex:
+          type: integer
+        isPrimary:
+          type: boolean
+
+    UpdateProfileRequest:
+      type: object
+      required: [displayName, gender, birthDate, occupation, modality, minBudget, maxBudget, preferredSuburbs]
+      properties:
+        displayName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Adarsh N."
+        gender:
+          type: string
+          enum: [MALE, FEMALE, NON_BINARY]
+        birthDate:
+          type: string
+          format: date
+          example: "2000-05-14"
+        occupation:
+          type: string
+          maxLength: 100
+          example: "Frontend Engineer"
+        collegeOrCompany:
+          type: string
+          maxLength: 150
+        bio:
+          type: string
+          maxLength: 300
+        modality:
+          $ref: '#/components/schemas/DiscoveryModalityEnum'
+        preferredGender:
+          type: string
+          enum: [MALE, FEMALE, ANY]
+          default: ANY
+        minBudget:
+          type: integer
+          minimum: 1000
+          example: 6000
+        maxBudget:
+          type: integer
+          maximum: 50000
+          example: 9000
+        moveInFlexibility:
+          type: string
+          enum: [WITHIN_15_DAYS, ONE_MONTH, TWO_MONTHS, FLEXIBLE]
+        preferredSuburbs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrivandrumSuburbEnum'
+          minItems: 1
+
+    # Lifestyle 7-Vector Models
+    LifestyleProfileResponse:
+      type: object
+      required: [id, userId, sleep, cleanliness, dietary, social, substances, financial, work]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        sleep:
+          type: object
+          required: [pattern, shiftSchedule, noiseSensitivity, isDealbreaker]
+          properties:
+            pattern:
+              type: string
+              enum: [EARLY_BIRD, NIGHT_OWL, FLEXIBLE]
+            shiftSchedule:
+              type: string
+              enum: [NORMAL_DAY, US_SHIFT, UK_SHIFT, ROTATIONAL_NIGHT]
+            noiseSensitivity:
+              type: string
+              enum: [LIGHT_SLEEPER, HEAVY_SLEEPER]
+            isDealbreaker:
+              type: boolean
+        cleanliness:
+          type: object
+          required: [level, sinkRule, maidPreference, isDealbreaker]
+          properties:
+            level:
+              type: string
+              enum: [RELAXED, MODERATE, METICULOUS]
+            sinkRule:
+              type: string
+              enum: [IMMEDIATE_WASH, SAME_DAY, NEXT_DAY]
+            maidPreference:
+              type: string
+              enum: [MUST_HAVE_MAID, OPEN_TO_MAID, DIY_ONLY]
+            isDealbreaker:
+              type: boolean
+        dietary:
+          type: object
+          required: [dietType, kitchenPolicy, isDealbreaker]
+          properties:
+            dietType:
+              type: string
+              enum: [STRICT_VEGETARIAN, EGGETARIAN, NON_VEGETARIAN, HALAL_ONLY]
+            kitchenPolicy:
+              type: string
+              enum: [VEG_ONLY_KITCHEN, SEPARATE_UTENSILS_OK, NO_RESTRICTIONS]
+            isDealbreaker:
+              type: boolean
+        social:
+          type: object
+          required: [guestFrequency, overnightGuestPolicy, partyPreference, isDealbreaker]
+          properties:
+            guestFrequency:
+              type: string
+              enum: [NO_GUESTS, OCCASIONAL_FRIENDS, FREQUENT_GUESTS]
+            overnightGuestPolicy:
+              type: string
+              enum: [NO_OVERNIGHT, SAME_GENDER_ONLY, PARTNERS_ALLOWED, FLEXIBLE_WITH_NOTICE]
+            partyPreference:
+              type: string
+              enum: [NEVER_AT_HOME, OCCASIONAL_WEEKENDS, FREQUENT]
+            isDealbreaker:
+              type: boolean
+        substances:
+          type: object
+          required: [smokingHabit, alcoholHabit, isDealbreaker]
+          properties:
+            smokingHabit:
+              type: string
+              enum: [NON_SMOKER_STRICT, BALCONY_ONLY, SMOKER]
+            alcoholHabit:
+              type: string
+              enum: [TEETOTALER, SOCIAL_DRINKER, REGULAR]
+            isDealbreaker:
+              type: boolean
+        financial:
+          type: object
+          required: [rentPaymentHabit, acBillSplit, groceryTracking, isDealbreaker]
+          properties:
+            rentPaymentHabit:
+              type: string
+              enum: [STRICT_1ST_OF_MONTH, BEFORE_5TH, FLEXIBLE]
+            acBillSplit:
+              type: string
+              enum: [EQUAL_SPLIT, PROPORTIONAL_TO_USAGE]
+            groceryTracking:
+              type: string
+              enum: [SPLITWISE_APP, INDIVIDUAL_PROVISIONS, ROTATIONAL_PAYMENT]
+            isDealbreaker:
+              type: boolean
+        work:
+          type: object
+          required: [workMode, callFrequency, workspacePreference, isDealbreaker]
+          properties:
+            workMode:
+              type: string
+              enum: [OFFICE_DAILY, HYBRID, 100_PERCENT_REMOTE]
+            callFrequency:
+              type: string
+              enum: [LOW, HIGH]
+            workspacePreference:
+              type: string
+              enum: [PRIVATE_ROOM_DESK, LIVING_ROOM_DESK_OK]
+            isDealbreaker:
+              type: boolean
+
+    UpdateLifestyleRequest:
+      type: object
+      required: [sleep, cleanliness, dietary, social, substances, financial, work]
+      properties:
+        sleep:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/sleep'
+        cleanliness:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/cleanliness'
+        dietary:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/dietary'
+        social:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/social'
+        substances:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/substances'
+        financial:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/financial'
+        work:
+          $ref: '#/components/schemas/LifestyleProfileResponse/properties/work'
+
+    # Discovery & Matching Models
+    DiscoveryCardItem:
+      type: object
+      required: [userId, displayName, age, occupation, modality, compatibilityScore, photos, verificationBadge, topHighlights, preferredSuburbs, budgetRange]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        age:
+          type: integer
+        occupation:
+          type: string
+        collegeOrCompany:
+          type: string
+        modality:
+          $ref: '#/components/schemas/DiscoveryModalityEnum'
+        compatibilityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 92
+        verificationBadge:
+          type: string
+          enum: [UNVERIFIED, VERIFIED_STUDENT, VERIFIED_PROFESSIONAL]
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfilePhotoItem'
+        topHighlights:
+          type: array
+          items:
+            type: string
+          example: ["Early Bird", "Non-Smoker", "Veg-Friendly"]
+        preferredSuburbs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrivandrumSuburbEnum'
+        budgetRange:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        roomListing:
+          $ref: '#/components/schemas/RoomListingResponse'
+
+    DiscoveryFeedResponse:
+      type: object
+      required: [cards, pagination]
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscoveryCardItem'
+        pagination:
+          type: object
+          properties:
+            nextCursor:
+              type: string
+              nullable: true
+            hasMore:
+              type: boolean
+
+    SwipeRequest:
+      type: object
+      required: [candidateUserId, action, clientMutationId]
+      properties:
+        candidateUserId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum: [LIKE, PASS, SUPERLIKE]
+        clientMutationId:
+          type: string
+          format: uuid
+          description: Idempotency token generated by client
+
+    SwipeResponse:
+      type: object
+      required: [success, isMutualMatch]
+      properties:
+        success:
+          type: boolean
+          example: true
+        isMutualMatch:
+          type: boolean
+          example: true
+        match:
+          $ref: '#/components/schemas/MatchItem'
+        conversationId:
+          type: string
+          format: uuid
+          nullable: true
+
+    RewindResponse:
+      type: object
+      required: [success, rewoundCandidateId, remainingRewinds]
+      properties:
+        success:
+          type: boolean
+        rewoundCandidateId:
+          type: string
+          format: uuid
+        remainingRewinds:
+          type: integer
+          example: 0
+
+    CompatibilityBreakdownResponse:
+      type: object
+      required: [overallScore, vectors]
+      properties:
+        overallScore:
+          type: integer
+          example: 89
+        vectors:
+          type: object
+          required: [sleep, cleanliness, dietary, social, substances, financial, work]
+          properties:
+            sleep:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            cleanliness:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            dietary:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            social:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            substances:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            financial:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+            work:
+              $ref: '#/components/schemas/VectorAlignmentDetail'
+        aiHarmonyNote:
+          $ref: '#/components/schemas/HarmonyExplanation'
+
+    VectorAlignmentDetail:
+      type: object
+      required: [affinityScore, status, userChoice, candidateChoice, notes]
+      properties:
+        affinityScore:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.95
+        status:
+          type: string
+          enum: [HIGH_ALIGNMENT, MODERATE_ALIGNMENT, DISCUSSION_POINT]
+        userChoice:
+          type: string
+        candidateChoice:
+          type: string
+        notes:
+          type: string
+
+    HarmonyExplanation:
+      type: object
+      required: [headline, lifestyleHarmonies, potentialCompromises, icebreakerPrompt]
+      properties:
+        headline:
+          type: string
+          example: "Great fit for quiet workweeks and clean kitchen discipline"
+        lifestyleHarmonies:
+          type: array
+          items:
+            type: string
+          example:
+            - "Both adhere to early morning routines (sleep before 11 PM)."
+            - "Shared commitment to immediate dishwashing and quiet weekday evenings."
+        potentialCompromises:
+          type: string
+          example: "Discuss weekend guest comfort as one prefers a sanctuary vibe."
+        icebreakerPrompt:
+          type: string
+          example: "Ask how they like setting up their desk space for hybrid days!"
+
+    CandidateDetailResponse:
+      type: object
+      required: [profile, lifestyle, compatibility]
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserProfileResponse'
+        lifestyle:
+          $ref: '#/components/schemas/LifestyleProfileResponse'
+        compatibility:
+          $ref: '#/components/schemas/CompatibilityBreakdownResponse'
+        roomListing:
+          $ref: '#/components/schemas/RoomListingResponse'
+
+    # Matches & Messaging Models
+    MatchItem:
+      type: object
+      required: [id, matchedUserId, matchedUserDisplayName, matchedUserAvatarUrl, compatibilityScore, matchedAt, conversationId]
+      properties:
+        id:
+          type: string
+          format: uuid
+        matchedUserId:
+          type: string
+          format: uuid
+        matchedUserDisplayName:
+          type: string
+        matchedUserAvatarUrl:
+          type: string
+          format: uri
+        compatibilityScore:
+          type: integer
+        matchedAt:
+          type: string
+          format: date-time
+        conversationId:
+          type: string
+          format: uuid
+
+    MatchesListResponse:
+      type: object
+      required: [matches, totalCount]
+      properties:
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchItem'
+        totalCount:
+          type: integer
+
+    ConversationItem:
+      type: object
+      required: [id, matchId, participant, status, lastMessageAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        matchId:
+          type: string
+          format: uuid
+        participant:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            displayName:
+              type: string
+            avatarUrl:
+              type: string
+            verificationBadge:
+              type: string
+        lastMessage:
+          $ref: '#/components/schemas/ChatMessageItem'
+        status:
+          type: string
+          enum: [ACTIVE, ARCHIVED, TERMINATED]
+        lastMessageAt:
+          type: string
+          format: date-time
+
+    ConversationsListResponse:
+      type: object
+      required: [conversations]
+      properties:
+        conversations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationItem'
+
+    ChatMessageItem:
+      type: object
+      required: [id, conversationId, senderUserId, content, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversationId:
+          type: string
+          format: uuid
+        senderUserId:
+          type: string
+          format: uuid
+        content:
+          type: string
+          maxLength: 2000
+        status:
+          type: string
+          enum: [SENT, DELIVERED, READ]
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    SendMessageRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          example: "Hey! Saw we both work hybrid in Kazhakkoottam. Want to team up for flat visits this Saturday?"
+
+    MessageHistoryResponse:
+      type: object
+      required: [messages, hasMore]
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessageItem'
+        hasMore:
+          type: boolean
+        nextCursor:
+          type: string
+          nullable: true
+
+    # Room Listings Models
+    RoomListingResponse:
+      type: object
+      required: [id, userId, roomType, bathroomType, monthlyRent, securityDeposit, availableFrom, locationSuburb, amenities, photos]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        roomType:
+          type: string
+          enum: [PRIVATE_ROOM, SHARED_ROOM]
+        sharingCount:
+          type: integer
+          nullable: true
+        bathroomType:
+          type: string
+          enum: [ATTACHED_PRIVATE, SHARED]
+        monthlyRent:
+          type: integer
+          example: 7500
+        securityDeposit:
+          type: integer
+          example: 15000
+        availableFrom:
+          type: string
+          format: date
+          example: "2026-12-01"
+        locationSuburb:
+          $ref: '#/components/schemas/TrivandrumSuburbEnum'
+        amenities:
+          type: array
+          items:
+            type: string
+          example: ["AC", "High-Speed Wi-Fi", "Washing Machine", "Power Backup / Inverter"]
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoomPhotoItem'
+
+    RoomPhotoItem:
+      type: object
+      required: [id, photoUrl, orderIndex]
+      properties:
+        id:
+          type: string
+          format: uuid
+        photoUrl:
+          type: string
+          format: uri
+        orderIndex:
+          type: integer
+
+    CreateRoomListingRequest:
+      type: object
+      required: [roomType, bathroomType, monthlyRent, securityDeposit, availableFrom, locationSuburb, amenities]
+      properties:
+        roomType:
+          type: string
+          enum: [PRIVATE_ROOM, SHARED_ROOM]
+        sharingCount:
+          type: integer
+          minimum: 2
+          maximum: 4
+        bathroomType:
+          type: string
+          enum: [ATTACHED_PRIVATE, SHARED]
+        monthlyRent:
+          type: integer
+          minimum: 1000
+          maximum: 60000
+          example: 7500
+        securityDeposit:
+          type: integer
+          minimum: 0
+          maximum: 200000
+          example: 15000
+        availableFrom:
+          type: string
+          format: date
+        locationSuburb:
+          $ref: '#/components/schemas/TrivandrumSuburbEnum'
+        amenities:
+          type: array
+          items:
+            type: string
+
+    # Trust & Safety Models
+    BlockUserRequest:
+      type: object
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+          maxLength: 500
+
+    ReportUserRequest:
+      type: object
+      required: [targetUserId, category, details]
+      properties:
+        targetUserId:
+          type: string
+          format: uuid
+        category:
+          type: string
+          enum:
+            - HARASSMENT_OR_ABUSE
+            - SPAM_OR_COMMERCIAL_BROKER
+            - FAKE_PROFILE_IMPERSONATION
+            - MORAL_POLICING_OR_DISCRIMINATION
+        details:
+          type: string
+          minLength: 10
+          maxLength: 1000
+          example: "User contacted me repeatedly outside app and made unsolicited advances."
+
+    ReportUserResponse:
+      type: object
+      required: [reportId, status, message]
+      properties:
+        reportId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [PENDING_REVIEW, ACTIONED_QUARANTINE]
+        message:
+          type: string
+          example: "Report submitted. Thank you for keeping our community safe."
