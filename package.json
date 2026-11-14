@@ -1,0 +1,35 @@
+{
+  "name": "flatmate",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Flatmate - Person-First Flatmate Discovery & Compatibility Platform",
+  "scripts": {
+    "dev": "node --experimental-strip-types src/server.ts",
+    "build": "tsc -p tsconfig.backend.json",
+    "start": "node dist/server.js",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:scoring": "node --experimental-strip-types --test tests/scoring.test.ts",
+    "test:auth": "node --experimental-strip-types --test tests/auth.test.ts",
+    "test:api": "node --experimental-strip-types --test tests/api.test.ts",
+    "test:frontend": "node --experimental-strip-types --test tests/frontend-unit.test.ts tests/component-state.test.ts",
+    "test:backend": "node --experimental-strip-types --test tests/scoring.test.ts tests/auth.test.ts tests/api.test.ts"
+  },
+  "dependencies": {
+    "argon2": "^0.40.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.5",
+    "uuid": "^9.0.1",
+    "ws": "^8.18.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Flatmate - Person-First Flatmate Discovery",
+  "short_name": "Flatmate",
+  "description": "Find compatible flatmates and rooms across Trivandrum based on lifestyle harmony.",
+  "start_url": "/discover",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0D9488",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
