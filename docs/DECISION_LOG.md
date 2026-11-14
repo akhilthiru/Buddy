@@ -27,5 +27,6 @@ This document records all architectural, governance, product, and process decisi
 | **DEC-019** | 2026-11-14 | Frontend Engineering | Next.js App Router Application & Accessible Design System | Complete mobile-first UI components, discovery card deck, thumb-zone controls, type-safe OpenAPI client, and 22 automated component tests | **Implemented** | Frontend Engineer / Solution Architect |
 | **DEC-020** | 2026-11-14 | Governance | Initiation of Workflow E (Testing & QA) | Human approval of Workflow D implementation unlocks test pyramid execution, API contract verification, security audit, and release recommendation | **Approved** | Chief Orchestrator / Human User |
 | **DEC-021** | 2026-11-14 | Security | Formal Release Security Audit & STRIDE Threat Sign-Off | Verification of all 23 STRIDE threats, OWASP Top 10 compliance, India DPDP Act 2023 statutory controls, and 16 automated security tests passing with 0 CVEs | **Approved** | Security Reviewer |
+| **DEC-022** | 2026-11-14 | Quality Assurance | Formal Release Test Report & QA Go Recommendation | 119 automated tests passing across 30 suites (0 failures), 100% test matrix coverage across all 28 user stories, 5 triaged defects resolved (0 open bugs), and QA Go sign-off | **Approved** | QA Engineer / Solution Architect |
 
 
