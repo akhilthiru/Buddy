@@ -4,7 +4,7 @@ export function renderTestConsoleHtml(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flatmate – Local Interactive Testing Console</title>
+  <title>Buddy – Local Interactive Testing Console</title>
   <style>
     :root {
       --primary: #0D9488;
@@ -111,7 +111,7 @@ export function renderTestConsoleHtml(): string {
   <header>
     <div class="header-inner">
       <div class="brand">
-        <div class="logo-badge">FLATMATE</div>
+        <div class="logo-badge">BUDDY</div>
         <div class="title-group">
           <h1>Local Interactive Testing Console</h1>
           <p>Thiruvananthapuram, Kerala • Verified API & Feature Harness</p>
@@ -302,7 +302,7 @@ export function renderTestConsoleHtml(): string {
         <div class="card">
           <div class="card-title">7-Vector Compatibility Configuration (FR-09 to FR-16, ADR-006)</div>
           <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
-            Flatmate matches on 7 lifestyle vectors: Sleep (20%), Cleanliness (20%), Diet (15%), Social (15%), Substances (15%), Budget (10%), Work (5%).
+            Buddy matches on 7 lifestyle vectors: Sleep (20%), Cleanliness (20%), Diet (15%), Social (15%), Substances (15%), Budget (10%), Work (5%).
           </p>
           <div class="form-row">
             <div class="form-group">
@@ -413,7 +413,7 @@ export function renderTestConsoleHtml(): string {
         <div class="card">
           <div class="card-title">Accommodation Listing Management (FR-25, FR-26)</div>
           <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
-            Accommodation is optional in Flatmate. Users in Modality 1 (Offering room) or Modality 3 (Relocating) can manage listings.
+            Accommodation is optional in Buddy. Users in Modality 1 (Offering room) or Modality 3 (Relocating) can manage listings.
           </p>
           <div class="form-row">
             <div class="form-group">

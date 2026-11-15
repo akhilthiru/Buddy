@@ -550,21 +550,21 @@ describe('Flatmate Security Audit & Hardening Test Suite (Workflow E / Rule 05 &
 
       // Phone number patterns
       const phoneWarning1 = ContentFilter.scanForContactDetails('Call me on +91 9876543210 tonight');
-      assert.ok(phoneWarning1?.includes('keep conversations within Flatmate'));
+      assert.ok(phoneWarning1?.includes('keep conversations within Buddy'));
 
       const phoneWarning2 = ContentFilter.scanForContactDetails('Reach me at 9876543210');
-      assert.ok(phoneWarning2?.includes('keep conversations within Flatmate'));
+      assert.ok(phoneWarning2?.includes('keep conversations within Buddy'));
 
       // Email address patterns
       const emailWarning = ContentFilter.scanForContactDetails('Send contract to my email flatmate.broker@gmail.com');
-      assert.ok(emailWarning?.includes('keep conversations within Flatmate'));
+      assert.ok(emailWarning?.includes('keep conversations within Buddy'));
 
       // UPI Payment Handles
       const upiWarning1 = ContentFilter.scanForContactDetails('Please pay the 5000 advance to user@oksbi');
-      assert.ok(upiWarning1?.includes('keep conversations within Flatmate'));
+      assert.ok(upiWarning1?.includes('keep conversations within Buddy'));
 
       const upiWarning2 = ContentFilter.scanForContactDetails('GPay to 9876543210@paytm');
-      assert.ok(upiWarning2?.includes('keep conversations within Flatmate'));
+      assert.ok(upiWarning2?.includes('keep conversations within Buddy'));
     });
 
     it('TC-SEC-12: Triggers automatic account quarantine upon 2 reports within 24 hours (FR-28, TH-R-02)', async () => {

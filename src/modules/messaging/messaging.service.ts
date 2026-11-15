@@ -30,7 +30,7 @@ export class MessagingService {
       return {
         id: m.id,
         matchedUserId: partnerId,
-        matchedUserDisplayName: partnerProfile ? partnerProfile.displayName : 'Flatmate User',
+        matchedUserDisplayName: partnerProfile ? partnerProfile.displayName : 'Buddy User',
         matchedUserAvatarUrl: partnerProfile?.avatarUrl,
         compatibilityScore: m.compatibilityScore,
         matchedAt: m.matchedAt.toISOString(),
@@ -94,7 +94,7 @@ export class MessagingService {
         matchId: conv.matchId,
         participant: {
           id: partnerId,
-          displayName: partnerProfile ? partnerProfile.displayName : 'Flatmate User',
+          displayName: partnerProfile ? partnerProfile.displayName : 'Buddy User',
           avatarUrl: partnerProfile?.avatarUrl,
           verificationBadge: partnerProfile ? partnerProfile.verificationBadge : 'UNVERIFIED',
         },

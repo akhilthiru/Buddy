@@ -80,8 +80,8 @@ if (process.env.NODE_ENV !== 'test') {
 
   getAvailablePort(env.PORT).then((actualPort) => {
     server.listen(actualPort, '0.0.0.0', () => {
-      console.log(`Flatmate Modular Monolith API listening on port ${actualPort} [${env.NODE_ENV}]`);
-      console.log(`📱 Real Flatmate User App:      http://localhost:${actualPort}/`);
+      console.log(`Buddy Modular Monolith API listening on port ${actualPort} [${env.NODE_ENV}]`);
+      console.log(`📱 Real Buddy User App:          http://localhost:${actualPort}/`);
       console.log(`⚡ Developer API Test Console:  http://localhost:${actualPort}/test-console`);
       console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${actualPort}/ws`);
     });

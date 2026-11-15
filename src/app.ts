@@ -59,7 +59,7 @@ export function parseCookies(cookieHeader?: string): Record<string, string> {
   return cookies;
 }
 
-export class FlatmateApp {
+export class BuddyApp {
   private authenticate(req: HttpRequest): void {
     let token: string | undefined;
     const auth = req.headers['authorization'] || (req.headers as any)['Authorization'];
@@ -228,7 +228,7 @@ export class FlatmateApp {
       return json(200, {
         status: 'UP',
         timestamp: new Date().toISOString(),
-        service: 'flatmate-modular-monolith',
+        service: 'buddy-modular-monolith',
         version: '1.0.0',
         environment: env.NODE_ENV,
         database: {
@@ -599,8 +599,9 @@ export class FlatmateApp {
     }
 
     // 404 Route Not Found
-    throw new NotFoundError(`Endpoint ${method} ${path} not found on Flatmate API`);
+    throw new NotFoundError(`Endpoint ${method} ${path} not found on Buddy API`);
   }
 }
 
-export const app = new FlatmateApp();
+export const app = new BuddyApp();
+export const FlatmateApp = BuddyApp;

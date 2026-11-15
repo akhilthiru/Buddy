@@ -85,7 +85,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               )}
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              {participant.collegeOrCompany || 'Technopark Flatmate'}
+              {participant.collegeOrCompany || 'Technopark Buddy'}
             </p>
           </div>
         </div>
@@ -118,7 +118,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           <path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
         </svg>
         <p className="leading-snug">
-          <strong className="font-semibold">DPDP Safety Reminder:</strong> Protect your privacy. Keep conversations inside Flatmate until mutual trust is established. Never send security deposits before physical flat visits.
+          <strong className="font-semibold">DPDP Safety Reminder:</strong> Protect your privacy. Keep conversations inside Buddy until mutual trust is established. Never send security deposits before physical flat visits.
         </p>
       </div>
 

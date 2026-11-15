@@ -3,9 +3,9 @@ import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Flatmate - Person-First Flatmate Discovery & Compatibility',
+  title: 'Buddy - Person-First Roommate & Flatmate Discovery',
   description:
-    'Find compatible flatmates in Trivandrum based on lifestyle habits, daily routines, and verified affiliations.',
+    'Find compatible roommates and flatmates in Trivandrum based on lifestyle habits, daily routines, and verified affiliations.',
   manifest: '/manifest.json',
 };
 
@@ -37,10 +37,10 @@ export default function RootLayout({
           <div className="flex items-center gap-6">
             <Link href="/discover" className="flex items-center gap-2">
               <span className="w-8 h-8 rounded-xl bg-teal-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                F
+                B
               </span>
               <span className="font-extrabold text-xl tracking-tight text-slate-900">
-                Flatmate
+                Buddy
               </span>
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
                 Trivandrum

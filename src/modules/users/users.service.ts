@@ -62,7 +62,7 @@ export class UsersService {
 
     const age = this.calculateAge(birthDate);
     if (age < 18) {
-      throw new BadRequestError('Users must be at least 18 years of age to use Flatmate');
+      throw new BadRequestError('Users must be at least 18 years of age to use Buddy');
     }
 
     if (req.minBudget < 1000) {

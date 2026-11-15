@@ -123,7 +123,7 @@ export default function LoginPage() {
             F
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Flatmate</h1>
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Buddy</h1>
             <p className="text-xs text-slate-500 font-medium">Trivandrum Lifestyle Compatibility</p>
           </div>
         </div>

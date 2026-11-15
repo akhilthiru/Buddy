@@ -34,7 +34,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
           Mutual Harmony Connected!
         </span>
         <h2 className="text-2xl font-black text-slate-900 mt-1">
-          It&apos;s a Flatmate Match!
+          It&apos;s a Buddy Match!
         </h2>
         <p className="text-xs text-slate-500 mt-1">
           You and <strong className="text-slate-800">{match.matchedUserDisplayName}</strong> liked each other!
