@@ -17,6 +17,16 @@ export class MessagingService {
   /**
    * Lists mutual matches for user (FR-20).
    */
+  private static calculateAge(birthDate: Date): number {
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
   static listMatches(userId: string): { matches: MatchItem[]; totalCount: number } {
     const userMatches = db.matches.filter(
       (m) => m.status === 'ACTIVE' && (m.user1Id === userId || m.user2Id === userId)
@@ -25,16 +35,60 @@ export class MessagingService {
     const matches: MatchItem[] = userMatches.map((m) => {
       const partnerId = m.user1Id === userId ? m.user2Id : m.user1Id;
       const partnerProfile = db.userProfiles.get(partnerId);
+      const partnerLifestyle = db.lifestyleProfiles.get(partnerId);
       const conv = db.conversations.find((c) => c.matchId === m.id);
+
+      const highlights: string[] = [];
+      if (partnerLifestyle) {
+        if (partnerLifestyle.sleep.sleepPattern === 'EARLY_BIRD') highlights.push('Early Bird');
+        else if (partnerLifestyle.sleep.sleepPattern === 'NIGHT_OWL') highlights.push('Night Owl');
+        if (partnerLifestyle.cleanliness.cleanlinessLevel === 'METICULOUS') highlights.push('Clean & Organized');
+        if (partnerLifestyle.dietary.dietType === 'STRICT_VEGETARIAN') highlights.push('Vegetarian');
+        else if (partnerLifestyle.dietary.dietType === 'NON_VEGETARIAN') highlights.push('Non-Veg Friendly');
+        if (partnerLifestyle.substances.smokingHabit === 'NON_SMOKER_STRICT') highlights.push('Non-Smoker');
+        if ((partnerLifestyle as any).household?.householdVibe === 'QUIET_SANCTUARY') highlights.push('Quiet Sanctuary');
+        else if ((partnerLifestyle as any).household?.householdVibe === 'SOCIALLY_ACTIVE') highlights.push('Socially Active');
+      }
+
+      const age = partnerProfile?.birthDate ? this.calculateAge(partnerProfile.birthDate) : undefined;
+      const primaryPhoto = partnerProfile?.photos?.[0]?.photoUrl;
+      const avatarUrl = partnerProfile?.avatarUrl || primaryPhoto;
+
+      const candidateObj = {
+        userId: partnerId,
+        displayName: partnerProfile ? partnerProfile.displayName : 'Buddy User',
+        age,
+        occupation: partnerProfile?.occupation,
+        collegeOrCompany: partnerProfile?.collegeOrCompany,
+        bio: partnerProfile?.bio,
+        modality: partnerProfile?.modality,
+        verificationBadge: partnerProfile?.verificationBadge,
+        preferredSuburbs: partnerProfile?.preferredSuburbs || [],
+        maxBudget: partnerProfile?.maxBudget,
+        photos: partnerProfile?.photos || [],
+        topHighlights: highlights.slice(0, 3),
+        avatarUrl,
+      };
 
       return {
         id: m.id,
         matchedUserId: partnerId,
         matchedUserDisplayName: partnerProfile ? partnerProfile.displayName : 'Buddy User',
-        matchedUserAvatarUrl: partnerProfile?.avatarUrl,
+        matchedUserAvatarUrl: avatarUrl,
         compatibilityScore: m.compatibilityScore,
         matchedAt: m.matchedAt.toISOString(),
         conversationId: conv ? conv.id : '',
+        age,
+        occupation: partnerProfile?.occupation,
+        collegeOrCompany: partnerProfile?.collegeOrCompany,
+        bio: partnerProfile?.bio,
+        modality: partnerProfile?.modality,
+        verificationBadge: partnerProfile?.verificationBadge,
+        preferredSuburbs: partnerProfile?.preferredSuburbs,
+        maxBudget: partnerProfile?.maxBudget,
+        topHighlights: highlights.slice(0, 3),
+        photos: partnerProfile?.photos,
+        candidate: candidateObj,
       };
     });
 
