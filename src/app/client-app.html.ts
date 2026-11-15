@@ -165,6 +165,104 @@ export function renderClientAppHtml(): string {
     .persona-badge img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     .persona-badge span { font-size: 13px; font-weight: 700; color: var(--text); }
 
+    /* Auth & Access Control Visibility State */
+    body.unauthenticated .desktop-nav,
+    body.unauthenticated .header-actions,
+    body.unauthenticated .mobile-bottom-nav,
+    body.onboarding-mode .desktop-nav,
+    body.onboarding-mode .header-actions,
+    body.onboarding-mode .mobile-bottom-nav {
+      display: none !important;
+    }
+
+    /* Login & Authentication Gateway Card */
+    .login-container {
+      max-width: 460px;
+      width: 100%;
+      margin: 30px auto;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+    }
+    .login-brand-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+      font-weight: 900;
+      margin: 0 auto 16px auto;
+      box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25);
+    }
+    .login-toggle-tabs {
+      display: flex;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .login-toggle-tab {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .login-toggle-tab.active {
+      background: #FFFFFF;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+    .login-persona-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+      text-align: left;
+    }
+    .login-persona-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .login-persona-chip:hover {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+    .login-persona-chip img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .login-persona-chip .name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .login-persona-chip .role {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
     /* Mobile Bottom Navigation Bar (Screens < 860px) */
     .mobile-bottom-nav {
       position: fixed;
@@ -856,12 +954,95 @@ export function renderClientAppHtml(): string {
           <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
           <span id="headerUserName">Adarsh</span>
         </div>
+
+        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
+          Log Out
+        </button>
       </div>
     </div>
   </header>
 
   <!-- MAIN VIEWPORT -->
   <main class="app-main">
+
+    <!-- =========================================================
+         VIEW 0: AUTHENTICATION & LOGIN GATEWAY
+         ========================================================= -->
+    <section id="view-login" class="view-panel active">
+      <div class="login-container">
+        <div class="login-brand-icon">🤝</div>
+        <h1 style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">
+          Welcome to Buddy
+        </h1>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+          Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.
+        </p>
+
+        <div id="loginAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0; font-weight: 600;"></div>
+
+        <div class="login-toggle-tabs">
+          <button class="login-toggle-tab active" id="tabModeSignIn" onclick="setAuthMode('signin')">Sign In</button>
+          <button class="login-toggle-tab" id="tabModeRegister" onclick="setAuthMode('register')">Create Account</button>
+        </div>
+
+        <!-- Phone input group -->
+        <div style="text-align: left; margin-bottom: 16px;">
+          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
+            Mobile Phone Number
+          </label>
+          <input type="text" id="loginPhoneInput" value="+919876543211" placeholder="+91 98765 43210" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600;">
+        </div>
+
+        <div id="loginOtpGroup" style="display: none; text-align: left; margin-bottom: 16px;">
+          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
+            Enter 6-Digit OTP Code
+          </label>
+          <input type="text" id="loginOtpInput" value="123456" placeholder="123456" maxlength="6" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--primary); border-radius: 12px; font-size: 18px; font-weight: 800; letter-spacing: 4px; text-align: center;">
+          <p style="font-size: 12px; color: var(--primary-dark); margin-top: 6px;">✔ Universal dev OTP code is <code>123456</code></p>
+        </div>
+
+        <button class="btn btn-primary" id="btnLoginAction" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="handleLoginSubmit()">
+          Send OTP Code →
+        </button>
+
+        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+          <p style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+            ⚡ Quick Sign In as Demo Persona
+          </p>
+          <div class="login-persona-grid">
+            <div class="login-persona-chip" onclick="quickLoginPersona('adarsh')">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Adarsh">
+              <div>
+                <div class="name">Adarsh Nair</div>
+                <div class="role">Has Room (M1)</div>
+              </div>
+            </div>
+            <div class="login-persona-chip" onclick="quickLoginPersona('kiran')">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Kiran">
+              <div>
+                <div class="name">Kiran Kumar</div>
+                <div class="role">Needs Room (M2)</div>
+              </div>
+            </div>
+            <div class="login-persona-chip" onclick="quickLoginPersona('rahul')">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Rahul">
+              <div>
+                <div class="name">Rahul Pillai</div>
+                <div class="role">Relocating (M3)</div>
+              </div>
+            </div>
+            <div class="login-persona-chip" onclick="quickLoginPersona('anjali')">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Anjali">
+              <div>
+                <div class="name">Anjali Krishna</div>
+                <div class="role">Team-Up (M4)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- =========================================================
          VIEW 1: REGISTRATION & ONBOARDING WIZARD
@@ -1401,17 +1582,207 @@ export function renderClientAppHtml(): string {
     };
 
     // App Initialization
+    let authMode = 'signin';
+    let otpSent = false;
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      document.getElementById('tabModeSignIn').classList.toggle('active', mode === 'signin');
+      document.getElementById('tabModeRegister').classList.toggle('active', mode === 'register');
+      document.getElementById('loginOtpGroup').style.display = 'none';
+      otpSent = false;
+      document.getElementById('btnLoginAction').textContent = 'Send OTP Code →';
+      const alertBox = document.getElementById('loginAlertBox');
+      alertBox.style.display = 'none';
+      if (mode === 'register') {
+        document.getElementById('loginPhoneInput').value = '+919876599999';
+      } else {
+        document.getElementById('loginPhoneInput').value = '+919876543211';
+      }
+    }
+
+    async function handleLoginSubmit() {
+      const phone = document.getElementById('loginPhoneInput').value.trim();
+      const alertBox = document.getElementById('loginAlertBox');
+      alertBox.style.display = 'none';
+
+      if (!otpSent) {
+        // Step 1: Send OTP
+        try {
+          const res = await fetch('/api/v1/auth/otp/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: phone })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.detail || data.title || 'Failed to send OTP');
+          }
+          otpSent = true;
+          document.getElementById('loginOtpGroup').style.display = 'block';
+          document.getElementById('btnLoginAction').textContent = 'Verify OTP & Enter Buddy →';
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#ECFDF5';
+          alertBox.style.color = '#065F46';
+          alertBox.textContent = '✔ OTP code sent! Use dev code 123456 to verify.';
+        } catch (e) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#FEF2F2';
+          alertBox.style.color = '#991B1B';
+          alertBox.textContent = 'Error: ' + e.message;
+        }
+      } else {
+        // Step 2: Verify OTP
+        const otp = document.getElementById('loginOtpInput').value.trim();
+        try {
+          const res = await fetch('/api/v1/auth/otp/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: phone, otp })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.detail || data.title || 'Invalid OTP');
+          }
+
+          currentToken = data.accessToken;
+          localStorage.setItem('buddy_token', currentToken);
+          localStorage.setItem('buddy_phone', phone);
+
+          const isRegistered = data.user && data.user.isOnboardingCompleted;
+          if (!isRegistered) {
+            document.body.classList.remove('unauthenticated');
+            document.body.classList.add('onboarding-mode');
+            currentUser = {
+              id: data.user.id,
+              phone: phone,
+              name: 'New Buddy User',
+              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+              isOnboardingCompleted: false
+            };
+            startNewRegistration();
+          } else {
+            document.body.classList.remove('unauthenticated');
+            document.body.classList.remove('onboarding-mode');
+            await loadUserProfile();
+            await loadFeed();
+            await loadMatches();
+            navigateTab('discover');
+          }
+        } catch (e) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#FEF2F2';
+          alertBox.style.color = '#991B1B';
+          alertBox.textContent = 'Verification error: ' + e.message;
+        }
+      }
+    }
+
+    async function quickLoginPersona(key) {
+      const p = PERSONAS[key];
+      if (!p) return;
+      document.body.classList.remove('unauthenticated');
+      document.body.classList.remove('onboarding-mode');
+      await loginAsPersona(p);
+      navigateTab('discover');
+    }
+
+    async function handleLogout() {
+      try {
+        if (currentToken) {
+          await fetch('/api/v1/auth/logout', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + currentToken }
+          });
+        }
+      } catch (e) {}
+      currentToken = null;
+      currentUser = null;
+      localStorage.removeItem('buddy_token');
+      localStorage.removeItem('buddy_phone');
+      document.body.classList.add('unauthenticated');
+      document.body.classList.remove('onboarding-mode');
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      const loginView = document.getElementById('view-login');
+      if (loginView) loginView.classList.add('active');
+    }
+
+    async function loadUserProfile() {
+      try {
+        const res = await fetch('/api/v1/profiles/me', {
+          headers: { 'Authorization': 'Bearer ' + currentToken }
+        });
+        if (res.ok) {
+          const prof = await res.json();
+          currentUser = {
+            id: prof.userId,
+            phone: localStorage.getItem('buddy_phone') || '+919876543210',
+            name: prof.displayName,
+            avatar: prof.photos && prof.photos[0] ? prof.photos[0].photoUrl : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+            work: prof.occupation,
+            modality: prof.modality,
+            isOnboardingCompleted: prof.isOnboardingCompleted
+          };
+          updateHeaderUser(currentUser);
+        }
+      } catch (e) {}
+    }
+
+    // App Initialization
     async function init() {
       const urlParams = new URLSearchParams(window.location.search);
+      const demoPersona = urlParams.get('demo');
       const requestedView = urlParams.get('view');
-      
-      if (requestedView && requestedView !== 'registration') {
-        await loginAsPersona(PERSONAS.adarsh);
-        navigateTab(requestedView);
-      } else {
-        // Start directly at Registration & Onboarding Flow
-        startNewRegistration();
+
+      if (demoPersona && PERSONAS[demoPersona]) {
+        await quickLoginPersona(demoPersona);
+        if (requestedView) navigateTab(requestedView);
+        return;
       }
+
+      const savedToken = localStorage.getItem('buddy_token');
+      if (savedToken) {
+        currentToken = savedToken;
+        try {
+          const profRes = await fetch('/api/v1/profiles/me', {
+            headers: { 'Authorization': 'Bearer ' + currentToken }
+          });
+          if (profRes.ok) {
+            const prof = await profRes.json();
+            currentUser = {
+              id: prof.userId,
+              phone: localStorage.getItem('buddy_phone') || '+919876543210',
+              name: prof.displayName,
+              avatar: prof.photos && prof.photos[0] ? prof.photos[0].photoUrl : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+              work: prof.occupation,
+              modality: prof.modality,
+              isOnboardingCompleted: prof.isOnboardingCompleted
+            };
+            if (!prof.isOnboardingCompleted) {
+              document.body.classList.remove('unauthenticated');
+              document.body.classList.add('onboarding-mode');
+              startNewRegistration();
+              return;
+            }
+            document.body.classList.remove('unauthenticated');
+            document.body.classList.remove('onboarding-mode');
+            updateHeaderUser(currentUser);
+            await loadFeed();
+            await loadMatches();
+            navigateTab(requestedView && requestedView !== 'registration' && requestedView !== 'login' ? requestedView : 'discover');
+            return;
+          }
+        } catch (e) {
+          // Token verification failed, fallback to login
+        }
+      }
+
+      // Default: Unauthenticated -> Show Login Gateway
+      document.body.classList.add('unauthenticated');
+      document.body.classList.remove('onboarding-mode');
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      const loginView = document.getElementById('view-login');
+      if (loginView) loginView.classList.add('active');
     }
 
     async function loginAsPersona(p) {
@@ -1431,6 +1802,8 @@ export function renderClientAppHtml(): string {
       });
       const data = await res.json();
       currentToken = data.accessToken;
+      localStorage.setItem('buddy_token', currentToken);
+      localStorage.setItem('buddy_phone', p.phone);
 
       await loadFeed();
       await loadMatches();
@@ -1453,6 +1826,20 @@ export function renderClientAppHtml(): string {
 
     // Navigation Switcher
     function navigateTab(tabName) {
+      // Access Control & Auth Gatekeeper
+      if (!currentToken && tabName !== 'login' && tabName !== 'registration') {
+        document.body.classList.add('unauthenticated');
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+        const loginView = document.getElementById('view-login');
+        if (loginView) loginView.classList.add('active');
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted && tabName !== 'registration') {
+        alert('Please complete registration before accessing the portal.');
+        tabName = 'registration';
+      }
+
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.m-nav-item').forEach(b => b.classList.remove('active'));
@@ -1690,7 +2077,12 @@ export function renderClientAppHtml(): string {
       });
 
       alert('🎉 Profile registration complete! Entering your personalized discovery feed.');
+      if (currentUser) currentUser.isOnboardingCompleted = true;
+      document.body.classList.remove('unauthenticated');
+      document.body.classList.remove('onboarding-mode');
+      await loadUserProfile();
       await loadFeed();
+      await loadMatches();
       navigateTab('discover');
     }
 
