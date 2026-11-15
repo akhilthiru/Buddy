@@ -320,18 +320,73 @@ export function renderClientAppHtml(): string {
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* -------------------------------------------------------------
-       REGISTRATION & ONBOARDING WIZARD
+       PROGRESSIVE CONVERSATIONAL ONBOARDING (BUMBLE-STYLE)
        ------------------------------------------------------------- */
     .wizard-container {
-      max-width: 680px;
+      max-width: 540px;
       width: 100%;
       margin: 20px auto;
       background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 32px 28px;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
     }
+    @media (max-width: 600px) {
+      .wizard-container {
+        padding: 20px 16px;
+        margin: 8px auto;
+        border-radius: 20px;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+      }
+    }
+
+    .onboarding-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      min-height: 36px;
+    }
+    .onboarding-back-btn {
+      background: #F1F5F9;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .onboarding-back-btn:hover {
+      background: #E2E8F0;
+    }
+    .onboarding-step-counter {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .onboarding-exit-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .onboarding-exit-btn:hover {
+      color: var(--danger);
+    }
+
     .wizard-progress-bar {
       display: flex;
       justify-content: space-between;
@@ -342,8 +397,8 @@ export function renderClientAppHtml(): string {
       content: "";
       position: absolute;
       top: 14px;
-      left: 10%;
-      right: 10%;
+      left: 8%;
+      right: 8%;
       height: 3px;
       background: #E2E8F0;
       z-index: 1;
@@ -351,7 +406,7 @@ export function renderClientAppHtml(): string {
     .progress-fill {
       position: absolute;
       top: 14px;
-      left: 10%;
+      left: 8%;
       height: 3px;
       background: var(--primary);
       z-index: 2;
@@ -397,21 +452,22 @@ export function renderClientAppHtml(): string {
       color: var(--text-muted);
     }
     .step-node.active .step-label { color: var(--primary-dark); font-weight: 800; }
+    .step-node.completed .step-label { color: var(--primary); }
 
     .wizard-step { display: none; flex-direction: column; gap: 20px; }
     .wizard-step.active { display: flex; animation: slideLeft 0.25s ease-out; }
     @keyframes slideLeft { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    .step-title-group h2 { font-size: 22px; font-weight: 800; color: var(--text); }
-    .step-title-group p { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+    .step-title-group h2 { font-size: 24px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+    .step-title-group p { font-size: 14px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
 
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 13.5px; font-weight: 700; color: var(--text); }
     .form-group input, .form-group select, .form-group textarea {
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 14px;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
       outline: none;
       transition: border-color 0.15s;
     }
@@ -422,6 +478,36 @@ export function renderClientAppHtml(): string {
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
 
+    /* Interactive Suburb Pills */
+    .suburb-pills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .suburb-pill {
+      padding: 7px 13px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #F8FAFC;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .suburb-pill:hover {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+    .suburb-pill.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(13, 148, 136, 0.25);
+    }
+
     /* Modality Cards in Wizard */
     .modality-cards-grid {
       display: grid;
@@ -431,7 +517,7 @@ export function renderClientAppHtml(): string {
     @media (max-width: 640px) { .modality-cards-grid { grid-template-columns: 1fr; } }
     .modality-select-card {
       border: 2px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 16px;
       cursor: pointer;
       display: flex;
@@ -1047,42 +1133,55 @@ export function renderClientAppHtml(): string {
     <!-- =========================================================
          VIEW 1: REGISTRATION & ONBOARDING WIZARD
          ========================================================= -->
+    <!-- =========================================================
+         VIEW 1: REGISTRATION & ONBOARDING WIZARD (CONVERSATIONAL BUMBLE-STYLE)
+         ========================================================= -->
     <section id="view-registration" class="view-panel active">
       <div class="wizard-container">
         
-        <!-- Progress Bar (5 Steps) -->
+        <!-- Onboarding Top Bar with Back Button & Step Counter -->
+        <div class="onboarding-top-bar">
+          <button class="onboarding-back-btn" id="obBackBtn" onclick="goBackOnboardingStep()" style="display: none;">
+            ← Back
+          </button>
+          <span class="onboarding-step-counter" id="obStepCounter">Step 1 of 12</span>
+          <button class="onboarding-exit-btn" onclick="handleLogout()" title="Cancel and Return to Sign In">✕ Exit</button>
+        </div>
+
+        <!-- 5 Subsections Progress Bar with Completion Ticks -->
         <div class="wizard-progress-bar">
           <div class="progress-fill" id="wizardProgressFill"></div>
           <div class="step-node active" id="node-step-1">
-            <div class="step-circle">1</div>
-            <span class="step-label">Phone OTP</span>
+            <div class="step-circle" id="circle-step-1">1</div>
+            <span class="step-label">Verify</span>
           </div>
           <div class="step-node" id="node-step-2">
-            <div class="step-circle">2</div>
-            <span class="step-label">Verification</span>
+            <div class="step-circle" id="circle-step-2">2</div>
+            <span class="step-label">Basics</span>
           </div>
           <div class="step-node" id="node-step-3">
-            <div class="step-circle">3</div>
-            <span class="step-label">Profile</span>
+            <div class="step-circle" id="circle-step-3">3</div>
+            <span class="step-label">Housing</span>
           </div>
           <div class="step-node" id="node-step-4">
-            <div class="step-circle">4</div>
-            <span class="step-label">Modality</span>
+            <div class="step-circle" id="circle-step-4">4</div>
+            <span class="step-label">Lifestyle</span>
           </div>
           <div class="step-node" id="node-step-5">
-            <div class="step-circle">5</div>
-            <span class="step-label">Lifestyle</span>
+            <div class="step-circle" id="circle-step-5">5</div>
+            <span class="step-label">Finish</span>
           </div>
         </div>
 
-        <!-- STEP 1: PHONE AUTHENTICATION -->
+        <!-- SUBSECTION 1: MANDATORY VERIFICATION -->
+        <!-- STEP 1: MOBILE OTP AUTHENTICATION -->
         <div class="wizard-step active" id="reg-step-1">
           <div class="step-title-group">
-            <h2>Welcome to Buddy</h2>
-            <p>Person-first flatmate & roommate discovery in Thiruvananthapuram. Let's begin by verifying your mobile phone number.</p>
+            <h2>Welcome to Buddy 👋</h2>
+            <p>Person-first flatmate & roommate discovery in Thiruvananthapuram. Let's begin by verifying your mobile number.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 10px;">
             <label>Mobile Phone Number</label>
             <input type="text" id="regPhone" value="+919876543210" placeholder="+91 98765 43210">
           </div>
@@ -1094,12 +1193,12 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div id="otpInputGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 10px;">
-            <label style="font-size: 13px; font-weight: 700;">Enter 6-Digit OTP Code</label>
-            <input type="text" id="regOtp" value="123456" placeholder="123456">
-            <p style="font-size: 11px; color: var(--primary-dark);">✔ Local dev universal OTP code is <code>123456</code></p>
+            <label style="font-size: 13.5px; font-weight: 700;">Enter 6-Digit Verification Code</label>
+            <input type="text" id="regOtp" value="123456" placeholder="123456" maxlength="6">
+            <p style="font-size: 11.5px; color: var(--primary-dark);">✔ Universal dev OTP code is <code>123456</code></p>
           </div>
 
-          <div class="wizard-actions">
+          <div class="wizard-actions" style="margin-top: 16px;">
             <div></div>
             <button class="btn btn-primary" id="btnStep1" onclick="handleStep1Auth()">
               Request OTP Code →
@@ -1107,139 +1206,167 @@ export function renderClientAppHtml(): string {
           </div>
         </div>
 
-        <!-- STEP 2: INSTITUTIONAL & TRUST VERIFICATION -->
+        <!-- SUBSECTION 2: BASIC IDENTITY -->
+        <!-- STEP 2: DISPLAY NAME -->
         <div class="wizard-step" id="reg-step-2">
           <div class="step-title-group">
-            <h2>Claim Your Verified Trust Badge</h2>
-            <p>Are you studying at CET / Kerala University, or working in the Technopark IT Corridor? Enter your institutional email to unlock your verified badge.</p>
+            <h2>What should we call you?</h2>
+            <p>Your name is how potential roommates and flatmates will know you on Buddy.</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Your Full Name</label>
+            <input type="text" id="regName" value="Kiran Kumar" placeholder="e.g. Kiran Kumar" onkeypress="if(event.key==='Enter') goToOnboardingStep(3)">
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(3)">Next: Gender →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: GENDER & PREFERRED GENDER -->
+        <div class="wizard-step" id="reg-step-3">
+          <div class="step-title-group">
+            <h2>Gender & Living Preferences</h2>
+            <p>Tell us your gender and who you are comfortable sharing an apartment or flat with.</p>
           </div>
 
           <div class="form-group">
-            <label>Institution / Workplace Type</label>
-            <select id="regInstType">
-              <option value="CORPORATE">Technopark Professional (Infosys, TCS, UST, Allianz, IBS, etc.)</option>
-              <option value="ACADEMIC">College Student (CET Trivandrum, Univ. of Kerala, etc.)</option>
+            <label>I identify as</label>
+            <select id="regGender">
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="NON_BINARY">Non-Binary / Other</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label>Institutional Email</label>
-            <input type="email" id="regInstEmail" value="kiran.kumar@infosys.com" placeholder="name@company.com or name@cet.ac.in">
+          <div class="form-group" style="margin-top: 10px;">
+            <label>I prefer living with</label>
+            <select id="regPrefGender">
+              <option value="ANY">Any Gender (Open-minded co-living)</option>
+              <option value="MALE">Male Flatmates Only</option>
+              <option value="FEMALE">Female Flatmates Only</option>
+            </select>
           </div>
 
-          <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipToStep(3)">Skip for Now</button>
-            <button class="btn btn-primary" onclick="handleStep2Verification()">Verify & Continue →</button>
-          </div>
-        </div>
-
-        <!-- STEP 3: BASIC PROFILE SETUP -->
-        <div class="wizard-step" id="reg-step-3">
-          <div class="step-title-group">
-            <h2>Tell Us About Yourself</h2>
-            <p>Your profile helps potential flatmates understand your routine, professional background, and vibe.</p>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Full Display Name</label>
-              <input type="text" id="regName" value="Kiran Kumar">
-            </div>
-            <div class="form-group">
-              <label>Gender</label>
-              <select id="regGender">
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="NON_BINARY">Non-Binary / Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Birth Date (Age verification)</label>
-              <input type="date" id="regBirthDate" value="1998-05-15">
-            </div>
-            <div class="form-group">
-              <label>Occupation & Company / College</label>
-              <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Bio (Your lifestyle, hobbies, daily rhythm)</label>
-            <textarea id="regBio" rows="3">Techie looking for a relaxed, clean flatmate near Technopark Phase I. Non-smoker, enjoys football on weekends and quiet evenings.</textarea>
-          </div>
-
-          <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipToStep(2)">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep3Profile()">Save Profile & Next →</button>
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(4)">Next: Work & Age →</button>
           </div>
         </div>
 
-        <!-- STEP 4: DISCOVERY MODALITY SELECTION -->
+        <!-- STEP 4: AGE & OCCUPATION -->
         <div class="wizard-step" id="reg-step-4">
           <div class="step-title-group">
-            <h2>Select Your Discovery Modality</h2>
-            <p>Accommodation is optional in Buddy! Choose your current housing situation:</p>
+            <h2>When's your birthday & what do you do?</h2>
+            <p>Age verification ensures a safe 18+ community in Trivandrum.</p>
           </div>
 
-          <div class="modality-cards-grid">
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="regBirthDate" value="1998-05-15">
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Occupation & Company or College</label>
+            <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software" placeholder="e.g. Software Engineer @ Infosys, Student @ CET">
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Short Bio (Optional)</label>
+            <textarea id="regBio" rows="2" placeholder="Tell potential flatmates a little about your routine and vibe...">Techie looking for a relaxed, clean flatmate near Technopark Phase I. Non-smoker, enjoys football on weekends and quiet evenings.</textarea>
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="handleStep4SaveBasics()">Save & Continue →</button>
+          </div>
+        </div>
+
+        <!-- SUBSECTION 3: HOUSING SITUATION -->
+        <!-- STEP 5: HOUSING MODALITY -->
+        <div class="wizard-step" id="reg-step-5">
+          <div class="step-title-group">
+            <h2>What's your current housing situation?</h2>
+            <p>In Buddy, accommodation is completely optional! Choose what fits your status:</p>
+          </div>
+
+          <div class="modality-cards-grid" style="margin-top: 8px;">
             <div class="modality-select-card" onclick="pickModalityCard('MODALITY_1', this)">
               <div class="modality-icon">🏠</div>
-              <div class="modality-title">Modality 1: Have a Room</div>
+              <div class="modality-title">Have a Room</div>
               <div class="modality-desc">I have a flat/room in Trivandrum and am searching for a flatmate to move in.</div>
             </div>
 
             <div class="modality-select-card" onclick="pickModalityCard('MODALITY_2', this)">
               <div class="modality-icon">🛏</div>
-              <div class="modality-title">Modality 2: Need a Room</div>
+              <div class="modality-title">Need a Room</div>
               <div class="modality-desc">I am actively looking for an existing room in a flat shared with compatible people.</div>
             </div>
 
             <div class="modality-select-card" onclick="pickModalityCard('MODALITY_3', this)">
               <div class="modality-icon">🔄</div>
-              <div class="modality-title">Modality 3: Want to Relocate</div>
+              <div class="modality-title">Want to Relocate</div>
               <div class="modality-desc">Currently renting, but want to relocate to a new area with a compatible flatmate.</div>
             </div>
 
             <div class="modality-select-card selected" onclick="pickModalityCard('MODALITY_4', this)">
               <div class="modality-icon">🤝</div>
-              <div class="modality-title">Modality 4: Team-Up First</div>
+              <div class="modality-title">Team-Up First</div>
               <div class="modality-desc">Person-first! Find a compatible flatmate first, then flat-hunt together in TVM.</div>
             </div>
           </div>
 
-          <div class="form-row" style="margin-top: 10px;">
-            <div class="form-group">
-              <label>Budget Range (Max INR/Month)</label>
-              <input type="number" id="regMaxBudget" value="9500">
-            </div>
-            <div class="form-group">
-              <label>Preferred Trivandrum Suburbs</label>
-              <input type="text" id="regSuburbs" value="KAZHAKKOOTTAM, KARIAVATTOM, SREEKARYAM">
-            </div>
-          </div>
-
-          <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipToStep(3)">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep4Modality()">Next: 7-Vector Lifestyle →</button>
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(6)">Next: Suburbs & Budget →</button>
           </div>
         </div>
 
-        <!-- STEP 5: 7-VECTOR LIFESTYLE PREFERENCES -->
-        <div class="wizard-step" id="reg-step-5">
+        <!-- STEP 6: LOCATION & BUDGET -->
+        <div class="wizard-step" id="reg-step-6">
           <div class="step-title-group">
-            <h2>7-Vector Compatibility Setup</h2>
-            <p>Our deterministic matching engine matches you on daily rhythms. You can toggle hard dealbreakers.</p>
+            <h2>Where & what budget?</h2>
+            <p>Select your preferred Trivandrum neighborhoods and maximum monthly budget per head.</p>
           </div>
 
-          <!-- Vector 1: Sleep -->
-          <div class="lifestyle-question">
-            <div class="question-header">
-              <span class="question-title">🌙 1. Sleep Schedule & Chronotype (Weight: 20%)</span>
-              <label class="dealbreaker-toggle"><input type="checkbox" id="dbSleep" checked> Hard Dealbreaker</label>
+          <div class="form-group">
+            <label>Select Preferred Suburbs (Tap to select)</label>
+            <div class="suburb-pills-wrap" id="suburbPillsWrap">
+              <span class="suburb-pill selected" onclick="toggleSuburbPill('KAZHAKKOOTTAM', this)">Kazhakkoottam</span>
+              <span class="suburb-pill selected" onclick="toggleSuburbPill('KARIAVATTOM', this)">Kariavattom</span>
+              <span class="suburb-pill selected" onclick="toggleSuburbPill('SREEKARYAM', this)">Sreekaryam</span>
+              <span class="suburb-pill" onclick="toggleSuburbPill('ULLOOR', this)">Ulloor</span>
+              <span class="suburb-pill" onclick="toggleSuburbPill('PATTOM', this)">Pattom</span>
+              <span class="suburb-pill" onclick="toggleSuburbPill('KOWDIAR', this)">Kowdiar</span>
+              <span class="suburb-pill" onclick="toggleSuburbPill('VELLAYAMBALAM', this)">Vellayambalam</span>
+              <span class="suburb-pill" onclick="toggleSuburbPill('MANACAUD', this)">Manacaud</span>
             </div>
+            <input type="hidden" id="regSuburbs" value="KAZHAKKOOTTAM, KARIAVATTOM, SREEKARYAM">
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label>Max Budget per Person (₹ INR / Month)</label>
+            <input type="number" id="regMaxBudget" value="9500" min="2000" step="500">
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="handleStep6SaveHousing()">Next: Lifestyle Rhythms →</button>
+          </div>
+        </div>
+
+        <!-- SUBSECTION 4: CORE LIFESTYLE -->
+        <!-- STEP 7: SLEEP RHYTHM -->
+        <div class="wizard-step" id="reg-step-7">
+          <div class="step-title-group">
+            <h2>🌙 Sleep Schedule & Daily Rhythm</h2>
+            <p>Daily routines impact living harmony the most. When are you awake and sleeping?</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Sleep Schedule</label>
             <select id="regSleep">
               <option value="EARLY_BIRD">Early Bird (Sleep by 10:30 PM, Awake by 6:30 AM)</option>
               <option value="NIGHT_OWL">Night Owl (Sleep 1:00 AM+, Awake 9:00 AM+)</option>
@@ -1247,12 +1374,27 @@ export function renderClientAppHtml(): string {
             </select>
           </div>
 
-          <!-- Vector 2: Cleanliness -->
-          <div class="lifestyle-question">
-            <div class="question-header">
-              <span class="question-title">🧹 2. Cleanliness & Kitchen Sink (Weight: 20%)</span>
-              <label class="dealbreaker-toggle"><input type="checkbox" id="dbClean" checked> Hard Dealbreaker</label>
-            </div>
+          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbSleep" checked> Strict Dealbreaker (Do not match me with opposing sleep patterns)
+            </label>
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(8)">Next: Cleanliness →</button>
+          </div>
+        </div>
+
+        <!-- STEP 8: CLEANLINESS -->
+        <div class="wizard-step" id="reg-step-8">
+          <div class="step-title-group">
+            <h2>🧹 Cleanliness & Kitchen Sink Standards</h2>
+            <p>How clean do you keep your common areas and kitchen sink?</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Cleanliness Level</label>
             <select id="regClean">
               <option value="METICULOUS">Meticulous (Dishes washed immediately, spotless counters)</option>
               <option value="MODERATE">Moderate (Cleaned by end of day)</option>
@@ -1260,12 +1402,27 @@ export function renderClientAppHtml(): string {
             </select>
           </div>
 
-          <!-- Vector 3: Dietary Policy -->
-          <div class="lifestyle-question">
-            <div class="question-header">
-              <span class="question-title">🍲 3. Kitchen & Dietary Policy (Weight: 15%)</span>
-              <label class="dealbreaker-toggle"><input type="checkbox" id="dbDiet"> Hard Dealbreaker</label>
-            </div>
+          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbClean" checked> Strict Dealbreaker (Cleanliness level must align)
+            </label>
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(9)">Next: Dietary Policy →</button>
+          </div>
+        </div>
+
+        <!-- STEP 9: DIETARY POLICY -->
+        <div class="wizard-step" id="reg-step-9">
+          <div class="step-title-group">
+            <h2>🍲 Food & Kitchen Sharing Policy</h2>
+            <p>Do you cook non-veg, require a pure vegetarian kitchen, or eat eggs?</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Dietary Type</label>
             <select id="regDiet">
               <option value="NON_VEGETARIAN">Non-Vegetarian (Cooking non-veg at home is fine)</option>
               <option value="STRICT_VEGETARIAN">Strict Vegetarian (Requires veg-only kitchen)</option>
@@ -1273,38 +1430,105 @@ export function renderClientAppHtml(): string {
             </select>
           </div>
 
-          <!-- Vector 4: Substances -->
-          <div class="lifestyle-question">
-            <div class="question-header">
-              <span class="question-title">🚭 4. Smoking & Substances (Weight: 15%)</span>
-              <label class="dealbreaker-toggle"><input type="checkbox" id="dbSmoke" checked> Hard Dealbreaker</label>
-            </div>
+          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbDiet"> Strict Dealbreaker (Strict veg-only kitchen policy)
+            </label>
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(10)">Next: Smoking & Substances →</button>
+          </div>
+        </div>
+
+        <!-- STEP 10: SMOKING & SUBSTANCES -->
+        <div class="wizard-step" id="reg-step-10">
+          <div class="step-title-group">
+            <h2>🚭 Smoking & Substance Habits</h2>
+            <p>Smoke-free living is an important boundary for many roommates.</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Smoking Preference</label>
             <select id="regSmoke">
               <option value="NON_SMOKER_STRICT">Strict Non-Smoker (Zero smoking in flat or balcony)</option>
-              <option value="BALCONY_ONLY">Balcony Only</option>
+              <option value="BALCONY_ONLY">Balcony Only (Smoking outside on balcony only)</option>
               <option value="SMOKER">Smoker Friendly</option>
             </select>
           </div>
 
-          <!-- Vector 5: Financial Split -->
-          <div class="lifestyle-question">
-            <div class="question-header">
-              <span class="question-title">💰 5. Rent & Grocery Split (Weight: 10%)</span>
-            </div>
-            <select id="regFin">
-              <option value="STRICT_1ST_OF_MONTH">Strict 1st of Month Rent • Splitwise for Provisions</option>
-              <option value="BEFORE_5TH">Before 5th of Month</option>
-              <option value="FLEXIBLE">Flexible Payment</option>
+          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbSmoke" checked> Strict Dealbreaker (Strict non-smoker requirement)
+            </label>
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
+          </div>
+        </div>
+
+        <!-- SUBSECTION 5: TRUST BADGE & FINISH -->
+        <!-- STEP 11: OPTIONAL TRUST BADGE (POSITIONED TOWARDS END) -->
+        <div class="wizard-step" id="reg-step-11">
+          <div class="step-title-group">
+            <h2>Claim Your Verified Trust Badge ⭐</h2>
+            <p><strong>Optional:</strong> Verified profiles from Technopark IT firms and Trivandrum colleges receive 3x more mutual matches. You can verify now or skip and do it later!</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Institution / Workplace Type</label>
+            <select id="regInstType">
+              <option value="CORPORATE">Technopark Professional (Infosys, TCS, UST, Allianz, IBS, etc.)</option>
+              <option value="ACADEMIC">College Student (CET Trivandrum, Univ. of Kerala, etc.)</option>
             </select>
           </div>
 
-          <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipToStep(4)">← Back</button>
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Institutional Email (Optional)</label>
+            <input type="email" id="regInstEmail" value="kiran.kumar@infosys.com" placeholder="name@company.com or name@cet.ac.in">
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="skipTrustBadge()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="handleStepTrustBadge()">Verify Email & Next →</button>
+          </div>
+        </div>
+
+        <!-- STEP 12: OPTIONAL PROFILE PHOTO & READY TO LAUNCH -->
+        <div class="wizard-step" id="reg-step-12">
+          <div class="step-title-group">
+            <h2>Add a Profile Photo 📸</h2>
+            <p><strong>Optional:</strong> Profiles with photos get 4x more replies. Pick a photo or finish now and add one later.</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 12px 0;">
+            <img id="regPhotoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80')">Photo 1</button>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80')">Photo 2</button>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80')">Photo 3</button>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80')">Photo 4</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Photo URL (Optional)</label>
+            <input type="text" id="regPhotoUrl" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" oninput="document.getElementById('regPhotoPreview').src = this.value">
+          </div>
+
+          <div class="wizard-actions" style="margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
             <button class="btn btn-primary" onclick="completeRegistrationAndLaunch()">
               🎉 Complete Profile & Start Discovering!
             </button>
           </div>
         </div>
+
+      </div>
+    </section>
 
       </div>
     </section>
@@ -1857,34 +2081,124 @@ export function renderClientAppHtml(): string {
     }
 
     // -------------------------------------------------------------
-    // REGISTRATION WIZARD LOGIC
+    // PROGRESSIVE CONVERSATIONAL ONBOARDING WIZARD LOGIC (BUMBLE-STYLE)
     // -------------------------------------------------------------
     function startNewRegistration() {
       wizardCurrentStep = 1;
+      document.body.classList.remove('unauthenticated');
+      document.body.classList.add('onboarding-mode');
       updateWizardUI();
       navigateTab('registration');
     }
 
-    function skipToStep(stepNum) {
+    function goToOnboardingStep(stepNum) {
       wizardCurrentStep = stepNum;
       updateWizardUI();
     }
 
+    function goBackOnboardingStep() {
+      if (wizardCurrentStep > 1) {
+        wizardCurrentStep--;
+        updateWizardUI();
+      }
+    }
+
+    function skipToStep(stepNum) {
+      goToOnboardingStep(stepNum);
+    }
+
     function updateWizardUI() {
+      // Hide all steps, show active step
       document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
       const activeStepEl = document.getElementById('reg-step-' + wizardCurrentStep);
       if (activeStepEl) activeStepEl.classList.add('active');
 
-      // Update progress bar fill & circles
-      const percent = ((wizardCurrentStep - 1) / 4) * 80;
-      document.getElementById('wizardProgressFill').style.width = percent + '%';
+      // Update top bar controls
+      const backBtn = document.getElementById('obBackBtn');
+      if (backBtn) backBtn.style.display = (wizardCurrentStep > 1 ? 'inline-flex' : 'none');
+      
+      const counter = document.getElementById('obStepCounter');
+      if (counter) counter.textContent = 'Question ' + wizardCurrentStep + ' of 12';
 
-      for (let i = 1; i <= 5; i++) {
-        const node = document.getElementById('node-step-' + i);
-        if (!node) continue;
-        node.classList.remove('active', 'completed');
-        if (i < wizardCurrentStep) node.classList.add('completed');
-        else if (i === wizardCurrentStep) node.classList.add('active');
+      // Update progress fill percentage (1 to 12)
+      const percent = Math.min(100, Math.round(((wizardCurrentStep - 1) / 11) * 100));
+      const fillEl = document.getElementById('wizardProgressFill');
+      if (fillEl) fillEl.style.width = percent + '%';
+
+      // 5 Subsections with completion ticks (✔)
+      // Node 1: Verify (Step 1)
+      const n1 = document.getElementById('node-step-1');
+      const c1 = document.getElementById('circle-step-1');
+      if (n1 && c1) {
+        n1.classList.remove('active', 'completed');
+        if (wizardCurrentStep > 1) {
+          n1.classList.add('completed');
+          c1.innerHTML = '✔';
+        } else {
+          n1.classList.add('active');
+          c1.innerHTML = '1';
+        }
+      }
+
+      // Node 2: Basics (Steps 2, 3, 4)
+      const n2 = document.getElementById('node-step-2');
+      const c2 = document.getElementById('circle-step-2');
+      if (n2 && c2) {
+        n2.classList.remove('active', 'completed');
+        if (wizardCurrentStep > 4) {
+          n2.classList.add('completed');
+          c2.innerHTML = '✔';
+        } else if (wizardCurrentStep >= 2 && wizardCurrentStep <= 4) {
+          n2.classList.add('active');
+          c2.innerHTML = '2';
+        } else {
+          c2.innerHTML = '2';
+        }
+      }
+
+      // Node 3: Housing (Steps 5, 6)
+      const n3 = document.getElementById('node-step-3');
+      const c3 = document.getElementById('circle-step-3');
+      if (n3 && c3) {
+        n3.classList.remove('active', 'completed');
+        if (wizardCurrentStep > 6) {
+          n3.classList.add('completed');
+          c3.innerHTML = '✔';
+        } else if (wizardCurrentStep >= 5 && wizardCurrentStep <= 6) {
+          n3.classList.add('active');
+          c3.innerHTML = '3';
+        } else {
+          c3.innerHTML = '3';
+        }
+      }
+
+      // Node 4: Lifestyle (Steps 7, 8, 9, 10)
+      const n4 = document.getElementById('node-step-4');
+      const c4 = document.getElementById('circle-step-4');
+      if (n4 && c4) {
+        n4.classList.remove('active', 'completed');
+        if (wizardCurrentStep > 10) {
+          n4.classList.add('completed');
+          c4.innerHTML = '✔';
+        } else if (wizardCurrentStep >= 7 && wizardCurrentStep <= 10) {
+          n4.classList.add('active');
+          c4.innerHTML = '4';
+        } else {
+          c4.innerHTML = '4';
+        }
+      }
+
+      // Node 5: Finish & Trust Badge (Steps 11, 12)
+      const n5 = document.getElementById('node-step-5');
+      const c5 = document.getElementById('circle-step-5');
+      if (n5 && c5) {
+        n5.classList.remove('active', 'completed');
+        if (wizardCurrentStep >= 11) {
+          n5.classList.add('active');
+          c5.innerHTML = '5';
+        } else {
+          c5.innerHTML = '5';
+        }
       }
     }
 
@@ -1892,106 +2206,107 @@ export function renderClientAppHtml(): string {
       document.getElementById('regPhone').value = num;
     }
 
+    function toggleSuburbPill(suburbCode, el) {
+      el.classList.toggle('selected');
+      const selectedPills = Array.from(document.querySelectorAll('#suburbPillsWrap .suburb-pill.selected'))
+        .map(p => p.textContent.trim().toUpperCase());
+      document.getElementById('regSuburbs').value = selectedPills.join(', ');
+    }
+
+    function setRegAvatar(url) {
+      document.getElementById('regPhotoUrl').value = url;
+      document.getElementById('regPhotoPreview').src = url;
+    }
+
+    // STEP 1: Phone OTP Verification
     async function handleStep1Auth() {
-      const phone = document.getElementById('regPhone').value;
+      const phone = document.getElementById('regPhone').value.trim();
       const otpGroup = document.getElementById('otpInputGroup');
       const btn = document.getElementById('btnStep1');
 
       if (otpGroup.style.display === 'none') {
-        // Step 1a: Request OTP
-        btn.textContent = 'Verifying...';
-        await fetch('/api/v1/auth/otp/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phoneNumber: phone })
-        });
-        otpGroup.style.display = 'flex';
-        btn.textContent = 'Verify OTP & Continue →';
-      } else {
-        // Step 1b: Verify OTP
-        const otp = document.getElementById('regOtp').value;
-        const res = await fetch('/api/v1/auth/otp/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phoneNumber: phone, otp })
-        });
-        const data = await res.json();
-        if (data.accessToken) {
-          currentToken = data.accessToken;
-          currentUser = {
-            id: data.user.id,
-            name: 'New Registered User',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-            work: 'Trivandrum Explorer'
-          };
-          skipToStep(2);
-        } else {
-          alert('OTP Verification failed. Please use 123456');
-        }
-      }
-    }
-
-    async function handleStep2Verification() {
-      const email = document.getElementById('regInstEmail').value;
-      const type = document.getElementById('regInstType').value;
-      try {
-        const reqRes = await fetch('/api/v1/auth/institution/verify-request', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ institutionType: type, institutionName: 'Technopark/CET', email })
-        });
-        const reqData = await reqRes.json();
-        if (reqData.previewToken) {
-          await fetch('/api/v1/auth/institution/verify-confirm', {
+        btn.textContent = 'Requesting OTP...';
+        try {
+          await fetch('/api/v1/auth/otp/send', {
             method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + currentToken,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ token: reqData.previewToken })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: phone })
           });
+          otpGroup.style.display = 'flex';
+          btn.textContent = 'Verify OTP & Continue →';
+        } catch (e) {
+          btn.textContent = 'Request OTP Code →';
+          alert('Failed to send OTP. Please check phone number format (+91 followed by 10 digits).');
         }
-      } catch (e) {
-        // Continue regardless
+      } else {
+        const otp = document.getElementById('regOtp').value.trim();
+        try {
+          const res = await fetch('/api/v1/auth/otp/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: phone, otp })
+          });
+          const data = await res.json();
+          if (data.accessToken) {
+            currentToken = data.accessToken;
+            localStorage.setItem('buddy_token', currentToken);
+            localStorage.setItem('buddy_phone', phone);
+
+            currentUser = {
+              id: data.user.id,
+              name: 'New Registered User',
+              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+              work: 'Trivandrum Explorer',
+              isOnboardingCompleted: false
+            };
+
+            goToOnboardingStep(2);
+          } else {
+            alert('OTP Verification failed. Universal dev OTP code is 123456');
+          }
+        } catch (e) {
+          alert('Network or server error during OTP verification.');
+        }
       }
-      skipToStep(3);
     }
 
-    async function handleStep3Profile() {
-      const name = document.getElementById('regName').value;
+    // STEP 4: Save Basic Identity
+    async function handleStep4SaveBasics() {
+      const name = document.getElementById('regName').value.trim() || 'Buddy User';
       const gender = document.getElementById('regGender').value;
+      const prefGender = document.getElementById('regPrefGender').value;
       const birthDate = document.getElementById('regBirthDate').value;
-      const occupation = document.getElementById('regOccupation').value;
-      const bio = document.getElementById('regBio').value;
+      const occupation = document.getElementById('regOccupation').value.trim() || 'Professional';
+      const bio = document.getElementById('regBio').value.trim();
 
       currentUser.name = name;
       currentUser.work = occupation;
       updateHeaderUser(currentUser);
 
-      await fetch('/api/v1/profiles/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer ' + currentToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          displayName: name,
-          gender: gender,
-          birthDate: birthDate,
-          occupation: occupation,
-          bio: bio,
-          modality: selectedModality,
-          preferredGender: 'ANY',
-          minBudget: 6000,
-          maxBudget: 10000,
-          moveInFlexibility: 'WITHIN_15_DAYS',
-          preferredSuburbs: ['KAZHAKKOOTTAM', 'KARIAVATTOM']
-        })
-      });
-      skipToStep(4);
+      try {
+        await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            displayName: name,
+            gender: gender,
+            preferredGender: prefGender,
+            birthDate: birthDate,
+            occupation: occupation,
+            bio: bio,
+            modality: selectedModality,
+            minBudget: 6000,
+            maxBudget: 10000,
+            moveInFlexibility: 'WITHIN_15_DAYS',
+            preferredSuburbs: ['KAZHAKKOOTTAM', 'KARIAVATTOM']
+          })
+        });
+      } catch (e) {}
+
+      goToOnboardingStep(5);
     }
 
     function pickModalityCard(mod, el) {
@@ -2000,31 +2315,90 @@ export function renderClientAppHtml(): string {
       el.classList.add('selected');
     }
 
-    async function handleStep4Modality() {
-      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10);
-      const suburbs = document.getElementById('regSuburbs').value.split(',').map(s => s.trim());
+    // STEP 6: Save Housing & Modality
+    async function handleStep6SaveHousing() {
+      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
+      const rawSuburbs = document.getElementById('regSuburbs').value;
+      const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
 
-      await fetch('/api/v1/profiles/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer ' + currentToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          modality: selectedModality,
-          maxBudget: maxBudget,
-          preferredSuburbs: suburbs
-        })
-      });
-      skipToStep(5);
+      try {
+        await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            modality: selectedModality,
+            maxBudget: maxBudget,
+            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM']
+          })
+        });
+      } catch (e) {}
+
+      goToOnboardingStep(7);
     }
 
+    // STEP 11: Optional Trust Badge
+    async function handleStepTrustBadge() {
+      const email = document.getElementById('regInstEmail').value.trim();
+      const type = document.getElementById('regInstType').value;
+      if (email) {
+        try {
+          const reqRes = await fetch('/api/v1/auth/institution/verify-request', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ institutionType: type, institutionName: 'Technopark/CET', email })
+          });
+          const reqData = await reqRes.json();
+          if (reqData.previewToken) {
+            await fetch('/api/v1/auth/institution/verify-confirm', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer ' + currentToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ token: reqData.previewToken })
+            });
+          }
+        } catch (e) {}
+      }
+      goToOnboardingStep(12);
+    }
+
+    function skipTrustBadge() {
+      goToOnboardingStep(12);
+    }
+
+    // STEP 12: Complete Registration & Launch
     async function completeRegistrationAndLaunch() {
       const sleep = document.getElementById('regSleep').value;
       const clean = document.getElementById('regClean').value;
       const diet = document.getElementById('regDiet').value;
       const smoke = document.getElementById('regSmoke').value;
-      const fin = document.getElementById('regFin').value;
+      const photoUrl = document.getElementById('regPhotoUrl').value.trim();
+
+      if (photoUrl) {
+        try {
+          await fetch('/api/v1/profiles/me/photos', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              photoUrl: photoUrl,
+              orderIndex: 0,
+              isPrimary: true
+            })
+          });
+          currentUser.avatar = photoUrl;
+          updateHeaderUser(currentUser);
+        } catch (e) {}
+      }
 
       await fetch('/api/v1/lifestyle/me', {
         method: 'PUT',
@@ -2062,7 +2436,7 @@ export function renderClientAppHtml(): string {
             isDealbreaker: document.getElementById('dbSmoke').checked
           },
           financial: {
-            rentPaymentHabit: fin,
+            rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
             acBillSplit: 'EQUAL_SPLIT',
             groceryTracking: 'SPLITWISE_APP',
             isDealbreaker: true
@@ -2076,7 +2450,7 @@ export function renderClientAppHtml(): string {
         })
       });
 
-      alert('🎉 Profile registration complete! Entering your personalized discovery feed.');
+      alert('🎉 Profile registration complete! Entering your personalized Buddy discovery feed.');
       if (currentUser) currentUser.isOnboardingCompleted = true;
       document.body.classList.remove('unauthenticated');
       document.body.classList.remove('onboarding-mode');
