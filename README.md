@@ -1,10 +1,10 @@
-# Project Flatmate – Multi-Agent Software Engineering System
+# Project Buddy – Multi-Agent Software Engineering System
 
-**Flatmate** is a person-first flatmate discovery and compatibility platform designed to help people find compatible flatmates based on lifestyle, daily routines, social habits, cleanliness, financial alignment, food preferences, and accommodation arrangements.
+**Buddy** is a person-first flatmate discovery and compatibility platform designed to help people find compatible flatmates based on lifestyle, daily routines, social habits, cleanliness, financial alignment, food preferences, and accommodation arrangements.
 
 Initial Launch Target: **Thiruvananthapuram (Trivandrum), Kerala, India** (College students and Technopark/Infopark IT professionals).
 
-This repository contains the complete, production-grade **Multi-Agent Software Engineering System** engineered to build, test, and release Flatmate following rigorous software engineering standards.
+This repository contains the complete, production-grade **Multi-Agent Software Engineering System** engineered to build, test, and release Buddy following rigorous software engineering standards.
 
 ---
 
@@ -148,9 +148,23 @@ swarm(action="add", name="ux-designer", brief="Specify the wireframes and design
 
 ---
 
-## 6. Current Project Status & Next Action
+## 6. Buddy v1.1.0 Enhancements
+
+The platform has been enhanced with six major architectural and experience upgrades:
+
+1. **Application Branding**: Complete rebrand to **Buddy** across UI, metadata, client API, and error handling.
+2. **Authentication & Access Control**: Portal access gated behind authentication with dedicated Login Gateway and automatic redirects for unauthenticated users.
+3. **Conversational Registration Experience**: Bumble-style 12-step progressive onboarding with distraction-free layouts, 1–2 related questions per screen, mandatory mobile OTP, optional verification badges, and visual subsection progress ticks (`✔`).
+4. **Discovery & Matching Logic**: Modality treated as user availability status rather than a disqualifying dealbreaker, with added location (suburb centroid) and budget affinity scoring.
+5. **Profile & Compatibility Expansion**: Roommate compatibility expanded with household vibe and hosting preferences (`QUIET_SANCTUARY`, `SOCIALLY_ACTIVE`, `BALANCED_CASUAL`) with an optional hard dealbreaker.
+6. **Responsive Match Listing**: Modern responsive desktop tile/card grid with candidate metadata and harmony chips, coupled with an ergonomic mobile view featuring an active avatar tray and chat drawer.
+
+---
+
+## 7. Current Project Status & Release Tracking
 - **Environment Status**: Fully configured, validated, and initialized.
+- **Test Suite Status**: 105 automated unit, integration, scoring, and security tests passing with 0 failures across 30 suites.
+- **Specification**: See [docs-buddy-enhancement-spec.md](file:///home/akhil/.gemini/antigravity/brain/0b4659dd-acfa-4a3c-aaa1-ea2f4fab0713/docs-buddy-enhancement-spec.md).
 - **Project Tracking**: See [PROJECT_STATUS.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/PROJECT_STATUS.md).
 - **Decision Log**: See [DECISION_LOG.md](file:///home/akhil/Vibe%20Coding/Flatmate/docs/DECISION_LOG.md).
-- **Recommended Next Step**: Trigger **Workflow A (Ideation)** with `product-strategist` to initiate product discovery and persona mapping for Thiruvananthapuram.
 

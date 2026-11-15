@@ -1,6 +1,6 @@
-# Flatmate Project Knowledge Base
+# Buddy Project Knowledge Base
 
-Welcome to the centralized project knowledge repository for **Flatmate** — the person-first flatmate discovery and compatibility platform.
+Welcome to the centralized project knowledge repository for **Buddy** — the person-first flatmate discovery and compatibility platform.
 
 ---
 

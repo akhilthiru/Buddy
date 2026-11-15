@@ -1,17 +1,17 @@
 openapi: 3.1.0
 info:
-  title: Flatmate API
+  title: Buddy API
   description: |
-    Production RESTful API contract for Project Flatmate – a person-first flatmate discovery and lifestyle compatibility platform initially serving Thiruvananthapuram (Trivandrum), Kerala, India.
+    Production RESTful API contract for Buddy – a person-first flatmate discovery and lifestyle compatibility platform initially serving Thiruvananthapuram (Trivandrum), Kerala, India.
     This contract strictly governs frontend-backend integration, error handling (RFC 7807), pagination, and authentication.
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    name: Flatmate Solution Architecture Team
-    email: architecture@flatmate.in
+    name: Buddy Solution Architecture Team
+    email: architecture@buddy.in
 servers:
-  - url: https://api.flatmate.in/api/v1
+  - url: https://api.buddy.in/api/v1
     description: Production Cluster
-  - url: https://staging-api.flatmate.in/api/v1
+  - url: https://staging-api.buddy.in/api/v1
     description: Staging Environment
   - url: http://localhost:4000/api/v1
     description: Local Development Server
@@ -1559,6 +1559,41 @@ components:
         conversationId:
           type: string
           format: uuid
+        age:
+          type: integer
+        occupation:
+          type: string
+        collegeOrCompany:
+          type: string
+        bio:
+          type: string
+        modality:
+          type: string
+        verificationBadge:
+          type: string
+        preferredSuburbs:
+          type: array
+          items:
+            type: string
+        maxBudget:
+          type: integer
+        topHighlights:
+          type: array
+          items:
+            type: string
+        photos:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              photoUrl:
+                type: string
+              orderIndex:
+                type: integer
+              isPrimary:
+                type: boolean
 
     MatchesListResponse:
       type: object
