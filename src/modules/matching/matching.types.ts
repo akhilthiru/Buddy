@@ -48,6 +48,20 @@ export type WorkMode = 'OFFICE_DAILY' | 'HYBRID' | '100_PERCENT_REMOTE';
 export type CallFrequency = 'LOW' | 'HIGH';
 export type WorkspacePreference = 'PRIVATE_ROOM_DESK' | 'LIVING_ROOM_DESK_OK';
 
+// Extended Household & Social Vibe Preferences
+export type HouseholdVibe = 'SOCIALLY_ACTIVE' | 'BALANCED_CASUAL' | 'QUIET_SANCTUARY';
+export type PrivacyPreference = 'HIGH_PRIVACY' | 'MODERATE_PRIVACY' | 'COMMUNAL_FRIENDLY';
+export type SoundEnvironment = 'HEADPHONES_FIRST' | 'MODERATE_AUDIO' | 'MUSIC_LOVER';
+export type PetPreference = 'PET_LOVER' | 'PET_NEUTRAL' | 'NO_PETS';
+
+export interface HouseholdPreferences {
+  householdVibe: HouseholdVibe;
+  isDealbreaker?: boolean;
+  privacyPreference?: PrivacyPreference;
+  soundEnvironment?: SoundEnvironment;
+  petPreference?: PetPreference;
+}
+
 export interface SleepVector {
   sleepPattern: SleepPattern;
   shiftSchedule: ShiftSchedule;
@@ -104,6 +118,7 @@ export interface LifestyleProfile {
   substances: SubstancesVector;
   financial: FinancialVector;
   work: WorkVector;
+  household?: HouseholdPreferences;
 }
 
 export interface UserProfileSummary {

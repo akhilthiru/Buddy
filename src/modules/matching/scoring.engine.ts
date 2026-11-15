@@ -116,6 +116,22 @@ export class ScoringEngine {
       }
     }
 
+    // Hosting & Household Dealbreaker: Socially Active vs Quiet Sanctuary
+    if (
+      (userLifestyle.household?.isDealbreaker || candidateLifestyle.household?.isDealbreaker) &&
+      userLifestyle.household &&
+      candidateLifestyle.household
+    ) {
+      const uVibe = userLifestyle.household.householdVibe;
+      const cVibe = candidateLifestyle.household.householdVibe;
+      if (
+        (uVibe === 'SOCIALLY_ACTIVE' && cVibe === 'QUIET_SANCTUARY') ||
+        (cVibe === 'SOCIALLY_ACTIVE' && uVibe === 'QUIET_SANCTUARY')
+      ) {
+        return 'Hosting dealbreaker: Socially active household conflicts with quiet sanctuary preference';
+      }
+    }
+
     // Social Dealbreaker
     if (userLifestyle.social.isDealbreaker || candidateLifestyle.social.isDealbreaker) {
       const uSoc = userLifestyle.social;
@@ -217,24 +233,49 @@ export class ScoringEngine {
     };
   }
 
-  static calculateSocialAffinity(u: SocialVector, c: SocialVector): VectorAlignmentDetail {
+  static calculateSocialAffinity(
+    u: SocialVector,
+    c: SocialVector,
+    uHousehold?: import('./matching.types.ts').HouseholdPreferences,
+    cHousehold?: import('./matching.types.ts').HouseholdPreferences
+  ): VectorAlignmentDetail {
     const guestScore = GUEST_FREQUENCY_AFFINITY[u.guestFrequency][c.guestFrequency];
     const overnightScore = OVERNIGHT_GUEST_POLICY_AFFINITY[u.overnightGuestPolicy][c.overnightGuestPolicy];
     const partyScore = PARTY_PREFERENCE_AFFINITY[u.partyPreference][c.partyPreference];
 
-    const score = roundToTwo(guestScore * 0.35 + overnightScore * 0.40 + partyScore * 0.25);
+    const baseScore = roundToTwo(guestScore * 0.35 + overnightScore * 0.40 + partyScore * 0.25);
+    let finalScore = baseScore;
+
+    if (uHousehold && cHousehold) {
+      let vibeScore = 1.0;
+      if (uHousehold.householdVibe === cHousehold.householdVibe) {
+        vibeScore = 1.0;
+      } else if (
+        (uHousehold.householdVibe === 'SOCIALLY_ACTIVE' && cHousehold.householdVibe === 'QUIET_SANCTUARY') ||
+        (uHousehold.householdVibe === 'QUIET_SANCTUARY' && cHousehold.householdVibe === 'SOCIALLY_ACTIVE')
+      ) {
+        vibeScore = 0.25;
+      } else {
+        vibeScore = 0.75;
+      }
+      finalScore = roundToTwo(baseScore * 0.70 + vibeScore * 0.30);
+    }
+
     const notes =
-      score >= 0.85
+      finalScore >= 0.85
         ? 'Well-aligned expectations on hosting guests and personal quiet time'
-        : score >= 0.50
+        : finalScore >= 0.50
         ? 'Moderate social overlap; establish common ground on weekend hosting'
         : 'Discuss: Differing comfort levels with overnight visitors or home parties';
 
+    const uExtra = uHousehold ? ` [${uHousehold.householdVibe}]` : '';
+    const cExtra = cHousehold ? ` [${cHousehold.householdVibe}]` : '';
+
     return {
-      affinityScore: score,
-      status: getAlignmentStatus(score),
-      userChoice: `${u.guestFrequency}, ${u.overnightGuestPolicy}`,
-      candidateChoice: `${c.guestFrequency}, ${c.overnightGuestPolicy}`,
+      affinityScore: finalScore,
+      status: getAlignmentStatus(finalScore),
+      userChoice: `${u.guestFrequency}, ${u.overnightGuestPolicy}${uExtra}`,
+      candidateChoice: `${c.guestFrequency}, ${c.overnightGuestPolicy}${cExtra}`,
       notes,
     };
   }
@@ -327,7 +368,12 @@ export class ScoringEngine {
       candidateLifestyle.cleanliness
     );
     const dietary = this.calculateDietaryAffinity(userLifestyle.dietary, candidateLifestyle.dietary);
-    const social = this.calculateSocialAffinity(userLifestyle.social, candidateLifestyle.social);
+    const social = this.calculateSocialAffinity(
+      userLifestyle.social,
+      candidateLifestyle.social,
+      userLifestyle.household,
+      candidateLifestyle.household
+    );
     const substances = this.calculateSubstancesAffinity(
       userLifestyle.substances,
       candidateLifestyle.substances
