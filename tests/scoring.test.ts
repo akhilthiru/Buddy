@@ -289,5 +289,42 @@ describe('Deterministic 7-Vector Compatibility Scoring Engine (ADR-006 & FR-14)'
       assert.strictEqual(result.dealbreakerFailed, true);
       assert.ok(result.failedReason?.includes('Sleep dealbreaker'));
     });
+
+    it('Scenario 6: Extended Household Vibe and Hosting Dealbreaker', () => {
+      const userA = createMockProfile('user-a');
+      const candidateB = createMockProfile('user-b');
+
+      // Test 6.1: Matching household vibe
+      const lifeA = createMockLifestyle('user-a', {
+        household: { householdVibe: 'SOCIALLY_ACTIVE', isDealbreaker: false },
+      });
+      const lifeB = createMockLifestyle('user-b', {
+        household: { householdVibe: 'SOCIALLY_ACTIVE', isDealbreaker: false },
+      });
+
+      const resMatch = ScoringEngine.calculateCompatibility(userA, lifeA, candidateB, lifeB);
+      assert.strictEqual(resMatch.dealbreakerFailed, false);
+      assert.strictEqual(resMatch.vectors.social.affinityScore, 1.0);
+
+      // Test 6.2: Hosting dealbreaker triggered
+      const lifeStrictSanctuary = createMockLifestyle('user-a', {
+        household: { householdVibe: 'QUIET_SANCTUARY', isDealbreaker: true },
+      });
+      const lifeSocial = createMockLifestyle('user-b', {
+        household: { householdVibe: 'SOCIALLY_ACTIVE', isDealbreaker: false },
+      });
+
+      const resDealbreaker = ScoringEngine.calculateCompatibility(userA, lifeStrictSanctuary, candidateB, lifeSocial);
+      assert.strictEqual(resDealbreaker.dealbreakerFailed, true);
+      assert.ok(resDealbreaker.failedReason?.includes('Hosting dealbreaker'));
+
+      // Test 6.3: Divergence without dealbreaker
+      const lifeNonDealbreakerSanctuary = createMockLifestyle('user-a', {
+        household: { householdVibe: 'QUIET_SANCTUARY', isDealbreaker: false },
+      });
+      const resDivergent = ScoringEngine.calculateCompatibility(userA, lifeNonDealbreakerSanctuary, candidateB, lifeSocial);
+      assert.strictEqual(resDivergent.dealbreakerFailed, false);
+      assert.ok(resDivergent.vectors.social.affinityScore < 1.0);
+    });
   });
 });

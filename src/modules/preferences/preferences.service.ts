@@ -29,6 +29,7 @@ export class PreferencesService {
       substances: data.substances,
       financial: data.financial,
       work: data.work,
+      household: data.household,
     };
 
     db.lifestyleProfiles.set(userId, lifestyle);
