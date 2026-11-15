@@ -64,12 +64,8 @@ export class ScoringEngine {
       return `Gender mismatch: Candidate prefers ${candidate.preferredGender}, user is ${user.gender}`;
     }
 
-    // 2. Modality Compatibility Rule (PRD Rule 4)
-    const isModalityCompatible =
-      MODALITY_COMPATIBILITY_MATRIX[user.modality]?.[candidate.modality] ?? false;
-    if (!isModalityCompatible) {
-      return `Incompatible modalities: ${user.modality} cannot pair with ${candidate.modality}`;
-    }
+    // 2. Modality is treated as user status / housing preference, NOT a matching dealbreaker.
+    // Matching is determined by compatibility preferences, location, and accommodation requirements.
 
     // 3. Vector Dealbreakers:
     // Dietary Dealbreaker: Strict non-veg conflict with Veg-Only Kitchen
@@ -353,10 +349,23 @@ export class ScoringEngine {
 
     const overallScore = Math.min(100, Math.max(0, Math.round(weightedScore * 100)));
 
+    const locationAffinity = this.calculateLocationAffinity(
+      user.preferredSuburbs,
+      candidate.preferredSuburbs
+    );
+    const budgetAffinity = this.calculateBudgetAffinity(
+      user.minBudget,
+      user.maxBudget,
+      candidate.minBudget,
+      candidate.maxBudget
+    );
+
     return {
       overallScore,
       dealbreakerFailed: dealbreakerReason !== null,
       failedReason: dealbreakerReason || undefined,
+      locationAffinity,
+      budgetAffinity,
       vectors: {
         sleep,
         cleanliness,
@@ -370,8 +379,48 @@ export class ScoringEngine {
   }
 
   /**
+   * Calculates location affinity based on overlapping preferred suburbs.
+   * Returns 1.0 if overlapping or unspecified, 0.5 if disjoint.
+   */
+  static calculateLocationAffinity(
+    userSuburbs?: string[],
+    candidateSuburbs?: string[]
+  ): number {
+    if (!userSuburbs || userSuburbs.length === 0 || !candidateSuburbs || candidateSuburbs.length === 0) {
+      return 1.0;
+    }
+    const candidateSet = new Set(candidateSuburbs);
+    const hasOverlap = userSuburbs.some((s) => candidateSet.has(s));
+    return hasOverlap ? 1.0 : 0.5;
+  }
+
+  /**
+   * Calculates budget affinity based on budget range overlap.
+   */
+  static calculateBudgetAffinity(
+    userMin?: number,
+    userMax?: number,
+    candidateMin?: number,
+    candidateMax?: number
+  ): number {
+    if (!userMin || !userMax || !candidateMin || !candidateMax) {
+      return 1.0;
+    }
+    const overlapMin = Math.max(userMin, candidateMin);
+    const overlapMax = Math.min(userMax, candidateMax);
+    if (overlapMin <= overlapMax) {
+      return 1.0;
+    }
+    const gap = overlapMin - overlapMax;
+    if (gap <= 2000) return 0.8;
+    if (gap <= 4000) return 0.6;
+    return 0.3;
+  }
+
+  /**
    * High-throughput batch scoring helper for discovery feeds.
-   * Evaluates dealbreakers and ranks eligible candidates by overall score.
+   * Evaluates dealbreakers and ranks eligible candidates by overall score,
+   * tie-breaking by location & budget affinity.
    */
   static rankBatch(
     user: UserProfileSummary,
@@ -387,8 +436,14 @@ export class ScoringEngine {
       }
     }
 
-    // Sort descending by overall compatibility score
-    scored.sort((a, b) => b.result.overallScore - a.result.overallScore);
+    // Sort descending by overall compatibility score, with location/budget tie-breaking
+    scored.sort((a, b) => {
+      const scoreDiff = b.result.overallScore - a.result.overallScore;
+      if (scoreDiff !== 0) return scoreDiff;
+      const bBonus = (b.result.locationAffinity ?? 1.0) + (b.result.budgetAffinity ?? 1.0);
+      const aBonus = (a.result.locationAffinity ?? 1.0) + (a.result.budgetAffinity ?? 1.0);
+      return bBonus - aBonus;
+    });
     return scored;
   }
 }
