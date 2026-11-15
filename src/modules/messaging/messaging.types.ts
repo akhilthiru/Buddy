@@ -34,6 +34,17 @@ export interface MatchItem {
   compatibilityScore: number;
   matchedAt: string;
   conversationId: string;
+  age?: number;
+  occupation?: string;
+  collegeOrCompany?: string;
+  bio?: string;
+  modality?: string;
+  verificationBadge?: string;
+  preferredSuburbs?: string[];
+  maxBudget?: number;
+  topHighlights?: string[];
+  photos?: Array<{ id: string; photoUrl: string; orderIndex?: number; isPrimary?: boolean }>;
+  candidate?: any;
 }
 
 export interface SendMessageRequest {

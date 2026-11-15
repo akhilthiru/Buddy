@@ -806,35 +806,271 @@ export function renderClientAppHtml(): string {
     .ai-harmony-row::before { content: "✔"; color: var(--primary); font-weight: 800; }
 
     /* -------------------------------------------------------------
-       SCREEN: MATCHES & ACTIVE CHAT SPLIT PANE
+       RESPONSIVE MATCHES: MODERN DESKTOP TILE GRID & MOBILE LIST
        ------------------------------------------------------------- */
-    .chat-split-container {
-      display: grid;
-      grid-template-columns: 1fr;
+    .matches-listing-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .matches-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+      background: #FFFFFF;
+      padding: 18px 24px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .match-count-pill {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .match-filter-tabs {
+      display: flex;
+      gap: 6px;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 10px;
+    }
+    .match-filter-tab {
+      border: none;
+      background: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .match-filter-tab.active {
       background: white;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Desktop Tile/Card Grid */
+    .desktop-match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 22px;
+    }
+    @media (max-width: 768px) {
+      .desktop-match-grid { display: none !important; }
+    }
+
+    .match-tile-card {
+      background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 20px;
       overflow: hidden;
-      height: 700px;
       box-shadow: var(--shadow-md);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
     }
-    @media (min-width: 800px) {
-      .chat-split-container { grid-template-columns: 320px 1fr; }
+    .match-tile-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary);
     }
-    .matches-sidebar {
-      border-right: 1px solid var(--border);
+    .match-tile-photo-box {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      background: #0F172A;
+    }
+    .match-tile-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+    .match-tile-card:hover .match-tile-photo {
+      transform: scale(1.04);
+    }
+    .match-tile-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(0,0,0,0) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 14px;
+    }
+    .match-tile-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .match-compat-gauge {
+      background: rgba(13, 148, 136, 0.95);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .match-verify-pill {
+      background: rgba(16, 185, 129, 0.95);
+      color: white;
+      padding: 4px 9px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
+    .match-tile-name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      color: white;
+    }
+    .match-tile-name {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+    }
+    .match-tile-age {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 600;
+    }
+
+    .match-tile-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      flex: 1;
+    }
+    .match-tile-work {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .match-modality-pill {
+      background: var(--primary-50);
+      color: var(--primary-dark);
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .match-suburb-line {
+      font-size: 12.5px;
+      color: var(--text);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .match-harmony-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .match-harmony-chip {
+      background: #F1F5F9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .match-tile-footer {
+      padding: 12px 16px 16px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Mobile Match Listing Experience (Screens < 768px) */
+    .mobile-matches-view {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    @media (min-width: 769px) {
+      .mobile-matches-view { display: none !important; }
+    }
+    .mobile-new-matches-tray {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 8px 4px 16px 4px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .mobile-new-matches-tray::-webkit-scrollbar { display: none; }
+    .mobile-tray-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .mobile-tray-avatar-wrap {
+      position: relative;
+    }
+    .mobile-tray-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid var(--primary);
+      padding: 1px;
+    }
+    .mobile-tray-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .mobile-tray-compat {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      background: var(--primary-50);
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+
+    .mobile-conv-list {
       display: flex;
       flex-direction: column;
       background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
     }
-    .matches-sidebar-header {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .matches-sidebar-header h3 { font-size: 16px; font-weight: 800; }
-    .matches-sidebar-header p { font-size: 12px; color: var(--text-muted); }
-    .conv-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-    .conv-item {
+    .mobile-conv-item {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -843,10 +1079,42 @@ export function renderClientAppHtml(): string {
       cursor: pointer;
       transition: background 0.15s;
     }
-    .conv-item:hover { background: #F8FAFC; }
-    .conv-item.active { background: var(--primary-light); }
-    .conv-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-    .conv-info { flex: 1; overflow: hidden; }
+    .mobile-conv-item:last-child { border-bottom: none; }
+    .mobile-conv-item:hover { background: #F8FAFC; }
+    .mobile-conv-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .mobile-conv-info { flex: 1; overflow: hidden; }
+    .mobile-conv-top { display: flex; justify-content: space-between; align-items: baseline; }
+    .mobile-conv-name { font-size: 14.5px; font-weight: 800; color: var(--text); }
+    .mobile-conv-time { font-size: 11px; color: var(--text-muted); }
+    .mobile-conv-badge-row { display: flex; gap: 6px; align-items: center; margin: 3px 0; }
+    .mobile-conv-snippet {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Active Chat Container */
+    .active-chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 700px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
     .conv-top-row { display: flex; justify-content: space-between; align-items: baseline; }
     .conv-name { font-size: 14px; font-weight: 700; }
     .conv-snippet { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
@@ -1584,52 +1852,76 @@ export function renderClientAppHtml(): string {
     </section>
 
     <!-- =========================================================
-         VIEW 3: MATCHES & ACTIVE CHAT SPLIT VIEW
+         VIEW 3: RESPONSIVE MATCHES & CONVERSATIONS
          ========================================================= -->
     <section id="view-matches" class="view-panel">
-      <div class="chat-split-container">
-        
-        <!-- Left Sidebar: Conversations & Matches -->
-        <div class="matches-sidebar">
-          <div class="matches-sidebar-header">
-            <h3>Matches & Chats</h3>
-            <p>Double opt-in mutual connections</p>
+      <!-- 1. MATCHES LISTING VIEW (Desktop Grid + Mobile Stream) -->
+      <div id="matchesListingContainer" class="matches-listing-wrapper">
+        <div class="matches-header-bar">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h2 style="font-size: 24px; font-weight: 900; color: var(--text);">Your Matches</h2>
+              <span class="match-count-pill" id="matchesHeaderPill">0 Connections</span>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;">Double opt-in mutual connections in Trivandrum</p>
           </div>
-
-          <div class="conv-list" id="convList">
-            <!-- Populated dynamically -->
+          <div class="match-filter-tabs">
+            <button class="match-filter-tab active" onclick="filterMatchCards('ALL', this)">All</button>
+            <button class="match-filter-tab" onclick="filterMatchCards('MODALITY_1', this)">Has Room</button>
+            <button class="match-filter-tab" onclick="filterMatchCards('MODALITY_2', this)">Seeking Room</button>
+            <button class="match-filter-tab" onclick="filterMatchCards('MODALITY_4', this)">Team-Up</button>
           </div>
         </div>
 
-        <!-- Right Pane: Active Chat Window -->
-        <div class="active-chat-pane">
-          <div class="chat-header">
+        <!-- Desktop Tile/Card Grid (Screens >= 768px) -->
+        <div class="desktop-match-grid" id="desktopMatchGrid">
+          <!-- Populated dynamically with rich match cards -->
+        </div>
+
+        <!-- Mobile-Specific Match Listing (Screens < 768px) -->
+        <div class="mobile-matches-view" id="mobileMatchesView">
+          <div class="mobile-new-matches-tray" id="mobileNewMatchesTray">
+            <!-- Populated dynamically with avatar bubbles -->
+          </div>
+          <div class="mobile-conv-list" id="mobileConvList">
+            <!-- Populated dynamically with mobile chat rows -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ACTIVE CONVERSATION / CHAT WINDOW -->
+      <div id="activeChatContainer" class="active-chat-container" style="display: none;">
+        <div class="chat-header">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 13px; border-radius: 8px;" onclick="closeChatAndBackToMatches()">
+              ← Back to Matches
+            </button>
             <div class="chat-partner-box">
               <img id="chatAvatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" class="chat-partner-avatar" alt="Partner">
               <div>
                 <div class="chat-partner-name" id="chatName">Rahul Pillai</div>
-                <div class="chat-partner-status">Online • 88% Compatibility</div>
+                <div class="chat-partner-status" id="chatStatus">Online • 88% Compatibility</div>
               </div>
             </div>
-            <div>
-              <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="triggerBlock()">Block User</button>
-            </div>
           </div>
-
-          <div class="chat-safety-banner">
-            🛡 Privacy First: Phone numbers, emails, and UPI handles are automatically scrubbed until trust is established.
-          </div>
-
-          <div class="messages-stream" id="msgStream">
-            <!-- Messages injected dynamically -->
-          </div>
-
-          <div class="chat-input-bar">
-            <input type="text" id="chatInputBox" class="chat-input" placeholder="Type a message or question..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-            <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="viewPartnerProfileFromChat()">Profile</button>
+            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #FECACA;" onclick="triggerBlock()">Block</button>
           </div>
         </div>
 
+        <div class="chat-safety-banner">
+          🛡 Privacy First: Phone numbers, emails, and UPI handles are automatically masked until mutual trust is established.
+        </div>
+
+        <div class="messages-stream" id="msgStream">
+          <!-- Messages injected dynamically -->
+        </div>
+
+        <div class="chat-input-bar">
+          <input type="text" id="chatInputBox" class="chat-input" placeholder="Type a message or question..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+          <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+        </div>
       </div>
     </section>
 
@@ -2077,7 +2369,10 @@ export function renderClientAppHtml(): string {
       if (mnav) mnav.classList.add('active');
 
       if (tabName === 'discover') renderDeck();
-      if (tabName === 'matches') loadMatches();
+      if (tabName === 'matches') {
+        closeChatAndBackToMatches();
+        loadMatches();
+      }
     }
 
     // -------------------------------------------------------------
@@ -2674,61 +2969,217 @@ export function renderClientAppHtml(): string {
     }
 
     // -------------------------------------------------------------
-    // MATCHES & CHAT
+    // RESPONSIVE MATCHES & CHAT (DESKTOP TILE GRID + MOBILE LIST)
     // -------------------------------------------------------------
+    let allLoadedMatches = [];
+    let currentMatchFilter = 'ALL';
+
+    function getModalityBadgeText(mod) {
+      if (mod === 'MODALITY_1') return '🏠 Has Room';
+      if (mod === 'MODALITY_2') return '🛏 Seeking Room';
+      if (mod === 'MODALITY_3') return '🔄 Relocating';
+      if (mod === 'MODALITY_4') return '🤝 Team-Up First';
+      return '🤝 Buddy Member';
+    }
+
     async function loadMatches() {
       try {
         const res = await fetch('/api/v1/matches', {
           headers: { 'Authorization': 'Bearer ' + currentToken }
         });
         const data = await res.json();
-        const matches = data.matches || [];
+        allLoadedMatches = data.matches || [];
 
-        document.getElementById('headerMatchesBadge').textContent = matches.length;
-        const list = document.getElementById('convList');
+        const badge = document.getElementById('headerMatchesBadge');
+        if (badge) badge.textContent = allLoadedMatches.length;
+        
+        const pill = document.getElementById('matchesHeaderPill');
+        if (pill) pill.textContent = allLoadedMatches.length + ' Connection' + (allLoadedMatches.length === 1 ? '' : 's');
 
-        if (matches.length === 0) {
-          list.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">No mutual matches yet. Swipe LIKE on candidates to connect!</div>';
-          return;
-        }
-
-        list.innerHTML = matches.map((m, idx) => 
-          '<div class="conv-item ' + (idx === 0 ? 'active' : '') + '" onclick="selectConversation(' + JSON.stringify(m.candidate).replace(/"/g, '&quot;') + ', this)">' +
-            '<img src="' + (m.candidate.photos && m.candidate.photos[0] ? m.candidate.photos[0].photoUrl : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80') + '" class="conv-avatar">' +
-            '<div class="conv-info">' +
-              '<div class="conv-top-row">' +
-                '<span class="conv-name">' + m.candidate.displayName + '</span>' +
-                '<span style="font-size: 11px; color: var(--text-muted);">Just now</span>' +
-              '</div>' +
-              '<div class="conv-snippet">★ ' + m.compatibilityScore + '% Compatibility • Tap to chat</div>' +
-            '</div>' +
-          '</div>'
-        ).join('');
-
-        if (matches.length > 0 && !activeMatchPartner) {
-          selectConversation(matches[0].candidate, null);
-        }
-
+        renderFilteredMatches();
       } catch (e) {
         // Fallback
       }
     }
 
-    function selectConversation(cand, el) {
-      if (el) {
-        document.querySelectorAll('.conv-item').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
+    function filterMatchCards(modality, btnEl) {
+      currentMatchFilter = modality;
+      document.querySelectorAll('.match-filter-tab').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderFilteredMatches();
+    }
+
+    function renderFilteredMatches() {
+      const filtered = (currentMatchFilter === 'ALL')
+        ? allLoadedMatches
+        : allLoadedMatches.filter(m => (m.candidate?.modality || m.modality) === currentMatchFilter);
+
+      renderDesktopMatches(filtered);
+      renderMobileMatches(filtered);
+    }
+
+    function renderDesktopMatches(matches) {
+      const grid = document.getElementById('desktopMatchGrid');
+      if (!grid) return;
+
+      if (matches.length === 0) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 20px; padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">' +
+            '<div style="font-size: 48px;">🌟</div>' +
+            '<h3 style="font-size: 20px; font-weight: 800;">No Mutual Matches Yet</h3>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 360px; line-height: 1.5;">' +
+              'Swipe LIKE on profiles in the Discover deck to connect with compatible roommates in Trivandrum!' +
+            '</p>' +
+            '<button class="btn btn-primary" onclick="navigateTab(\'discover\')" style="border-radius: 20px;">' +
+              'Explore Discover Feed →' +
+            '</button>' +
+          '</div>';
+        return;
       }
+
+      grid.innerHTML = matches.map(m => {
+        const cand = m.candidate || {
+          userId: m.matchedUserId,
+          displayName: m.matchedUserDisplayName,
+          age: m.age || 25,
+          occupation: m.occupation || 'Professional',
+          collegeOrCompany: m.collegeOrCompany,
+          modality: m.modality || 'MODALITY_4',
+          verificationBadge: m.verificationBadge || 'UNVERIFIED',
+          preferredSuburbs: m.preferredSuburbs || ['KAZHAKKOOTTAM'],
+          maxBudget: m.maxBudget || 9000,
+          photos: m.photos || [{ photoUrl: m.matchedUserAvatarUrl }],
+          topHighlights: m.topHighlights || ['Early Bird', 'Quiet Sanctuary']
+        };
+
+        const photoUrl = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80';
+        const verifyLabel = cand.verificationBadge === 'VERIFIED_PROFESSIONAL' ? '✔ Verified Pro' : (cand.verificationBadge === 'VERIFIED_STUDENT' ? '✔ Verified Student' : '');
+        const chipsHtml = (cand.topHighlights || m.topHighlights || []).map(h => '<span class="match-harmony-chip">' + h + '</span>').join('');
+        const suburb = (cand.preferredSuburbs && cand.preferredSuburbs[0]) || 'Trivandrum';
+
+        return '<div class="match-tile-card">' +
+          '<div class="match-tile-photo-box">' +
+            '<img src="' + photoUrl + '" class="match-tile-photo" alt="' + cand.displayName + '">' +
+            '<div class="match-tile-overlay">' +
+              '<div class="match-tile-top-row">' +
+                '<span class="match-compat-gauge">★ ' + m.compatibilityScore + '% Compatibility</span>' +
+                (verifyLabel ? '<span class="match-verify-pill">' + verifyLabel + '</span>' : '<span></span>') +
+              '</div>' +
+              '<div class="match-tile-name-row">' +
+                '<span class="match-tile-name">' + cand.displayName + '</span>' +
+                (cand.age ? '<span class="match-tile-age">• ' + cand.age + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="match-tile-body">' +
+            '<div class="match-tile-work">💼 ' + (cand.occupation || 'Professional') + (cand.collegeOrCompany ? ' @ ' + cand.collegeOrCompany : '') + '</div>' +
+            '<div class="match-modality-pill">' + getModalityBadgeText(cand.modality) + '</div>' +
+            '<div class="match-suburb-line">📍 ' + suburb + ' • Max ₹' + (cand.maxBudget || 9000) + '/mo</div>' +
+            '<div class="match-harmony-chips">' + chipsHtml + '</div>' +
+          '</div>' +
+          '<div class="match-tile-footer">' +
+            '<button class="btn btn-primary" style="flex: 1;" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>💬 Message</button>' +
+            '<button class="btn btn-outline" onclick=\'openCandidateModal(' + JSON.stringify(cand).replace(/"/g, '&quot;') + ')\'>👤 Profile</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderMobileMatches(matches) {
+      const tray = document.getElementById('mobileNewMatchesTray');
+      const list = document.getElementById('mobileConvList');
+      if (!tray || !list) return;
+
+      if (matches.length === 0) {
+        tray.style.display = 'none';
+        list.innerHTML = 
+          '<div style="padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 13px;">' +
+            'No mutual matches yet. Swipe LIKE on candidates in Discover to connect!' +
+          '</div>';
+        return;
+      }
+
+      tray.style.display = 'flex';
+      tray.innerHTML = matches.map(m => {
+        const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
+        const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
+        const firstName = cand.displayName.split(' ')[0];
+
+        return '<div class="mobile-tray-bubble" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+          '<div class="mobile-tray-avatar-wrap">' +
+            '<img src="' + photo + '" class="mobile-tray-avatar" alt="' + cand.displayName + '">' +
+          '</div>' +
+          '<span class="mobile-tray-name">' + firstName + '</span>' +
+          '<span class="mobile-tray-compat">' + m.compatibilityScore + '%</span>' +
+        '</div>';
+      }).join('');
+
+      list.innerHTML = matches.map(m => {
+        const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
+        const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
+
+        return '<div class="mobile-conv-item" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+          '<img src="' + photo + '" class="mobile-conv-avatar" alt="' + cand.displayName + '">' +
+          '<div class="mobile-conv-info">' +
+            '<div class="mobile-conv-top">' +
+              '<span class="mobile-conv-name">' + cand.displayName + '</span>' +
+              '<span class="mobile-conv-time">Today</span>' +
+            '</div>' +
+            '<div class="mobile-conv-badge-row">' +
+              '<span style="font-size: 11px; font-weight: 800; color: var(--primary);">' + m.compatibilityScore + '% Match</span>' +
+              '<span style="font-size: 11px; color: var(--text-muted);">• ' + getModalityBadgeText(cand.modality) + '</span>' +
+            '</div>' +
+            '<div class="mobile-conv-snippet">Tap to start conversation with ' + cand.displayName.split(' ')[0] + '...</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function openChatWithMatch(m) {
+      const cand = m.candidate || {
+        userId: m.matchedUserId,
+        displayName: m.matchedUserDisplayName,
+        photos: [{ photoUrl: m.matchedUserAvatarUrl }]
+      };
       activeMatchPartner = cand;
+
+      const chatCont = document.getElementById('activeChatContainer');
+      const listCont = document.getElementById('matchesListingContainer');
+      if (chatCont && listCont) {
+        listCont.style.display = 'none';
+        chatCont.style.display = 'flex';
+      }
+
       document.getElementById('chatName').textContent = cand.displayName;
-      document.getElementById('chatAvatar').src = cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
+      const avatar = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
+      document.getElementById('chatAvatar').src = avatar;
+      document.getElementById('chatStatus').textContent = 'Online • ' + (m.compatibilityScore || 90) + '% Compatibility';
 
       const stream = document.getElementById('msgStream');
       stream.innerHTML = 
         '<div class="msg-bubble msg-in">' +
-          'Hi ' + currentUser.name.split(' ')[0] + '! Excited to connect. I saw our lifestyles have high alignment!' +
-          '<div class="msg-time">10:45 AM</div>' +
+          'Hi ' + currentUser.name.split(' ')[0] + '! Excited to connect on Buddy. I saw our lifestyles and routines have high alignment!' +
+          '<div class="msg-time">Just now</div>' +
         '</div>';
+    }
+
+    function closeChatAndBackToMatches() {
+      const chatCont = document.getElementById('activeChatContainer');
+      const listCont = document.getElementById('matchesListingContainer');
+      if (chatCont && listCont) {
+        chatCont.style.display = 'none';
+        listCont.style.display = 'block';
+      }
+    }
+
+    function viewPartnerProfileFromChat() {
+      if (activeMatchPartner) {
+        openCandidateModal(activeMatchPartner);
+      }
+    }
+
+    function selectConversation(cand, el) {
+      openChatWithMatch({ candidate: cand, matchedUserDisplayName: cand.displayName, matchedUserId: cand.userId });
     }
 
     function sendChatMessage() {
@@ -2753,7 +3204,6 @@ export function renderClientAppHtml(): string {
         warn.innerHTML = '🛡 Security Notice: Phone numbers and payment details are restricted to prevent off-platform scams.';
         stream.appendChild(warn);
       } else {
-        // Simulated response after 1.2s
         setTimeout(() => {
           const reply = document.createElement('div');
           reply.className = 'msg-bubble msg-in';
@@ -2782,10 +3232,16 @@ export function renderClientAppHtml(): string {
     function openChatFromModal() {
       closeMatchModal();
       navigateTab('matches');
-      selectConversation(activeMatchPartner, null);
+      openChatWithMatch({ candidate: activeMatchPartner, matchedUserDisplayName: activeMatchPartner.displayName, matchedUserId: activeMatchPartner.userId });
     }
 
     function triggerBlock() {
+      if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
+        alert('User blocked successfully.');
+        closeChatAndBackToMatches();
+        navigateTab('discover');
+      }
+    }
       if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
         alert('User blocked successfully.');
         navigateTab('discover');
