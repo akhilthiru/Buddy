@@ -233,20 +233,19 @@ describe('Deterministic 7-Vector Compatibility Scoring Engine (ADR-006 & FR-14)'
       assert.ok(result.failedReason?.includes('Dietary dealbreaker'));
     });
 
-    it('Scenario 4: Modality Compatibility Matrix (PRD Rule 4)', () => {
-      // Modality 1 (Has room) vs Modality 1 (Has room) -> Incompatible
+    it('Scenario 4: Discovery Modality as Status (Non-Disqualifying Preference)', () => {
+      // Modality 1 (Has room) vs Modality 1 (Has room) -> Compatible (modality is status, not dealbreaker)
       const m1User = createMockProfile('m1', { modality: 'MODALITY_1' });
       const m1Candidate = createMockProfile('m1-cand', { modality: 'MODALITY_1' });
       const life = createMockLifestyle('default');
 
       const resM1M1 = ScoringEngine.calculateCompatibility(m1User, life, m1Candidate, life);
-      assert.strictEqual(resM1M1.dealbreakerFailed, true);
-      assert.ok(resM1M1.failedReason?.includes('Incompatible modalities'));
+      assert.strictEqual(resM1M1.dealbreakerFailed, false, 'Modality 1 vs Modality 1 should not fail dealbreakers');
 
-      // Modality 1 (Has room) vs Modality 4 (Team up first) -> Incompatible
+      // Modality 1 (Has room) vs Modality 4 (Team up first) -> Compatible
       const m4Candidate = createMockProfile('m4-cand', { modality: 'MODALITY_4' });
       const resM1M4 = ScoringEngine.calculateCompatibility(m1User, life, m4Candidate, life);
-      assert.strictEqual(resM1M4.dealbreakerFailed, true);
+      assert.strictEqual(resM1M4.dealbreakerFailed, false, 'Modality 1 vs Modality 4 should not fail dealbreakers');
 
       // Modality 1 (Has room) vs Modality 2 (Seeking room) -> Compatible
       const m2Candidate = createMockProfile('m2-cand', { modality: 'MODALITY_2' });
@@ -257,6 +256,22 @@ describe('Deterministic 7-Vector Compatibility Scoring Engine (ADR-006 & FR-14)'
       const m4User = createMockProfile('m4', { modality: 'MODALITY_4' });
       const resM4M4 = ScoringEngine.calculateCompatibility(m4User, life, m4Candidate, life);
       assert.strictEqual(resM4M4.dealbreakerFailed, false);
+    });
+
+    it('Scenario 4b: Location & Budget Affinity Calculation', () => {
+      // Location overlap
+      const locMatch = ScoringEngine.calculateLocationAffinity(['KAZHAKKOOTTAM', 'KARIAVATTOM'], ['KAZHAKKOOTTAM']);
+      assert.strictEqual(locMatch, 1.0);
+
+      const locDisjoint = ScoringEngine.calculateLocationAffinity(['KAZHAKKOOTTAM'], ['PATTOM']);
+      assert.strictEqual(locDisjoint, 0.5);
+
+      // Budget overlap
+      const budgetMatch = ScoringEngine.calculateBudgetAffinity(5000, 10000, 7000, 12000);
+      assert.strictEqual(budgetMatch, 1.0);
+
+      const budgetNear = ScoringEngine.calculateBudgetAffinity(5000, 8000, 9000, 12000);
+      assert.strictEqual(budgetNear, 0.8);
     });
 
     it('Scenario 5: Sleep dealbreaker filters opposing chronotypes when dealbreaker is toggled', () => {

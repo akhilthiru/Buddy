@@ -133,6 +133,8 @@ export interface CompatibilityResult {
   overallScore: number; // 0 - 100
   dealbreakerFailed: boolean;
   failedReason?: string;
+  locationAffinity?: number;
+  budgetAffinity?: number;
   vectors: {
     sleep: VectorAlignmentDetail;
     cleanliness: VectorAlignmentDetail;

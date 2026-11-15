@@ -662,12 +662,12 @@ describe('End-to-End User Discovery Journeys (All 4 Modalities)', () => {
       body: baseLifestyle,
     });
 
-    // Step 4: Adarsh retrieves discovery feed - M1 provider must be filtered out, only Rohit (M4) appears
+    // Step 4: Adarsh retrieves discovery feed - modality is status preference; eligible candidates appear with Rohit (M4) ranked first
     const adarshFeed = await request('GET', '/api/v1/discovery/feed', {
       headers: { Authorization: `Bearer ${adarsh.token}` },
     });
     assert.strictEqual(adarshFeed.statusCode, 200);
-    assert.strictEqual(adarshFeed.body.cards.length, 1);
+    assert.ok(adarshFeed.body.cards.length >= 1, 'Should return candidate feed');
     assert.strictEqual(adarshFeed.body.cards[0].userId, rohit.userId);
     assert.strictEqual(adarshFeed.body.cards[0].modality, 'MODALITY_4');
 
