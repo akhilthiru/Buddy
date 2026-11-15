@@ -102,6 +102,38 @@ export class BuddyApp {
     }
   }
 
+  private optionalAuthenticate(req: HttpRequest): void {
+    let token: string | undefined;
+    const auth = req.headers['authorization'] || (req.headers as any)['Authorization'];
+    if (auth && typeof auth === 'string' && auth.startsWith('Bearer ')) {
+      token = auth.substring(7);
+    } else if (req.cookies['access_token']) {
+      token = req.cookies['access_token'];
+    }
+
+    if (!token) return;
+
+    try {
+      const decoded = JwtUtil.verify(token, env.JWT_SECRET);
+      if (!decoded.sub) return;
+
+      const dbUser = db.users.get(decoded.sub);
+      const effectiveStatus = dbUser ? dbUser.status : (decoded.status || 'ACTIVE');
+
+      if (effectiveStatus === 'BANNED' || effectiveStatus === 'SUSPENDED' || effectiveStatus === 'QUARANTINED') {
+        return;
+      }
+
+      req.user = {
+        userId: decoded.sub,
+        role: decoded.role || 'USER',
+        status: effectiveStatus,
+      };
+    } catch {
+      // Treat as unauthenticated guest on token verification error
+    }
+  }
+
   private matchRoute(
     pattern: string,
     pathname: string
@@ -376,9 +408,9 @@ export class BuddyApp {
     // DOMAIN 4 & 5: DISCOVERY & SWIPING
     // ==========================================
     if (method === 'GET' && path === '/api/v1/discovery/feed') {
-      this.authenticate(req);
+      this.optionalAuthenticate(req);
       const limit = req.query.limit ? parseInt(req.query.limit, 10) : 20;
-      const feed = DiscoveryService.getFeed(req.user!.userId, limit);
+      const feed = DiscoveryService.getFeed(req.user?.userId, limit);
       return json(200, feed);
     }
 

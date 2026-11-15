@@ -6,6 +6,7 @@ import {
   BadRequestError,
   ForbiddenError,
   NotFoundError,
+  RegistrationIncompleteError,
 } from '../../common/errors/problem-details.ts';
 import type {
   ChatMessageItem,
@@ -193,6 +194,13 @@ export class MessagingService {
 
     if (conv.user1Id !== senderUserId && conv.user2Id !== senderUserId) {
       throw new ForbiddenError('You are not a participant in this conversation');
+    }
+
+    const senderProfile = db.userProfiles.get(senderUserId);
+    if (!senderProfile || !senderProfile.isOnboardingCompleted) {
+      throw new RegistrationIncompleteError(
+        'Mandatory registration must be completed before sending messages'
+      );
     }
 
     if (conv.status !== 'ACTIVE') {

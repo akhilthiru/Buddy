@@ -134,56 +134,45 @@ export function renderClientAppHtml(): string {
       align-items: center;
       gap: 12px;
     }
-    .restart-reg-btn {
-      background: linear-gradient(135deg, #0D9488, #0F766E);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.15s;
-    }
-    .restart-reg-btn:hover { opacity: 0.92; }
-
     .persona-badge {
       display: flex;
       align-items: center;
       gap: 8px;
       background: white;
       border: 1px solid var(--border);
-      padding: 4px 10px 4px 5px;
+      padding: 4px 12px 4px 5px;
       border-radius: 24px;
       cursor: pointer;
-      transition: border-color 0.15s;
+      transition: all 0.15s ease;
     }
-    .persona-badge:hover { border-color: var(--primary); }
+    .persona-badge:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
     .persona-badge img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     .persona-badge span { font-size: 13px; font-weight: 700; color: var(--text); }
+    .badge-incomplete {
+      font-size: 10px;
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
 
-    /* Auth & Access Control Visibility State */
-    body.unauthenticated .app-header,
-    body.unauthenticated .mobile-bottom-nav,
+    /* Onboarding Mode: conversational Bumble-style flow without distraction */
     body.onboarding-mode .app-header,
     body.onboarding-mode .mobile-bottom-nav {
       display: none !important;
     }
 
-    body.unauthenticated, body.onboarding-mode {
+    body.onboarding-mode {
       background: #F8FAFC;
     }
-    body.unauthenticated .app-main,
     body.onboarding-mode .app-main {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 32px 16px;
+      padding: 24px 16px;
     }
 
     /* Login & Authentication Gateway Card */
@@ -1371,7 +1360,7 @@ export function renderClientAppHtml(): string {
     .celeb-avatar-right { margin-left: -24px; }
   </style>
 </head>
-<body class="unauthenticated">
+<body class="">
 
   <!-- TOP APPLICATION HEADER (FLUID RESPONSIVE) -->
   <header class="app-header">
@@ -1392,7 +1381,7 @@ export function renderClientAppHtml(): string {
         </button>
         <button class="nav-btn" id="dnav-matches" onclick="navigateTab('matches')">
           💬 Matches & Chat
-          <span class="badge-count" id="headerMatchesBadge">2</span>
+          <span class="badge-count" id="headerMatchesBadge" style="display: none;">0</span>
         </button>
         <button class="nav-btn" id="dnav-rooms" onclick="navigateTab('rooms')">
           🏠 Room Listings
@@ -1402,18 +1391,19 @@ export function renderClientAppHtml(): string {
         </button>
       </nav>
 
-      <!-- Action items -->
+      <!-- Action items: Unified Profile Entry Point -->
       <div class="header-actions">
-        <button class="restart-reg-btn" onclick="startNewRegistration()">
-          ✨ New Registration
+        <button id="headerSignInBtn" class="btn btn-primary" style="font-size: 13px; padding: 7px 16px; border-radius: 20px;" onclick="navigateTab('profile')">
+          👤 Sign In
         </button>
 
-        <div class="persona-badge" onclick="cyclePersona()" title="Quick switch active demo persona">
+        <div class="persona-badge" id="headerProfileBadge" onclick="navigateTab('profile')" title="My Profile & Account" style="display: none;">
           <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
-          <span id="headerUserName">Adarsh</span>
+          <span id="headerUserName">Profile</span>
+          <span id="headerIncompletePill" class="badge-incomplete" style="display: none;">Incomplete</span>
         </div>
 
-        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
+        <button id="headerLogoutBtn" class="btn btn-outline" style="display: none; font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
           Log Out
         </button>
       </div>
@@ -1423,88 +1413,6 @@ export function renderClientAppHtml(): string {
   <!-- MAIN VIEWPORT -->
   <main class="app-main">
 
-    <!-- =========================================================
-         VIEW 0: AUTHENTICATION & LOGIN GATEWAY
-         ========================================================= -->
-    <section id="view-login" class="view-panel active">
-      <div class="login-container">
-        <div class="login-brand-icon">🤝</div>
-        <h1 id="loginTitle" style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">
-          Welcome to Buddy
-        </h1>
-        <p id="loginDesc" style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
-          Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.
-        </p>
-
-        <div id="loginAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0; font-weight: 600;"></div>
-
-        <div class="login-toggle-tabs">
-          <button class="login-toggle-tab active" id="tabModeSignIn" onclick="setAuthMode('signin')">Sign In</button>
-          <button class="login-toggle-tab" id="tabModeRegister" onclick="setAuthMode('register')">Create Account</button>
-        </div>
-
-        <!-- Phone input group -->
-        <div style="text-align: left; margin-bottom: 16px;">
-          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
-            Mobile Phone Number
-          </label>
-          <input type="text" id="loginPhoneInput" value="+919876543211" placeholder="+91 98765 43210" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600;">
-        </div>
-
-        <div id="loginOtpGroup" style="display: none; text-align: left; margin-bottom: 16px;">
-          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
-            Enter 6-Digit OTP Code
-          </label>
-          <input type="text" id="loginOtpInput" value="123456" placeholder="123456" maxlength="6" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--primary); border-radius: 12px; font-size: 18px; font-weight: 800; letter-spacing: 4px; text-align: center;">
-          <p style="font-size: 12px; color: var(--primary-dark); margin-top: 6px;">✔ Universal dev OTP code is <code>123456</code></p>
-        </div>
-
-        <button class="btn btn-primary" id="btnLoginAction" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="handleLoginSubmit()">
-          Send OTP Code →
-        </button>
-
-        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
-          <p style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
-            ⚡ Quick Sign In as Demo Persona
-          </p>
-          <div class="login-persona-grid">
-            <div class="login-persona-chip" onclick="quickLoginPersona('adarsh')">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Adarsh">
-              <div>
-                <div class="name">Adarsh Nair</div>
-                <div class="role">Has Room (M1)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('kiran')">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Kiran">
-              <div>
-                <div class="name">Kiran Kumar</div>
-                <div class="role">Needs Room (M2)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('rahul')">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Rahul">
-              <div>
-                <div class="name">Rahul Pillai</div>
-                <div class="role">Relocating (M3)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('anjali')">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Anjali">
-              <div>
-                <div class="name">Anjali Krishna</div>
-                <div class="role">Team-Up (M4)</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =========================================================
-         VIEW 1: REGISTRATION & ONBOARDING WIZARD
-         ========================================================= -->
     <!-- =========================================================
          VIEW 1: REGISTRATION & ONBOARDING WIZARD (CONVERSATIONAL BUMBLE-STYLE)
          ========================================================= -->
@@ -1517,7 +1425,7 @@ export function renderClientAppHtml(): string {
             ← Back
           </button>
           <span class="onboarding-step-counter" id="obStepCounter">Question 1 of 12</span>
-          <button class="onboarding-exit-btn" onclick="cancelOnboarding()" title="Exit and Return to Sign In">✕ Exit</button>
+          <button class="onboarding-exit-btn" onclick="cancelOnboarding()" title="Exit and Return to Profile">✕ Exit</button>
         </div>
 
         <!-- 5 Subsections Progress Bar with Completion Ticks -->
@@ -1922,8 +1830,13 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(10)">Next: Household Vibe →</button>
+            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">
+              Finish & Start Matching 🚀
+            </button>
+            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(10)">
+              Optional Details (2 min) →
+            </button>
           </div>
         </div>
 
@@ -1972,8 +1885,9 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
+            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
           </div>
         </div>
 
@@ -2014,8 +1928,9 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipTrustBadge()">Skip for Now</button>
-            <button class="btn btn-primary" onclick="handleStepTrustBadge()">Verify & Next →</button>
+            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(12)">Next: Photo →</button>
           </div>
         </div>
 
@@ -2042,8 +1957,8 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" onclick="skipAndCompleteRegistration()">Skip for Now</button>
-            <button class="btn btn-primary" onclick="completeRegistrationAndLaunch()">
+            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">
               Start Discovering →
             </button>
           </div>
@@ -2055,7 +1970,7 @@ export function renderClientAppHtml(): string {
     <!-- =========================================================
          VIEW 2: DISCOVERY STAGE (FLUID RESPONSIVE DECK)
          ========================================================= -->
-    <section id="view-discover" class="view-panel">
+    <section id="view-discover" class="view-panel active">
       <div class="discover-stage">
         
         <!-- Left Column: Swipe Deck -->
@@ -2218,42 +2133,11 @@ export function renderClientAppHtml(): string {
     </section>
 
     <!-- =========================================================
-         VIEW 5: MY PROFILE & LIFESTYLE CONFIGURATION
+         VIEW 5: UNIFIED PROFILE & ACCOUNT MANAGEMENT
          ========================================================= -->
     <section id="view-profile" class="view-panel">
-      <div style="max-width: 700px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;">
-        
-        <div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);">
-          <img id="myProfAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-          <div style="flex: 1;">
-            <h2 id="myProfName" style="font-size: 20px; font-weight: 800;">Adarsh Nair</h2>
-            <p id="myProfWork" style="font-size: 13px; color: var(--text-muted);">Senior Backend Engineer @ TCS Technopark</p>
-            <div style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; background: #E0F2FE; color: #0369A1; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 12px;">
-              ✔ Verified Professional
-            </div>
-          </div>
-          <button class="btn btn-outline" onclick="startNewRegistration()">Edit Registration</button>
-        </div>
-
-        <div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-sm);">
-          <h3 style="font-size: 16px; font-weight: 800;">Your Discovery Settings</h3>
-          
-          <div class="form-group">
-            <label>Current Modality</label>
-            <input type="text" id="myProfModality" value="Modality 1: I have a room available in Kazhakkoottam" readonly style="background: #F8FAFC;">
-          </div>
-
-          <div class="form-group">
-            <label>Budget & Suburbs</label>
-            <input type="text" value="₹7,000 - ₹9,000/mo • Kazhakkoottam, Kariavattom" readonly style="background: #F8FAFC;">
-          </div>
-
-          <div style="border-top: 1px solid var(--border); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 13px; color: var(--text-muted);">Looking to switch perspective or test as someone else?</span>
-            <button class="btn btn-secondary" onclick="cyclePersona()">Cycle Next Demo Persona</button>
-          </div>
-        </div>
-
+      <div id="profileContainer" style="max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;">
+        <!-- Dynamically rendered by renderProfileView() -->
       </div>
     </section>
 
@@ -2302,6 +2186,44 @@ export function renderClientAppHtml(): string {
     </div>
   </div>
 
+  <!-- GUEST ACTION PROMPT MODAL -->
+  <div class="modal-backdrop" id="guestPromptModal">
+    <div class="modal-box" style="text-align: center; max-width: 380px;">
+      <div style="font-size: 42px; margin-bottom: 8px;">🤝</div>
+      <h2 style="font-size: 20px; font-weight: 800; color: var(--text);">Sign In to Buddy</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0 20px 0; line-height: 1.5;" id="guestPromptText">
+        Please sign in or create a quick account to connect with flatmates and save your preferences in Trivandrum.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 12px; font-weight: 800;" onclick="closeGuestPromptModal(); navigateTab('profile');">
+          Sign In / Create Account →
+        </button>
+        <button class="btn btn-outline" style="width: 100%; border-radius: 12px; padding: 10px;" onclick="closeGuestPromptModal()">
+          Keep Browsing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOMPLETE REGISTRATION MODAL -->
+  <div class="modal-backdrop" id="incompleteRegModal">
+    <div class="modal-box" style="text-align: center; max-width: 380px;">
+      <div style="font-size: 42px; margin-bottom: 8px;">✨</div>
+      <h2 style="font-size: 20px; font-weight: 800; color: var(--text);">Complete Registration to Connect</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0 20px 0; line-height: 1.5;">
+        You're only 1 minute away from sending interest to <strong id="incompletePromptName" style="color: var(--primary);">Candidate</strong>! Finish your quick mandatory preferences to unlock matching.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 12px; font-weight: 800;" onclick="closeIncompleteRegModal(); startNewRegistration();">
+          Complete Registration (1 Min) →
+        </button>
+        <button class="btn btn-outline" style="width: 100%; border-radius: 12px; padding: 10px;" onclick="closeIncompleteRegModal()">
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // State
     let currentToken = null;
@@ -2311,8 +2233,11 @@ export function renderClientAppHtml(): string {
     let activeMatchPartner = null;
     let selectedModality = 'MODALITY_4';
     let wizardCurrentStep = 1;
+    let pendingInterestCandidate = null;
+    let authMode = 'signin';
+    let otpSent = false;
 
-    // Personas
+    // Personas: Including an Incomplete user persona (Kiran) for interactive testing
     const PERSONAS = {
       adarsh: {
         id: 'usr_adarsh_001',
@@ -2320,15 +2245,17 @@ export function renderClientAppHtml(): string {
         name: 'Adarsh Nair',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
         work: 'Senior Backend Engineer @ TCS Technopark',
-        modality: 'MODALITY_1'
+        modality: 'MODALITY_1',
+        isOnboardingCompleted: true
       },
-      sneha: {
-        id: 'usr_sneha_002',
-        phone: '+919876543212',
-        name: 'Sneha Menon',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
-        work: 'M.Tech AI @ CET Trivandrum',
-        modality: 'MODALITY_2'
+      kiran: {
+        id: 'usr_kiran_002',
+        phone: '+919876543299',
+        name: 'Kiran Kumar',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+        work: 'Technopark Associate • Needs Room (M2)',
+        modality: 'MODALITY_2',
+        isOnboardingCompleted: false
       },
       rahul: {
         id: 'usr_rahul_003',
@@ -2336,7 +2263,8 @@ export function renderClientAppHtml(): string {
         name: 'Rahul Pillai',
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
         work: 'Financial Analyst @ UST Global',
-        modality: 'MODALITY_3'
+        modality: 'MODALITY_3',
+        isOnboardingCompleted: true
       },
       anjali: {
         id: 'usr_anjali_004',
@@ -2344,40 +2272,100 @@ export function renderClientAppHtml(): string {
         name: 'Anjali Krishna',
         avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80',
         work: 'HR Specialist @ Allianz Technopark',
-        modality: 'MODALITY_4'
+        modality: 'MODALITY_4',
+        isOnboardingCompleted: true
       }
     };
 
-    // App Initialization
-    let authMode = 'signin';
-    let otpSent = false;
+    function showToast(msg) {
+      let toast = document.getElementById('buddyToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'buddyToast';
+        toast.style.position = 'fixed';
+        toast.style.bottom = '80px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = '#0F172A';
+        toast.style.color = '#FFFFFF';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '24px';
+        toast.style.fontSize = '14px';
+        toast.style.fontWeight = '700';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+        toast.style.transition = 'opacity 0.3s ease';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => { toast.style.display = 'none'; }, 300);
+      }, 3500);
+    }
+
+    function showGuestPromptModal(actionName) {
+      const modal = document.getElementById('guestPromptModal');
+      const text = document.getElementById('guestPromptText');
+      if (text) {
+        text.textContent = (actionName === 'like')
+          ? 'Please sign in or create an account to express interest in roommate candidates in Trivandrum.'
+          : 'Please sign in or create an account to pass or save your roommate preferences.';
+      }
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeGuestPromptModal() {
+      const modal = document.getElementById('guestPromptModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function showIncompleteRegModal(candidateName) {
+      const modal = document.getElementById('incompleteRegModal');
+      const nameEl = document.getElementById('incompletePromptName');
+      if (nameEl) nameEl.textContent = candidateName || 'Candidate';
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeIncompleteRegModal() {
+      const modal = document.getElementById('incompleteRegModal');
+      if (modal) modal.classList.remove('active');
+    }
 
     function setAuthMode(mode) {
       authMode = mode;
-      document.getElementById('tabModeSignIn').classList.toggle('active', mode === 'signin');
-      document.getElementById('tabModeRegister').classList.toggle('active', mode === 'register');
-      document.getElementById('loginOtpGroup').style.display = 'none';
+      const tSign = document.getElementById('tabModeSignIn');
+      const tReg = document.getElementById('tabModeRegister');
+      if (tSign) tSign.classList.toggle('active', mode === 'signin');
+      if (tReg) tReg.classList.toggle('active', mode === 'register');
+      const otpGroup = document.getElementById('loginOtpGroup');
+      if (otpGroup) otpGroup.style.display = 'none';
       otpSent = false;
-      document.getElementById('btnLoginAction').textContent = 'Send OTP Code →';
+      const btnAction = document.getElementById('btnLoginAction');
+      if (btnAction) btnAction.textContent = 'Send OTP Code →';
       const alertBox = document.getElementById('loginAlertBox');
-      alertBox.style.display = 'none';
+      if (alertBox) alertBox.style.display = 'none';
       const titleEl = document.getElementById('loginTitle');
       const descEl = document.getElementById('loginDesc');
+      const phoneInput = document.getElementById('loginPhoneInput');
       if (mode === 'register') {
         if (titleEl) titleEl.textContent = 'Create Buddy Account';
         if (descEl) descEl.textContent = 'Join flatmate & roommate discovery in Thiruvananthapuram. Verify your mobile to begin.';
-        document.getElementById('loginPhoneInput').value = '+919876599999';
+        if (phoneInput) phoneInput.value = '+919876599999';
       } else {
         if (titleEl) titleEl.textContent = 'Welcome to Buddy';
-        if (descEl) descEl.textContent = 'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.';
-        document.getElementById('loginPhoneInput').value = '+919876543211';
+        if (descEl) descEl.textContent = 'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in with your mobile number to unlock matching and chat.';
+        if (phoneInput) phoneInput.value = '+919876543211';
       }
     }
 
     async function handleLoginSubmit() {
-      const phone = document.getElementById('loginPhoneInput').value.trim();
+      const phoneInput = document.getElementById('loginPhoneInput');
+      const phone = phoneInput ? phoneInput.value.trim() : '';
       const alertBox = document.getElementById('loginAlertBox');
-      alertBox.style.display = 'none';
+      if (alertBox) alertBox.style.display = 'none';
 
       if (!otpSent) {
         // Step 1: Send OTP
@@ -2392,21 +2380,28 @@ export function renderClientAppHtml(): string {
             throw new Error(data.detail || data.title || 'Failed to send OTP');
           }
           otpSent = true;
-          document.getElementById('loginOtpGroup').style.display = 'block';
-          document.getElementById('btnLoginAction').textContent = 'Verify OTP & Enter Buddy →';
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#ECFDF5';
-          alertBox.style.color = '#065F46';
-          alertBox.textContent = '✔ OTP code sent! Use dev code 123456 to verify.';
+          const otpGroup = document.getElementById('loginOtpGroup');
+          if (otpGroup) otpGroup.style.display = 'block';
+          const btnAction = document.getElementById('btnLoginAction');
+          if (btnAction) btnAction.textContent = 'Verify OTP & Enter Buddy →';
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#ECFDF5';
+            alertBox.style.color = '#065F46';
+            alertBox.textContent = '✔ OTP code sent! Use dev code 123456 to verify.';
+          }
         } catch (e) {
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#FEF2F2';
-          alertBox.style.color = '#991B1B';
-          alertBox.textContent = 'Error: ' + e.message;
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#FEF2F2';
+            alertBox.style.color = '#991B1B';
+            alertBox.textContent = 'Error: ' + e.message;
+          }
         }
       } else {
         // Step 2: Verify OTP
-        const otp = document.getElementById('loginOtpInput').value.trim();
+        const otpInput = document.getElementById('loginOtpInput');
+        const otp = otpInput ? otpInput.value.trim() : '123456';
         try {
           const res = await fetch('/api/v1/auth/otp/verify', {
             method: 'POST',
@@ -2423,30 +2418,30 @@ export function renderClientAppHtml(): string {
           localStorage.setItem('buddy_phone', phone);
 
           const isRegistered = data.user && data.user.isOnboardingCompleted;
+          currentUser = {
+            id: data.user.id,
+            phone: phone,
+            name: (data.user && data.user.name) || '',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+            isOnboardingCompleted: isRegistered
+          };
+
+          updateHeaderUser(currentUser);
+          await loadFeed();
+          await loadMatches();
+
           if (!isRegistered) {
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.add('onboarding-mode');
-            currentUser = {
-              id: data.user.id,
-              phone: phone,
-              name: '',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-              isOnboardingCompleted: false
-            };
-            await startNewRegistration();
+            navigateTab('profile');
           } else {
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.remove('onboarding-mode');
-            await loadUserProfile();
-            await loadFeed();
-            await loadMatches();
             navigateTab('discover');
           }
         } catch (e) {
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#FEF2F2';
-          alertBox.style.color = '#991B1B';
-          alertBox.textContent = 'Verification error: ' + e.message;
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#FEF2F2';
+            alertBox.style.color = '#991B1B';
+            alertBox.textContent = 'Verification error: ' + e.message;
+          }
         }
       }
     }
@@ -2454,10 +2449,36 @@ export function renderClientAppHtml(): string {
     async function quickLoginPersona(key) {
       const p = PERSONAS[key];
       if (!p) return;
-      document.body.classList.remove('unauthenticated');
-      document.body.classList.remove('onboarding-mode');
       await loginAsPersona(p);
       navigateTab('discover');
+    }
+
+    async function loginAsPersona(p) {
+      currentUser = { ...p };
+
+      // Authenticate with server
+      await fetch('/api/v1/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: p.phone })
+      });
+      const res = await fetch('/api/v1/auth/otp/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: p.phone, otp: '123456' })
+      });
+      const data = await res.json();
+      currentToken = data.accessToken;
+      localStorage.setItem('buddy_token', currentToken);
+      localStorage.setItem('buddy_phone', p.phone);
+
+      const isRegistered = data.user ? data.user.isOnboardingCompleted : p.isOnboardingCompleted;
+      currentUser.id = data.user ? data.user.id : p.id;
+      currentUser.isOnboardingCompleted = isRegistered;
+
+      updateHeaderUser(currentUser);
+      await loadFeed();
+      await loadMatches();
     }
 
     async function handleLogout() {
@@ -2471,16 +2492,17 @@ export function renderClientAppHtml(): string {
       } catch (e) {}
       currentToken = null;
       currentUser = null;
+      pendingInterestCandidate = null;
       localStorage.removeItem('buddy_token');
       localStorage.removeItem('buddy_phone');
-      document.body.classList.add('unauthenticated');
       document.body.classList.remove('onboarding-mode');
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      const loginView = document.getElementById('view-login');
-      if (loginView) loginView.classList.add('active');
+      updateHeaderUser(null);
+      await loadFeed();
+      navigateTab('profile');
     }
 
     async function loadUserProfile() {
+      if (!currentToken) return;
       try {
         const res = await fetch('/api/v1/profiles/me', {
           headers: { 'Authorization': 'Bearer ' + currentToken }
@@ -2499,6 +2521,340 @@ export function renderClientAppHtml(): string {
           updateHeaderUser(currentUser);
         }
       } catch (e) {}
+    }
+
+    function updateHeaderUser(u) {
+      const signInBtn = document.getElementById('headerSignInBtn');
+      const badge = document.getElementById('headerProfileBadge');
+      const logoutBtn = document.getElementById('headerLogoutBtn');
+      const incompletePill = document.getElementById('headerIncompletePill');
+
+      if (!u || !currentToken) {
+        if (signInBtn) signInBtn.style.display = 'inline-flex';
+        if (badge) badge.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      } else {
+        if (signInBtn) signInBtn.style.display = 'none';
+        if (badge) badge.style.display = 'inline-flex';
+        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+        const avatarEl = document.getElementById('headerUserAvatar');
+        if (avatarEl && u.avatar) avatarEl.src = u.avatar;
+        const nameEl = document.getElementById('headerUserName');
+        if (nameEl) nameEl.textContent = (u.name ? u.name.split(' ')[0] : 'Profile');
+        if (incompletePill) {
+          incompletePill.style.display = (!u.isOnboardingCompleted) ? 'inline-block' : 'none';
+        }
+      }
+    }
+
+    function cyclePersona() {
+      const keys = Object.keys(PERSONAS);
+      const currentKey = keys.find(k => PERSONAS[k].id === (currentUser && currentUser.id)) || 'adarsh';
+      const nextKey = keys[(keys.indexOf(currentKey) + 1) % keys.length];
+      loginAsPersona(PERSONAS[nextKey]);
+    }
+
+    // Dynamic Central Profile View (Handles Guest, Incomplete, and Complete States)
+    function renderProfileView() {
+      const container = document.getElementById('profileContainer');
+      if (!container) return;
+
+      if (!currentToken) {
+        // GUEST: Render Login Gateway Card
+        container.innerHTML = 
+          '<div class="login-container">' +
+            '<div class="login-brand-icon">🤝</div>' +
+            '<h1 id="loginTitle" style="font-size: 24px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">' +
+              'Welcome to Buddy' +
+            '</h1>' +
+            '<p id="loginDesc" style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">' +
+              'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in with your mobile number to unlock matching and chat.' +
+            '</p>' +
+            '<div id="loginAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0; font-weight: 600;"></div>' +
+            '<div class="login-toggle-tabs">' +
+              '<button class="login-toggle-tab active" id="tabModeSignIn" onclick="setAuthMode(&apos;signin&apos;)">Sign In</button>' +
+              '<button class="login-toggle-tab" id="tabModeRegister" onclick="setAuthMode(&apos;register&apos;)">Create Account</button>' +
+            '</div>' +
+            '<div style="text-align: left; margin-bottom: 16px;">' +
+              '<label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">' +
+                'Mobile Phone Number' +
+              '</label>' +
+              '<input type="text" id="loginPhoneInput" value="+919876543211" placeholder="+91 98765 43210" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600;">' +
+            '</div>' +
+            '<div id="loginOtpGroup" style="display: none; text-align: left; margin-bottom: 16px;">' +
+              '<label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">' +
+                'Enter 6-Digit OTP Code' +
+              '</label>' +
+              '<input type="text" id="loginOtpInput" value="123456" placeholder="123456" maxlength="6" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--primary); border-radius: 12px; font-size: 18px; font-weight: 800; letter-spacing: 4px; text-align: center;">' +
+              '<p style="font-size: 12px; color: var(--primary-dark); margin-top: 6px;">✔ Universal dev OTP code is <code>123456</code></p>' +
+            '</div>' +
+            '<button class="btn btn-primary" id="btnLoginAction" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="handleLoginSubmit()">' +
+              'Send OTP Code →' +
+            '</button>' +
+            '<div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">' +
+              '<p style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">' +
+                '⚡ Quick Sign In as Demo Persona' +
+              '</p>' +
+              '<div class="login-persona-grid">' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;adarsh&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Adarsh">' +
+                  '<div>' +
+                    '<div class="name">Adarsh Nair</div>' +
+                    '<div class="role">Complete • Has Room (M1)</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;kiran&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Kiran">' +
+                  '<div>' +
+                    '<div class="name">Kiran Kumar</div>' +
+                    '<div class="role" style="color: #D97706; font-weight: 700;">⚠️ Incomplete Reg</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;rahul&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Rahul">' +
+                  '<div>' +
+                    '<div class="name">Rahul Pillai</div>' +
+                    '<div class="role">Complete • Relocating (M3)</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;anjali&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Anjali">' +
+                  '<div>' +
+                    '<div class="name">Anjali Krishna</div>' +
+                    '<div class="role">Complete • Team-Up (M4)</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        // LOGGED IN, REGISTRATION INCOMPLETE
+        container.innerHTML = 
+          '<div style="background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 24px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">' +
+              '<div style="display: inline-flex; align-items: center; gap: 6px; background: #FEF3C7; color: #92400E; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px;">' +
+                '⚠️ Registration Incomplete' +
+              '</div>' +
+              '<span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">' + (currentUser.phone || '') + '</span>' +
+            '</div>' +
+            '<h2 style="font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px;">' +
+              'Complete Your Registration 🚀' +
+            '</h2>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">' +
+              'Your mobile number is verified! Complete 4 quick questions about your living preferences and lifestyle to unlock expressing interest (LIKE), matching, and messaging with flatmates in Trivandrum.' +
+            '</p>' +
+            '<div style="background: #F1F5F9; border-radius: 12px; padding: 14px; margin-bottom: 20px;">' +
+              '<div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px;">' +
+                '<span>Registration Progress</span>' +
+                '<span style="color: var(--primary);">Step 1 of 2 Complete (50%)</span>' +
+              '</div>' +
+              '<div style="width: 100%; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">' +
+                '<div style="width: 50%; height: 100%; background: linear-gradient(90deg, #F59E0B, var(--primary)); border-radius: 4px;"></div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 20px;">' +
+              '<div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">' +
+                'Mandatory Requirements (Takes 1 min)' +
+              '</div>' +
+              '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #059669; font-weight: 600;">' +
+                  '<span>✔</span> <span>Mobile Number Verified (' + (currentUser.phone || '') + ')</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Name & 18+ Age Verification</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Gender & Living Preferences</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Modality, Preferred Suburbs & Budget</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Core Lifestyle (Sleep, Cleanliness, Food, Smoking)</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 15px; font-weight: 800; border-radius: 14px; justify-content: center; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);" onclick="startNewRegistration()">' +
+              'Complete Registration (1 Min) →' +
+            '</button>' +
+          '</div>' +
+          '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">' +
+            '<div>' +
+              '<div style="font-size: 14px; font-weight: 700; color: var(--text);">Account Management</div>' +
+              '<div style="font-size: 12px; color: var(--text-muted);">Signed in as ' + (currentUser.phone || '') + '</div>' +
+            '</div>' +
+            '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
+              'Log Out' +
+            '</button>' +
+          '</div>';
+        return;
+      }
+
+      // LOGGED IN, REGISTRATION COMPLETE
+      container.innerHTML = 
+        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);">' +
+          '<img id="myProfAvatar" src="' + (currentUser.avatar || '') + '" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-100);">' +
+          '<div style="flex: 1;">' +
+            '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">' +
+              '<h2 id="myProfName" style="font-size: 20px; font-weight: 800; color: var(--text);">' + (currentUser.name || 'Buddy User') + '</h2>' +
+              '<div style="display: inline-flex; align-items: center; gap: 4px; background: #ECFDF5; color: #065F46; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 12px;">' +
+                '✔ Active Member' +
+              '</div>' +
+            '</div>' +
+            '<p id="myProfWork" style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">' + (currentUser.work || 'Trivandrum Community Member') + '</p>' +
+            '<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">📱 ' + (currentUser.phone || '') + '</div>' +
+          '</div>' +
+          '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="startNewRegistration()">' +
+            'Edit Preferences' +
+          '</button>' +
+        '</div>' +
+        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm);">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+            '<span style="font-size: 14px; font-weight: 800; color: var(--text);">Profile Strength</span>' +
+            '<span style="font-size: 13px; font-weight: 800; color: var(--primary);">85% • Strong</span>' +
+          '</div>' +
+          '<div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">' +
+            '<div style="width: 85%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px;"></div>' +
+          '</div>' +
+          '<p style="font-size: 12px; color: var(--text-muted);">' +
+            'Complete optional hosting and verification details below to stand out to 3x more potential roommates!' +
+          '</p>' +
+        '</div>' +
+        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: var(--shadow-sm);">' +
+          '<div style="display: flex; align-items: center; justify-content: space-between;">' +
+            '<div>' +
+              '<h3 style="font-size: 16px; font-weight: 800; color: var(--text);">Optional Profile Enhancements</h3>' +
+              '<p style="font-size: 12px; color: var(--text-muted);">Customize your profile bio, hosting habits, and trust verification.</p>' +
+            '</div>' +
+            '<span style="font-size: 11px; background: #EEF2FF; color: #4F46E5; font-weight: 800; padding: 3px 8px; border-radius: 10px;">Optional</span>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">📸 Profile Photos & Bio</div>' +
+            '<div class="form-group" style="margin-bottom: 10px;">' +
+              '<label style="font-size: 12px;">Photo Avatar URL</label>' +
+              '<input type="text" id="profAvatarInput" value="' + (currentUser.avatar || '') + '" style="background: white; font-size: 13px;">' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label style="font-size: 12px;">About Me / Bio</label>' +
+              '<textarea id="profBioInput" rows="2" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; resize: vertical;" placeholder="Tell roommates about yourself, your hobbies, or workplace...">Friendly, clean, and respectful professional looking for a quiet and cooperative living environment in Trivandrum.</textarea>' +
+            '</div>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🏠 Household Vibe & Hosting Policy</div>' +
+            '<div class="form-group" style="margin-bottom: 10px;">' +
+              '<label style="font-size: 12px;">Household Atmosphere</label>' +
+              '<select id="profHouseholdVibe" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+                '<option value="QUIET_SANCTUARY">Quiet Sanctuary (Focus on restful living, minimal noise)</option>' +
+                '<option value="BALANCED_CASUAL" selected>Balanced & Casual (Friendly & easygoing, occasional chats)</option>' +
+                '<option value="SOCIALLY_ACTIVE">Socially Active (Enjoys hosting, frequent friendly gatherings)</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label style="font-size: 12px;">Guest & Visitor Frequency</label>' +
+              '<select id="profGuestPolicy" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+                '<option value="NEVER">Rarely or Never (No outside overnight visitors)</option>' +
+                '<option value="OCCASIONAL_FRIENDS" selected>Weekends Only (Advance notice preferred)</option>' +
+                '<option value="REGULAR_GUESTS">Anytime (Friends and guests are always welcome)</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">' +
+              '<div style="font-size: 13.5px; font-weight: 700; color: var(--text);">🛡️ Verified Trust Badge</div>' +
+              '<span style="font-size: 11px; background: #E0F2FE; color: #0369A1; font-weight: 800; padding: 2px 8px; border-radius: 10px;">Blue Check</span>' +
+            '</div>' +
+            '<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">' +
+              'Verify with your official Technopark company email or College ID (.edu/.ac.in) for verified badge.' +
+            '</p>' +
+            '<div style="display: flex; gap: 8px;">' +
+              '<input type="text" id="profEmailVerifyInput" placeholder="name@technopark-company.com" style="flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+              '<button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; border-radius: 10px;" onclick="showToast(&apos;Verification link sent to institutional email!&apos;)">' +
+                'Verify' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center;" onclick="saveOptionalProfileDetails()">' +
+            'Save Optional Details ✔' +
+          '</button>' +
+        '</div>' +
+        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">' +
+          '<button class="btn btn-secondary" style="border-radius: 10px; font-size: 13px;" onclick="cyclePersona()">' +
+            'Switch Demo Persona' +
+          '</button>' +
+          '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
+            'Log Out' +
+          '</button>' +
+        '</div>';
+    }
+
+    async function saveOptionalProfileDetails() {
+      const avatarInput = document.getElementById('profAvatarInput');
+      const avatar = avatarInput ? avatarInput.value : '';
+      const vibe = document.getElementById('profHouseholdVibe')?.value || 'BALANCED_CASUAL';
+      const guest = document.getElementById('profGuestPolicy')?.value || 'OCCASIONAL_FRIENDS';
+
+      if (avatar && currentUser) {
+        currentUser.avatar = avatar;
+        updateHeaderUser(currentUser);
+      }
+
+      try {
+        await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            social: {
+              guestFrequency: guest,
+              overnightGuestPolicy: 'SAME_GENDER_ONLY',
+              partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
+              isDealbreaker: false
+            }
+          })
+        });
+        showToast('Optional profile details updated successfully! ✔');
+      } catch (e) {
+        showToast('Profile updated locally.');
+      }
+    }
+
+    // Navigation Switcher
+    function navigateTab(tabName) {
+      if (tabName === 'login') {
+        tabName = 'profile';
+      }
+
+      if (tabName === 'registration') {
+        document.body.classList.add('onboarding-mode');
+      } else {
+        document.body.classList.remove('onboarding-mode');
+      }
+
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.m-nav-item').forEach(b => b.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + tabName);
+      if (targetView) targetView.classList.add('active');
+
+      const dnav = document.getElementById('dnav-' + tabName);
+      if (dnav) dnav.classList.add('active');
+      const mnav = document.getElementById('mnav-' + tabName);
+      if (mnav) mnav.classList.add('active');
+
+      if (tabName === 'discover') renderDeck();
+      if (tabName === 'matches') {
+        closeChatAndBackToMatches();
+        loadMatches();
+      }
+      if (tabName === 'profile') {
+        renderProfileView();
+      }
     }
 
     // App Initialization
@@ -2531,14 +2887,6 @@ export function renderClientAppHtml(): string {
               modality: prof.modality,
               isOnboardingCompleted: prof.isOnboardingCompleted
             };
-            if (!prof.isOnboardingCompleted) {
-              document.body.classList.remove('unauthenticated');
-              document.body.classList.add('onboarding-mode');
-              await startNewRegistration();
-              return;
-            }
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.remove('onboarding-mode');
             updateHeaderUser(currentUser);
             await loadFeed();
             await loadMatches();
@@ -2546,102 +2894,16 @@ export function renderClientAppHtml(): string {
             return;
           }
         } catch (e) {
-          // Token verification failed, fallback to login
+          // Token verification failed, fallback to guest
         }
       }
 
-      // Default: Unauthenticated -> Show Login Gateway
-      document.body.classList.add('unauthenticated');
-      document.body.classList.remove('onboarding-mode');
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      const loginView = document.getElementById('view-login');
-      if (loginView) loginView.classList.add('active');
-    }
-
-    async function loginAsPersona(p) {
-      currentUser = p;
-      updateHeaderUser(p);
-
-      // Authenticate with server
-      await fetch('/api/v1/auth/otp/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: p.phone })
-      });
-      const res = await fetch('/api/v1/auth/otp/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: p.phone, otp: '123456' })
-      });
-      const data = await res.json();
-      currentToken = data.accessToken;
-      localStorage.setItem('buddy_token', currentToken);
-      localStorage.setItem('buddy_phone', p.phone);
-
+      // Guest: Browse Discover Feed without gating
+      currentToken = null;
+      currentUser = null;
+      updateHeaderUser(null);
       await loadFeed();
-      await loadMatches();
-    }
-
-    function updateHeaderUser(p) {
-      document.getElementById('headerUserAvatar').src = p.avatar;
-      document.getElementById('headerUserName').textContent = p.name.split(' ')[0];
-      document.getElementById('myProfAvatar').src = p.avatar;
-      document.getElementById('myProfName').textContent = p.name;
-      document.getElementById('myProfWork').textContent = p.work;
-    }
-
-    function cyclePersona() {
-      const keys = Object.keys(PERSONAS);
-      const currentKey = keys.find(k => PERSONAS[k].id === currentUser.id) || 'adarsh';
-      const nextKey = keys[(keys.indexOf(currentKey) + 1) % keys.length];
-      loginAsPersona(PERSONAS[nextKey]);
-    }
-
-    // Navigation Switcher
-    function navigateTab(tabName) {
-      // Access Control & Auth Gatekeeper
-      if (!currentToken && tabName !== 'login' && tabName !== 'registration') {
-        document.body.classList.add('unauthenticated');
-        document.body.classList.remove('onboarding-mode');
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-        const loginView = document.getElementById('view-login');
-        if (loginView) loginView.classList.add('active');
-        return;
-      }
-
-      if (currentUser && !currentUser.isOnboardingCompleted && tabName !== 'registration') {
-        alert('Please complete registration before accessing the portal.');
-        tabName = 'registration';
-      }
-
-      if (tabName === 'registration') {
-        document.body.classList.remove('unauthenticated');
-        document.body.classList.add('onboarding-mode');
-      } else if (tabName === 'login') {
-        document.body.classList.add('unauthenticated');
-        document.body.classList.remove('onboarding-mode');
-      } else {
-        document.body.classList.remove('unauthenticated');
-        document.body.classList.remove('onboarding-mode');
-      }
-
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.m-nav-item').forEach(b => b.classList.remove('active'));
-
-      const targetView = document.getElementById('view-' + tabName);
-      if (targetView) targetView.classList.add('active');
-
-      const dnav = document.getElementById('dnav-' + tabName);
-      if (dnav) dnav.classList.add('active');
-      const mnav = document.getElementById('mnav-' + tabName);
-      if (mnav) mnav.classList.add('active');
-
-      if (tabName === 'discover') renderDeck();
-      if (tabName === 'matches') {
-        closeChatAndBackToMatches();
-        loadMatches();
-      }
+      navigateTab('discover');
     }
 
     // -------------------------------------------------------------
@@ -2731,9 +2993,8 @@ export function renderClientAppHtml(): string {
     }
 
     function cancelOnboarding() {
-      if (confirm('Exit registration? Your verified phone is saved. You can sign in anytime to complete your profile.')) {
-        handleLogout();
-      }
+      document.body.classList.remove('onboarding-mode');
+      navigateTab('profile');
     }
 
     function goToOnboardingStep(stepNum) {
@@ -2900,19 +3161,24 @@ export function renderClientAppHtml(): string {
     }
 
     function skipAndCompleteRegistration() {
-      document.getElementById('regPhotoUrl').value = '';
+      const photoInput = document.getElementById('regPhotoUrl');
+      if (photoInput) photoInput.value = '';
       completeRegistrationAndLaunch();
     }
 
-    // STEP 12: Complete Registration & Launch
+    function finishMandatoryAndLaunch() {
+      completeRegistrationAndLaunch();
+    }
+
+    // Complete Registration & Launch
     async function completeRegistrationAndLaunch() {
       const name = document.getElementById('regName').value.trim() || 'Buddy User';
       const gender = document.getElementById('regGender').value;
       const prefGender = document.getElementById('regPrefGender').value;
-      const birthDate = document.getElementById('regBirthDate').value || '1998-05-15';
-      const occupation = document.getElementById('regOccupation').value.trim() || 'Software Professional';
-      const bio = document.getElementById('regBio').value.trim();
-      const rawSuburbs = document.getElementById('regSuburbs').value;
+      const birthDate = (document.getElementById('regBirthDate') && document.getElementById('regBirthDate').value) || '1998-05-15';
+      const occupation = (document.getElementById('regOccupation') && document.getElementById('regOccupation').value.trim()) || 'Software Professional';
+      const bio = (document.getElementById('regBio') && document.getElementById('regBio').value.trim()) || '';
+      const rawSuburbs = (document.getElementById('regSuburbs') && document.getElementById('regSuburbs').value) || 'KAZHAKKOOTTAM';
       const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
       const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
 
@@ -2921,9 +3187,9 @@ export function renderClientAppHtml(): string {
       const diet = document.getElementById('regDiet').value;
       const smoke = document.getElementById('regSmoke').value;
       const vibe = document.getElementById('regVibe') ? document.getElementById('regVibe').value : 'BALANCED_CASUAL';
-      const photoUrl = document.getElementById('regPhotoUrl').value.trim();
+      const photoUrl = document.getElementById('regPhotoUrl') ? document.getElementById('regPhotoUrl').value.trim() : '';
 
-      // 1. Save Full Profile to Backend
+      // 1. Save Full Profile to Backend with isOnboardingCompleted: true
       try {
         const profRes = await fetch('/api/v1/profiles/me', {
           method: 'PUT',
@@ -2943,7 +3209,8 @@ export function renderClientAppHtml(): string {
             minBudget: 3000,
             maxBudget: maxBudget,
             moveInFlexibility: 'WITHIN_1_MONTH',
-            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM']
+            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM'],
+            isOnboardingCompleted: true
           })
         });
         if (!profRes.ok) {
@@ -2987,18 +3254,18 @@ export function renderClientAppHtml(): string {
               sleepPattern: sleep,
               shiftSchedule: 'NORMAL_DAY',
               noiseSensitivity: 'LIGHT_SLEEPER',
-              isDealbreaker: document.getElementById('dbSleep').checked
+              isDealbreaker: document.getElementById('dbSleep') ? document.getElementById('dbSleep').checked : false
             },
             cleanliness: {
               cleanlinessLevel: clean,
               kitchenSinkRule: 'IMMEDIATE_WASH',
               maidPreference: 'OPEN_TO_MAID',
-              isDealbreaker: document.getElementById('dbClean').checked
+              isDealbreaker: document.getElementById('dbClean') ? document.getElementById('dbClean').checked : false
             },
             dietary: {
               dietType: diet,
               kitchenPolicy: 'NO_RESTRICTIONS',
-              isDealbreaker: document.getElementById('dbDiet').checked
+              isDealbreaker: document.getElementById('dbDiet') ? document.getElementById('dbDiet').checked : false
             },
             social: {
               guestFrequency: vibe === 'QUIET_SANCTUARY' ? 'NEVER' : vibe === 'SOCIALLY_ACTIVE' ? 'REGULAR_GUESTS' : 'OCCASIONAL_FRIENDS',
@@ -3009,7 +3276,7 @@ export function renderClientAppHtml(): string {
             substances: {
               smokingHabit: smoke,
               alcoholHabit: 'TEETOTALER',
-              isDealbreaker: document.getElementById('dbSmoke').checked
+              isDealbreaker: document.getElementById('dbSmoke') ? document.getElementById('dbSmoke').checked : false
             },
             financial: {
               rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
@@ -3027,13 +3294,43 @@ export function renderClientAppHtml(): string {
         });
       } catch (e) {}
 
-      alert('🎉 Profile registration complete! Entering your personalized Buddy discovery feed.');
-      if (currentUser) currentUser.isOnboardingCompleted = true;
-      document.body.classList.remove('unauthenticated');
+      if (currentUser) {
+        currentUser.name = name;
+        currentUser.isOnboardingCompleted = true;
+        if (photoUrl) currentUser.avatar = photoUrl;
+      }
+
       document.body.classList.remove('onboarding-mode');
+      updateHeaderUser(currentUser);
       await loadUserProfile();
       await loadFeed();
       await loadMatches();
+
+      // Check for deferred interest / like!
+      if (pendingInterestCandidate) {
+        const cand = pendingInterestCandidate;
+        pendingInterestCandidate = null;
+        try {
+          const res = await fetch('/api/v1/discovery/swipe', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ candidateUserId: cand.userId, action: 'LIKE' })
+          });
+          const data = await res.json();
+          navigateTab('discover');
+          if (data && (data.isMutualMatch || data.isMatch)) {
+            triggerCelebration(cand);
+          } else {
+            showToast('Interest sent to ' + cand.displayName + '! 🎉');
+          }
+          return;
+        } catch (e) {}
+      }
+
+      showToast('🎉 Profile registration complete! Discovery feed unlocked.');
       navigateTab('discover');
     }
 
@@ -3042,9 +3339,11 @@ export function renderClientAppHtml(): string {
     // -------------------------------------------------------------
     async function loadFeed() {
       try {
-        const res = await fetch('/api/v1/discovery/feed?limit=10', {
-          headers: { 'Authorization': 'Bearer ' + currentToken }
-        });
+        const headers = {};
+        if (currentToken) {
+          headers['Authorization'] = 'Bearer ' + currentToken;
+        }
+        const res = await fetch('/api/v1/discovery/feed?limit=10', { headers });
         const data = await res.json();
         candidates = data.cards || [];
         currentCardIndex = 0;
@@ -3173,7 +3472,32 @@ export function renderClientAppHtml(): string {
 
     async function executeSwipeAction(cardEl, action) {
       const candidate = candidates[currentCardIndex];
-      const dir = (action === 'LIKE') ? 1 : -1;
+      if (!candidate) return;
+
+      // 1. Guest Check: Must authenticate before performing interactions
+      if (!currentToken) {
+        cardEl.style.transition = 'transform 0.25s ease';
+        cardEl.style.transform = 'translate(0px, 0px) rotate(0deg)';
+        cardEl.style.opacity = '1';
+        showGuestPromptModal(action === 'LIKE' ? 'like' : 'pass');
+        return;
+      }
+
+      // 2. Incomplete Registration Check:
+      // PASS is permitted; LIKE / expressing positive interest requires mandatory registration completion
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        if (action === 'LIKE' || action === 'SUPERLIKE') {
+          cardEl.style.transition = 'transform 0.25s ease';
+          cardEl.style.transform = 'translate(0px, 0px) rotate(0deg)';
+          cardEl.style.opacity = '1';
+          pendingInterestCandidate = candidate;
+          showIncompleteRegModal(candidate.displayName);
+          return;
+        }
+        // action === 'PASS' continues below (allowed for incomplete users)
+      }
+
+      const dir = (action === 'LIKE' || action === 'SUPERLIKE') ? 1 : -1;
 
       cardEl.style.transition = 'transform 0.35s ease-out, opacity 0.3s';
       cardEl.style.transform = 'translate(' + (dir * 500) + 'px, 40px) rotate(' + (dir * 30) + 'deg)';
@@ -3265,6 +3589,13 @@ export function renderClientAppHtml(): string {
     }
 
     async function loadMatches() {
+      if (!currentToken || (currentUser && !currentUser.isOnboardingCompleted)) {
+        allLoadedMatches = [];
+        const badge = document.getElementById('headerMatchesBadge');
+        if (badge) badge.style.display = 'none';
+        renderFilteredMatches();
+        return;
+      }
       try {
         const res = await fetch('/api/v1/matches', {
           headers: { 'Authorization': 'Bearer ' + currentToken }
@@ -3273,14 +3604,18 @@ export function renderClientAppHtml(): string {
         allLoadedMatches = data.matches || [];
 
         const badge = document.getElementById('headerMatchesBadge');
-        if (badge) badge.textContent = allLoadedMatches.length;
+        if (badge) {
+          badge.textContent = allLoadedMatches.length;
+          badge.style.display = allLoadedMatches.length > 0 ? 'inline-block' : 'none';
+        }
         
         const pill = document.getElementById('matchesHeaderPill');
         if (pill) pill.textContent = allLoadedMatches.length + ' Connection' + (allLoadedMatches.length === 1 ? '' : 's');
 
         renderFilteredMatches();
       } catch (e) {
-        // Fallback
+        allLoadedMatches = [];
+        renderFilteredMatches();
       }
     }
 
@@ -3323,6 +3658,36 @@ export function renderClientAppHtml(): string {
     function renderDesktopMatches(matches) {
       const grid = document.getElementById('desktopMatchGrid');
       if (!grid) return;
+
+      if (!currentToken) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 20px; padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">' +
+            '<div style="font-size: 48px;">🔒</div>' +
+            '<h3 style="font-size: 20px; font-weight: 800;">Sign In to View Matches</h3>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 360px; line-height: 1.5;">' +
+              'Sign in or create an account to view your matches and chat with compatible flatmates.' +
+            '</p>' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;profile&apos;)" style="border-radius: 20px;">' +
+              'Sign In / Register →' +
+            '</button>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">' +
+            '<div style="font-size: 48px;">✨</div>' +
+            '<h3 style="font-size: 20px; font-weight: 800;">Complete Registration to Unlock Matching</h3>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 380px; line-height: 1.5;">' +
+              'Finish your quick mandatory profile (1 min) so potential flatmates can match and chat with you.' +
+            '</p>' +
+            '<button class="btn btn-primary" onclick="startNewRegistration()" style="border-radius: 20px;">' +
+              'Complete Registration (1 Min) →' +
+            '</button>' +
+          '</div>';
+        return;
+      }
 
       if (matches.length === 0) {
         grid.innerHTML = 
@@ -3391,6 +3756,28 @@ export function renderClientAppHtml(): string {
       const tray = document.getElementById('mobileNewMatchesTray');
       const list = document.getElementById('mobileConvList');
       if (!tray || !list) return;
+
+      if (!currentToken) {
+        tray.style.display = 'none';
+        list.innerHTML = 
+          '<div style="padding: 40px 16px; text-align: center;">' +
+            '<div style="font-size: 36px; margin-bottom: 8px;">🔒</div>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">Sign in to view matches and chat.</p>' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;profile&apos;)" style="border-radius: 20px; padding: 8px 18px; font-size: 13px;">Sign In →</button>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        tray.style.display = 'none';
+        list.innerHTML = 
+          '<div style="padding: 40px 16px; text-align: center;">' +
+            '<div style="font-size: 36px; margin-bottom: 8px;">✨</div>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">Complete registration to unlock matching & chat.</p>' +
+            '<button class="btn btn-primary" onclick="startNewRegistration()" style="border-radius: 20px; padding: 8px 18px; font-size: 13px;">Complete Registration (1 Min) →</button>' +
+          '</div>';
+        return;
+      }
 
       if (matches.length === 0) {
         tray.style.display = 'none';
@@ -3486,8 +3873,17 @@ export function renderClientAppHtml(): string {
 
     function sendChatMessage() {
       const input = document.getElementById('chatInputBox');
-      const text = input.value.trim();
+      const text = input ? input.value.trim() : '';
       if (!text) return;
+
+      if (!currentToken) {
+        showGuestPromptModal('message');
+        return;
+      }
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        showToast('Please complete registration to send messages.');
+        return;
+      }
 
       const stream = document.getElementById('msgStream');
       const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

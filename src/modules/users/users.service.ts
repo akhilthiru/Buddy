@@ -79,6 +79,9 @@ export class UsersService {
 
     let profile = db.userProfiles.get(userId);
     const now = new Date();
+    const isCompleted = typeof req.isOnboardingCompleted === 'boolean'
+      ? req.isOnboardingCompleted
+      : true;
 
     if (!profile) {
       const existingVerification = db.institutionVerifications.find(
@@ -105,7 +108,7 @@ export class UsersService {
         maxBudget: req.maxBudget,
         moveInFlexibility: req.moveInFlexibility,
         verificationBadge: initialBadge,
-        isOnboardingCompleted: true,
+        isOnboardingCompleted: isCompleted,
         preferredSuburbs: req.preferredSuburbs,
         photos: [],
         createdAt: now,
@@ -125,7 +128,7 @@ export class UsersService {
       profile.maxBudget = req.maxBudget;
       profile.moveInFlexibility = req.moveInFlexibility;
       profile.preferredSuburbs = req.preferredSuburbs;
-      profile.isOnboardingCompleted = true;
+      profile.isOnboardingCompleted = isCompleted;
       profile.updatedAt = now;
     }
 
