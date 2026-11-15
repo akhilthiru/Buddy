@@ -166,39 +166,50 @@ export function renderClientAppHtml(): string {
     .persona-badge span { font-size: 13px; font-weight: 700; color: var(--text); }
 
     /* Auth & Access Control Visibility State */
-    body.unauthenticated .desktop-nav,
-    body.unauthenticated .header-actions,
+    body.unauthenticated .app-header,
     body.unauthenticated .mobile-bottom-nav,
-    body.onboarding-mode .desktop-nav,
-    body.onboarding-mode .header-actions,
+    body.onboarding-mode .app-header,
     body.onboarding-mode .mobile-bottom-nav {
       display: none !important;
     }
 
+    body.unauthenticated, body.onboarding-mode {
+      background: #F8FAFC;
+    }
+    body.unauthenticated .app-main,
+    body.onboarding-mode .app-main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
     /* Login & Authentication Gateway Card */
     .login-container {
-      max-width: 460px;
+      max-width: 440px;
       width: 100%;
-      margin: 30px auto;
+      margin: 0 auto;
       background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 36px 32px;
-      box-shadow: var(--shadow-xl);
+      padding: 36px 30px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.07), 0 0 1px 1px rgba(0,0,0,0.04);
       text-align: center;
     }
     .login-brand-icon {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 900;
-      margin: 0 auto 16px auto;
+      margin: 0 auto 14px auto;
       box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25);
     }
     .login-toggle-tabs {
@@ -563,10 +574,83 @@ export function renderClientAppHtml(): string {
       cursor: pointer;
     }
 
+    /* Bumble-style Option Selection Cards */
+    .option-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .option-select-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .option-select-card:hover {
+      border-color: #CBD5E1;
+      background: #F8FAFC;
+    }
+    .option-select-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-50);
+      box-shadow: 0 0 0 1.5px var(--primary);
+    }
+    .option-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .option-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .option-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .option-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+    .option-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #CBD5E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      background: white;
+    }
+    .option-select-card.selected .option-radio {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .option-select-card.selected .option-radio::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FFFFFF;
+    }
+
     /* Buttons */
     .btn {
       padding: 12px 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -583,7 +667,27 @@ export function renderClientAppHtml(): string {
     .btn-secondary:hover { background: #CBD5E1; }
     .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .wizard-actions { display: flex; justify-content: space-between; margin-top: 10px; }
+    .wizard-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .wizard-actions .btn {
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 13.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .wizard-actions .btn-primary {
+      flex: 1;
+      justify-content: center;
+    }
+    .wizard-actions .btn-secondary {
+      flex-shrink: 0;
+    }
 
     /* -------------------------------------------------------------
        SCREEN: DISCOVERY STAGE (RESPONSIVE FLUID LAYOUT)
@@ -1267,7 +1371,7 @@ export function renderClientAppHtml(): string {
     .celeb-avatar-right { margin-left: -24px; }
   </style>
 </head>
-<body>
+<body class="unauthenticated">
 
   <!-- TOP APPLICATION HEADER (FLUID RESPONSIVE) -->
   <header class="app-header">
@@ -1325,10 +1429,10 @@ export function renderClientAppHtml(): string {
     <section id="view-login" class="view-panel active">
       <div class="login-container">
         <div class="login-brand-icon">🤝</div>
-        <h1 style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">
+        <h1 id="loginTitle" style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">
           Welcome to Buddy
         </h1>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+        <p id="loginDesc" style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
           Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.
         </p>
 
@@ -1404,7 +1508,7 @@ export function renderClientAppHtml(): string {
     <!-- =========================================================
          VIEW 1: REGISTRATION & ONBOARDING WIZARD (CONVERSATIONAL BUMBLE-STYLE)
          ========================================================= -->
-    <section id="view-registration" class="view-panel active">
+    <section id="view-registration" class="view-panel">
       <div class="wizard-container">
         
         <!-- Onboarding Top Bar with Back Button & Step Counter -->
@@ -1412,8 +1516,8 @@ export function renderClientAppHtml(): string {
           <button class="onboarding-back-btn" id="obBackBtn" onclick="goBackOnboardingStep()" style="display: none;">
             ← Back
           </button>
-          <span class="onboarding-step-counter" id="obStepCounter">Step 1 of 12</span>
-          <button class="onboarding-exit-btn" onclick="handleLogout()" title="Cancel and Return to Sign In">✕ Exit</button>
+          <span class="onboarding-step-counter" id="obStepCounter">Question 1 of 12</span>
+          <button class="onboarding-exit-btn" onclick="cancelOnboarding()" title="Exit and Return to Sign In">✕ Exit</button>
         </div>
 
         <!-- 5 Subsections Progress Bar with Completion Ticks -->
@@ -1421,11 +1525,11 @@ export function renderClientAppHtml(): string {
           <div class="progress-fill" id="wizardProgressFill"></div>
           <div class="step-node active" id="node-step-1">
             <div class="step-circle" id="circle-step-1">1</div>
-            <span class="step-label">Verify</span>
+            <span class="step-label">Basics</span>
           </div>
           <div class="step-node" id="node-step-2">
             <div class="step-circle" id="circle-step-2">2</div>
-            <span class="step-label">Basics</span>
+            <span class="step-label">About</span>
           </div>
           <div class="step-node" id="node-step-3">
             <div class="step-circle" id="circle-step-3">3</div>
@@ -1441,175 +1545,172 @@ export function renderClientAppHtml(): string {
           </div>
         </div>
 
-        <!-- SUBSECTION 1: MANDATORY VERIFICATION -->
-        <!-- STEP 1: MOBILE OTP AUTHENTICATION -->
+        <!-- SUBSECTION 1: BASICS & IDENTITY -->
+        <!-- STEP 1: DISPLAY NAME -->
         <div class="wizard-step active" id="reg-step-1">
           <div class="step-title-group">
-            <h2>Welcome to Buddy 👋</h2>
-            <p>Person-first flatmate & roommate discovery in Thiruvananthapuram. Let's begin by verifying your mobile number.</p>
+            <h2>What should we call you? 👋</h2>
+            <p>Your name is how potential flatmates and roommates will know you on Buddy.</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
-            <label>Mobile Phone Number</label>
-            <input type="text" id="regPhone" value="+919876543210" placeholder="+91 98765 43210">
-          </div>
-
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="autofillPhone('+919876543210')">
-              Use Test Phone (+91 9876543210)
-            </button>
-          </div>
-
-          <div id="otpInputGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 10px;">
-            <label style="font-size: 13.5px; font-weight: 700;">Enter 6-Digit Verification Code</label>
-            <input type="text" id="regOtp" value="123456" placeholder="123456" maxlength="6">
-            <p style="font-size: 11.5px; color: var(--primary-dark);">✔ Universal dev OTP code is <code>123456</code></p>
-          </div>
-
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <div></div>
-            <button class="btn btn-primary" id="btnStep1" onclick="handleStep1Auth()">
-              Request OTP Code →
-            </button>
-          </div>
-        </div>
-
-        <!-- SUBSECTION 2: BASIC IDENTITY -->
-        <!-- STEP 2: DISPLAY NAME -->
-        <div class="wizard-step" id="reg-step-2">
-          <div class="step-title-group">
-            <h2>What should we call you?</h2>
-            <p>Your name is how potential roommates and flatmates will know you on Buddy.</p>
-          </div>
-
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Your Full Name</label>
-            <input type="text" id="regName" value="Kiran Kumar" placeholder="e.g. Kiran Kumar" onkeypress="if(event.key==='Enter') goToOnboardingStep(3)">
+            <input type="text" id="regName" value="Kiran Kumar" placeholder="e.g. Kiran Kumar" onkeypress="if(event.key==='Enter') goToOnboardingStep(2)">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(3)">Next: Gender →</button>
+          <div class="wizard-actions">
+            <div></div>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(2)">Next: Preferences →</button>
           </div>
         </div>
 
-        <!-- STEP 3: GENDER & PREFERRED GENDER -->
-        <div class="wizard-step" id="reg-step-3">
+        <!-- STEP 2: GENDER & PREFERRED GENDER -->
+        <div class="wizard-step" id="reg-step-2">
           <div class="step-title-group">
             <h2>Gender & Living Preferences</h2>
             <p>Tell us your gender and who you are comfortable sharing an apartment or flat with.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>I identify as</label>
-            <select id="regGender">
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="NON_BINARY">Non-Binary / Other</option>
-            </select>
+            <input type="hidden" id="regGender" value="MALE">
+            <div class="option-cards-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div class="option-select-card selected" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="MALE" onclick="pickOptionCard('regGender', 'MALE', this)">
+                <div class="option-title">👨 Male</div>
+              </div>
+              <div class="option-select-card" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="FEMALE" onclick="pickOptionCard('regGender', 'FEMALE', this)">
+                <div class="option-title">👩 Female</div>
+              </div>
+              <div class="option-select-card" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="NON_BINARY" onclick="pickOptionCard('regGender', 'NON_BINARY', this)">
+                <div class="option-title">🧑 Other</div>
+              </div>
+            </div>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 16px;">
             <label>I prefer living with</label>
-            <select id="regPrefGender">
-              <option value="ANY">Any Gender (Open-minded co-living)</option>
-              <option value="MALE">Male Flatmates Only</option>
-              <option value="FEMALE">Female Flatmates Only</option>
-            </select>
+            <input type="hidden" id="regPrefGender" value="ANY">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="ANY" onclick="pickOptionCard('regPrefGender', 'ANY', this)">
+                <div class="option-icon">🌈</div>
+                <div class="option-content">
+                  <div class="option-title">Any Gender</div>
+                  <div class="option-desc">Open-minded co-living environment</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="MALE" onclick="pickOptionCard('regPrefGender', 'MALE', this)">
+                <div class="option-icon">👨</div>
+                <div class="option-content">
+                  <div class="option-title">Male Flatmates Only</div>
+                  <div class="option-desc">All-male flat arrangement</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="FEMALE" onclick="pickOptionCard('regPrefGender', 'FEMALE', this)">
+                <div class="option-icon">👩</div>
+                <div class="option-content">
+                  <div class="option-title">Female Flatmates Only</div>
+                  <div class="option-desc">All-female flat arrangement</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(4)">Next: Work & Age →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(3)">Next: Profile Info →</button>
           </div>
         </div>
 
-        <!-- STEP 4: AGE & OCCUPATION -->
-        <div class="wizard-step" id="reg-step-4">
+        <!-- SUBSECTION 2: ABOUT -->
+        <!-- STEP 3: AGE & OCCUPATION -->
+        <div class="wizard-step" id="reg-step-3">
           <div class="step-title-group">
             <h2>When's your birthday & what do you do?</h2>
             <p>Age verification ensures a safe 18+ community in Trivandrum.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Date of Birth</label>
             <input type="date" id="regBirthDate" value="1998-05-15">
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 12px;">
             <label>Occupation & Company or College</label>
-            <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software" placeholder="e.g. Software Engineer @ Infosys, Student @ CET">
+            <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software" placeholder="e.g. Software Engineer @ Infosys, Student @ CET" onkeypress="if(event.key==='Enter') goToOnboardingStep(4)">
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 12px;">
             <label>Short Bio (Optional)</label>
             <textarea id="regBio" rows="2" placeholder="Tell potential flatmates a little about your routine and vibe...">Techie looking for a relaxed, clean flatmate near Technopark Phase I. Non-smoker, enjoys football on weekends and quiet evenings.</textarea>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep4SaveBasics()">Save & Continue →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(4)">Next: Housing →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 3: HOUSING SITUATION -->
-        <!-- STEP 5: HOUSING MODALITY -->
-        <div class="wizard-step" id="reg-step-5">
+        <!-- STEP 4: HOUSING MODALITY -->
+        <div class="wizard-step" id="reg-step-4">
           <div class="step-title-group">
             <h2>What's your current housing situation?</h2>
             <p>In Buddy, accommodation is completely optional! Choose what fits your status:</p>
           </div>
 
-          <div class="modality-cards-grid" style="margin-top: 8px;">
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_1', this)">
+          <div class="modality-cards-grid" style="margin-top: 12px;">
+            <div class="modality-select-card" data-modality="MODALITY_1" onclick="pickModalityCard('MODALITY_1', this)">
               <div class="modality-icon">🏠</div>
               <div class="modality-title">Have a Room</div>
               <div class="modality-desc">I have a flat/room in Trivandrum and am searching for a flatmate to move in.</div>
             </div>
 
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_2', this)">
+            <div class="modality-select-card" data-modality="MODALITY_2" onclick="pickModalityCard('MODALITY_2', this)">
               <div class="modality-icon">🛏</div>
               <div class="modality-title">Need a Room</div>
               <div class="modality-desc">I am actively looking for an existing room in a flat shared with compatible people.</div>
             </div>
 
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_3', this)">
+            <div class="modality-select-card" data-modality="MODALITY_3" onclick="pickModalityCard('MODALITY_3', this)">
               <div class="modality-icon">🔄</div>
               <div class="modality-title">Want to Relocate</div>
               <div class="modality-desc">Currently renting, but want to relocate to a new area with a compatible flatmate.</div>
             </div>
 
-            <div class="modality-select-card selected" onclick="pickModalityCard('MODALITY_4', this)">
+            <div class="modality-select-card selected" data-modality="MODALITY_4" onclick="pickModalityCard('MODALITY_4', this)">
               <div class="modality-icon">🤝</div>
               <div class="modality-title">Team-Up First</div>
               <div class="modality-desc">Person-first! Find a compatible flatmate first, then flat-hunt together in TVM.</div>
             </div>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(6)">Next: Suburbs & Budget →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(5)">Next: Suburbs →</button>
           </div>
         </div>
 
-        <!-- STEP 6: LOCATION & BUDGET -->
-        <div class="wizard-step" id="reg-step-6">
+        <!-- STEP 5: LOCATION & BUDGET -->
+        <div class="wizard-step" id="reg-step-5">
           <div class="step-title-group">
             <h2>Where & what budget?</h2>
             <p>Select your preferred Trivandrum neighborhoods and maximum monthly budget per head.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Select Preferred Suburbs (Tap to select)</label>
             <div class="suburb-pills-wrap" id="suburbPillsWrap">
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('KAZHAKKOOTTAM', this)">Kazhakkoottam</span>
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('KARIAVATTOM', this)">Kariavattom</span>
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('SREEKARYAM', this)">Sreekaryam</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('ULLOOR', this)">Ulloor</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('PATTOM', this)">Pattom</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('KOWDIAR', this)">Kowdiar</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('VELLAYAMBALAM', this)">Vellayambalam</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('MANACAUD', this)">Manacaud</span>
+              <span class="suburb-pill selected" data-suburb="KAZHAKKOOTTAM" onclick="toggleSuburbPill('KAZHAKKOOTTAM', this)">Kazhakkoottam</span>
+              <span class="suburb-pill selected" data-suburb="KARIAVATTOM" onclick="toggleSuburbPill('KARIAVATTOM', this)">Kariavattom</span>
+              <span class="suburb-pill selected" data-suburb="SREEKARYAM" onclick="toggleSuburbPill('SREEKARYAM', this)">Sreekaryam</span>
+              <span class="suburb-pill" data-suburb="ULLOOR" onclick="toggleSuburbPill('ULLOOR', this)">Ulloor</span>
+              <span class="suburb-pill" data-suburb="PATTOM" onclick="toggleSuburbPill('PATTOM', this)">Pattom</span>
+              <span class="suburb-pill" data-suburb="KOWDIAR" onclick="toggleSuburbPill('KOWDIAR', this)">Kowdiar</span>
+              <span class="suburb-pill" data-suburb="VELLAYAMBALAM" onclick="toggleSuburbPill('VELLAYAMBALAM', this)">Vellayambalam</span>
+              <span class="suburb-pill" data-suburb="MANACAUD" onclick="toggleSuburbPill('MANACAUD', this)">Manacaud</span>
             </div>
             <input type="hidden" id="regSuburbs" value="KAZHAKKOOTTAM, KARIAVATTOM, SREEKARYAM">
           </div>
@@ -1619,149 +1720,302 @@ export function renderClientAppHtml(): string {
             <input type="number" id="regMaxBudget" value="9500" min="2000" step="500">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep6SaveHousing()">Next: Lifestyle Rhythms →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(6)">Next: Daily Rhythm →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 4: CORE LIFESTYLE -->
-        <!-- STEP 7: SLEEP RHYTHM -->
-        <div class="wizard-step" id="reg-step-7">
+        <!-- STEP 6: SLEEP RHYTHM -->
+        <div class="wizard-step" id="reg-step-6">
           <div class="step-title-group">
             <h2>🌙 Sleep Schedule & Daily Rhythm</h2>
             <p>Daily routines impact living harmony the most. When are you awake and sleeping?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Sleep Schedule</label>
-            <select id="regSleep">
-              <option value="EARLY_BIRD">Early Bird (Sleep by 10:30 PM, Awake by 6:30 AM)</option>
-              <option value="NIGHT_OWL">Night Owl (Sleep 1:00 AM+, Awake 9:00 AM+)</option>
-              <option value="FLEXIBLE">Flexible Routine</option>
-            </select>
+            <input type="hidden" id="regSleep" value="EARLY_BIRD">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="EARLY_BIRD" onclick="pickOptionCard('regSleep', 'EARLY_BIRD', this)">
+                <div class="option-icon">🌅</div>
+                <div class="option-content">
+                  <div class="option-title">Early Bird</div>
+                  <div class="option-desc">Sleep by 10:30 PM, awake by 6:30 AM</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="NIGHT_OWL" onclick="pickOptionCard('regSleep', 'NIGHT_OWL', this)">
+                <div class="option-icon">🦉</div>
+                <div class="option-content">
+                  <div class="option-title">Night Owl</div>
+                  <div class="option-desc">Sleep 1:00 AM+, awake 9:00 AM+</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="FLEXIBLE" onclick="pickOptionCard('regSleep', 'FLEXIBLE', this)">
+                <div class="option-icon">⚡</div>
+                <div class="option-content">
+                  <div class="option-title">Flexible Routine</div>
+                  <div class="option-desc">Adapts to work shifts and weekend schedules</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
-              <input type="checkbox" id="dbSleep" checked> Strict Dealbreaker (Do not match me with opposing sleep patterns)
+              <input type="checkbox" id="dbSleep" checked> Strict Dealbreaker (Opposing sleep patterns filtered)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(8)">Next: Cleanliness →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(7)">Next: Cleanliness →</button>
           </div>
         </div>
 
-        <!-- STEP 8: CLEANLINESS -->
-        <div class="wizard-step" id="reg-step-8">
+        <!-- STEP 7: CLEANLINESS -->
+        <div class="wizard-step" id="reg-step-7">
           <div class="step-title-group">
             <h2>🧹 Cleanliness & Kitchen Sink Standards</h2>
             <p>How clean do you keep your common areas and kitchen sink?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Cleanliness Level</label>
-            <select id="regClean">
-              <option value="METICULOUS">Meticulous (Dishes washed immediately, spotless counters)</option>
-              <option value="MODERATE">Moderate (Cleaned by end of day)</option>
-              <option value="RELAXED">Relaxed (Weekly cleanings)</option>
-            </select>
+            <input type="hidden" id="regClean" value="METICULOUS">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="METICULOUS" onclick="pickOptionCard('regClean', 'METICULOUS', this)">
+                <div class="option-icon">✨</div>
+                <div class="option-content">
+                  <div class="option-title">Meticulous</div>
+                  <div class="option-desc">Dishes washed immediately, spotless common spaces</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="MODERATE" onclick="pickOptionCard('regClean', 'MODERATE', this)">
+                <div class="option-icon">🧼</div>
+                <div class="option-content">
+                  <div class="option-title">Moderate</div>
+                  <div class="option-desc">Cleaned daily, tidy by end of day</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="RELAXED" onclick="pickOptionCard('regClean', 'RELAXED', this)">
+                <div class="option-icon">🛋️</div>
+                <div class="option-content">
+                  <div class="option-title">Relaxed</div>
+                  <div class="option-desc">Casual living, scheduled weekly cleanings</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbClean" checked> Strict Dealbreaker (Cleanliness level must align)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(9)">Next: Dietary Policy →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(8)">Next: Dietary Policy →</button>
           </div>
         </div>
 
-        <!-- STEP 9: DIETARY POLICY -->
-        <div class="wizard-step" id="reg-step-9">
+        <!-- STEP 8: DIETARY POLICY -->
+        <div class="wizard-step" id="reg-step-8">
           <div class="step-title-group">
             <h2>🍲 Food & Kitchen Sharing Policy</h2>
             <p>Do you cook non-veg, require a pure vegetarian kitchen, or eat eggs?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Dietary Type</label>
-            <select id="regDiet">
-              <option value="NON_VEGETARIAN">Non-Vegetarian (Cooking non-veg at home is fine)</option>
-              <option value="STRICT_VEGETARIAN">Strict Vegetarian (Requires veg-only kitchen)</option>
-              <option value="EGGETARIAN">Eggetarian</option>
-            </select>
+            <input type="hidden" id="regDiet" value="NON_VEGETARIAN">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="NON_VEGETARIAN" onclick="pickOptionCard('regDiet', 'NON_VEGETARIAN', this)">
+                <div class="option-icon">🍗</div>
+                <div class="option-content">
+                  <div class="option-title">Non-Vegetarian</div>
+                  <div class="option-desc">Cooking meat & non-veg at home is completely fine</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="STRICT_VEGETARIAN" onclick="pickOptionCard('regDiet', 'STRICT_VEGETARIAN', this)">
+                <div class="option-icon">🥦</div>
+                <div class="option-content">
+                  <div class="option-title">Strict Vegetarian</div>
+                  <div class="option-desc">Requires pure veg-only kitchen environment</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="EGGETARIAN" onclick="pickOptionCard('regDiet', 'EGGETARIAN', this)">
+                <div class="option-icon">🍳</div>
+                <div class="option-content">
+                  <div class="option-title">Eggetarian</div>
+                  <div class="option-desc">Vegetarian diet with eggs allowed in kitchen</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbDiet"> Strict Dealbreaker (Strict veg-only kitchen policy)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(10)">Next: Smoking & Substances →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(9)">Next: Smoking Habits →</button>
           </div>
         </div>
 
-        <!-- STEP 10: SMOKING & SUBSTANCES -->
-        <div class="wizard-step" id="reg-step-10">
+        <!-- STEP 9: SMOKING & SUBSTANCES -->
+        <div class="wizard-step" id="reg-step-9">
           <div class="step-title-group">
             <h2>🚭 Smoking & Substance Habits</h2>
             <p>Smoke-free living is an important boundary for many roommates.</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Smoking Preference</label>
-            <select id="regSmoke">
-              <option value="NON_SMOKER_STRICT">Strict Non-Smoker (Zero smoking in flat or balcony)</option>
-              <option value="BALCONY_ONLY">Balcony Only (Smoking outside on balcony only)</option>
-              <option value="SMOKER">Smoker Friendly</option>
-            </select>
+            <input type="hidden" id="regSmoke" value="NON_SMOKER_STRICT">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="NON_SMOKER_STRICT" onclick="pickOptionCard('regSmoke', 'NON_SMOKER_STRICT', this)">
+                <div class="option-icon">🚭</div>
+                <div class="option-content">
+                  <div class="option-title">Strict Non-Smoker</div>
+                  <div class="option-desc">Zero smoking permitted inside flat or on balcony</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="BALCONY_ONLY" onclick="pickOptionCard('regSmoke', 'BALCONY_ONLY', this)">
+                <div class="option-icon">🌿</div>
+                <div class="option-content">
+                  <div class="option-title">Balcony Only</div>
+                  <div class="option-desc">Smoking permitted outside on open balcony only</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="SMOKER" onclick="pickOptionCard('regSmoke', 'SMOKER', this)">
+                <div class="option-icon">💨</div>
+                <div class="option-content">
+                  <div class="option-title">Smoker Friendly</div>
+                  <div class="option-desc">Comfortable sharing with casual smokers</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbSmoke" checked> Strict Dealbreaker (Strict non-smoker requirement)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
+            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(10)">Next: Household Vibe →</button>
+          </div>
+        </div>
+
+        <!-- STEP 10: HOUSEHOLD VIBE & HOSTING (ENHANCEMENT 5) -->
+        <div class="wizard-step" id="reg-step-10">
+          <div class="step-title-group">
+            <h2>🎉 Household Vibe & Hosting Preferences</h2>
+            <p>Do you prefer a tranquil retreat with minimal guests, or a socially active home with friends over?</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label>Household Hosting & Vibe</label>
+            <input type="hidden" id="regVibe" value="BALANCED_CASUAL">
+            <div class="option-cards-list">
+              <div class="option-select-card" data-val="QUIET_SANCTUARY" onclick="pickOptionCard('regVibe', 'QUIET_SANCTUARY', this)">
+                <div class="option-icon">🧘</div>
+                <div class="option-content">
+                  <div class="option-title">Quiet Sanctuary</div>
+                  <div class="option-desc">Tranquil, peaceful retreat with minimal or no guests</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card selected" data-val="BALANCED_CASUAL" onclick="pickOptionCard('regVibe', 'BALANCED_CASUAL', this)">
+                <div class="option-icon">⚖️</div>
+                <div class="option-content">
+                  <div class="option-title">Balanced & Casual</div>
+                  <div class="option-desc">Quiet on workdays, occasional friends over with notice</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="SOCIALLY_ACTIVE" onclick="pickOptionCard('regVibe', 'SOCIALLY_ACTIVE', this)">
+                <div class="option-icon">🎉</div>
+                <div class="option-content">
+                  <div class="option-title">Socially Active</div>
+                  <div class="option-desc">Loves hosting friends, casual dinners & weekend gatherings</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbVibe"> Strict Dealbreaker (Hosting vibe must align)
+            </label>
+          </div>
+
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
             <button class="btn btn-primary" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 5: TRUST BADGE & FINISH -->
-        <!-- STEP 11: OPTIONAL TRUST BADGE (POSITIONED TOWARDS END) -->
+        <!-- STEP 11: OPTIONAL TRUST BADGE -->
         <div class="wizard-step" id="reg-step-11">
           <div class="step-title-group">
             <h2>Claim Your Verified Trust Badge ⭐</h2>
             <p><strong>Optional:</strong> Verified profiles from Technopark IT firms and Trivandrum colleges receive 3x more mutual matches. You can verify now or skip and do it later!</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Institution / Workplace Type</label>
-            <select id="regInstType">
-              <option value="CORPORATE">Technopark Professional (Infosys, TCS, UST, Allianz, IBS, etc.)</option>
-              <option value="ACADEMIC">College Student (CET Trivandrum, Univ. of Kerala, etc.)</option>
-            </select>
+            <input type="hidden" id="regInstType" value="CORPORATE">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="CORPORATE" onclick="pickOptionCard('regInstType', 'CORPORATE', this)">
+                <div class="option-icon">💼</div>
+                <div class="option-content">
+                  <div class="option-title">Technopark Professional</div>
+                  <div class="option-desc">Infosys, TCS, UST, Allianz, IBS Software, etc.</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="ACADEMIC" onclick="pickOptionCard('regInstType', 'ACADEMIC', this)">
+                <div class="option-icon">🎓</div>
+                <div class="option-content">
+                  <div class="option-title">College Student</div>
+                  <div class="option-desc">CET Trivandrum, University of Kerala, etc.</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Institutional Email (Optional)</label>
             <input type="email" id="regInstEmail" value="kiran.kumar@infosys.com" placeholder="name@company.com or name@cet.ac.in">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="skipTrustBadge()">Skip for Now</button>
-            <button class="btn btn-primary" onclick="handleStepTrustBadge()">Verify Email & Next →</button>
+            <button class="btn btn-primary" onclick="handleStepTrustBadge()">Verify & Next →</button>
           </div>
         </div>
 
@@ -1769,11 +2023,11 @@ export function renderClientAppHtml(): string {
         <div class="wizard-step" id="reg-step-12">
           <div class="step-title-group">
             <h2>Add a Profile Photo 📸</h2>
-            <p><strong>Optional:</strong> Profiles with photos get 4x more replies. Pick a photo or finish now and add one later.</p>
+            <p><strong>Optional:</strong> Profiles with photos get 4x more replies. Pick an avatar or finish and add one later.</p>
           </div>
 
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 12px 0;">
-            <img id="regPhotoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 16px 0;">
+            <img id="regPhotoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);">
             <div style="display: flex; gap: 8px;">
               <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80')">Photo 1</button>
               <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80')">Photo 2</button>
@@ -1787,16 +2041,13 @@ export function renderClientAppHtml(): string {
             <input type="text" id="regPhotoUrl" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" oninput="document.getElementById('regPhotoPreview').src = this.value">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+          <div class="wizard-actions">
+            <button class="btn btn-secondary" onclick="skipAndCompleteRegistration()">Skip for Now</button>
             <button class="btn btn-primary" onclick="completeRegistrationAndLaunch()">
-              🎉 Complete Profile & Start Discovering!
+              Start Discovering →
             </button>
           </div>
         </div>
-
-      </div>
-    </section>
 
       </div>
     </section>
@@ -2110,9 +2361,15 @@ export function renderClientAppHtml(): string {
       document.getElementById('btnLoginAction').textContent = 'Send OTP Code →';
       const alertBox = document.getElementById('loginAlertBox');
       alertBox.style.display = 'none';
+      const titleEl = document.getElementById('loginTitle');
+      const descEl = document.getElementById('loginDesc');
       if (mode === 'register') {
+        if (titleEl) titleEl.textContent = 'Create Buddy Account';
+        if (descEl) descEl.textContent = 'Join flatmate & roommate discovery in Thiruvananthapuram. Verify your mobile to begin.';
         document.getElementById('loginPhoneInput').value = '+919876599999';
       } else {
+        if (titleEl) titleEl.textContent = 'Welcome to Buddy';
+        if (descEl) descEl.textContent = 'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.';
         document.getElementById('loginPhoneInput').value = '+919876543211';
       }
     }
@@ -2172,11 +2429,11 @@ export function renderClientAppHtml(): string {
             currentUser = {
               id: data.user.id,
               phone: phone,
-              name: 'New Buddy User',
+              name: '',
               avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
               isOnboardingCompleted: false
             };
-            startNewRegistration();
+            await startNewRegistration();
           } else {
             document.body.classList.remove('unauthenticated');
             document.body.classList.remove('onboarding-mode');
@@ -2277,7 +2534,7 @@ export function renderClientAppHtml(): string {
             if (!prof.isOnboardingCompleted) {
               document.body.classList.remove('unauthenticated');
               document.body.classList.add('onboarding-mode');
-              startNewRegistration();
+              await startNewRegistration();
               return;
             }
             document.body.classList.remove('unauthenticated');
@@ -2345,6 +2602,7 @@ export function renderClientAppHtml(): string {
       // Access Control & Auth Gatekeeper
       if (!currentToken && tabName !== 'login' && tabName !== 'registration') {
         document.body.classList.add('unauthenticated');
+        document.body.classList.remove('onboarding-mode');
         document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
         const loginView = document.getElementById('view-login');
         if (loginView) loginView.classList.add('active');
@@ -2354,6 +2612,17 @@ export function renderClientAppHtml(): string {
       if (currentUser && !currentUser.isOnboardingCompleted && tabName !== 'registration') {
         alert('Please complete registration before accessing the portal.');
         tabName = 'registration';
+      }
+
+      if (tabName === 'registration') {
+        document.body.classList.remove('unauthenticated');
+        document.body.classList.add('onboarding-mode');
+      } else if (tabName === 'login') {
+        document.body.classList.add('unauthenticated');
+        document.body.classList.remove('onboarding-mode');
+      } else {
+        document.body.classList.remove('unauthenticated');
+        document.body.classList.remove('onboarding-mode');
       }
 
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -2378,12 +2647,93 @@ export function renderClientAppHtml(): string {
     // -------------------------------------------------------------
     // PROGRESSIVE CONVERSATIONAL ONBOARDING WIZARD LOGIC (BUMBLE-STYLE)
     // -------------------------------------------------------------
-    function startNewRegistration() {
+    async function startNewRegistration() {
       wizardCurrentStep = 1;
       document.body.classList.remove('unauthenticated');
       document.body.classList.add('onboarding-mode');
+      
+      // Hide all panels, activate registration view
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      const regView = document.getElementById('view-registration');
+      if (regView) regView.classList.add('active');
+
+      await populateWizardFromExistingProfile();
       updateWizardUI();
-      navigateTab('registration');
+    }
+
+    async function populateWizardFromExistingProfile() {
+      if (!currentToken) return;
+      try {
+        const res = await fetch('/api/v1/profiles/me', {
+          headers: { 'Authorization': 'Bearer ' + currentToken }
+        });
+        if (res.ok) {
+          const prof = await res.json();
+          if (prof.displayName && document.getElementById('regName')) {
+            document.getElementById('regName').value = prof.displayName;
+          }
+          if (prof.gender) {
+            syncOptionCard('regGender', prof.gender);
+          }
+          if (prof.preferredGender) {
+            syncOptionCard('regPrefGender', prof.preferredGender);
+          }
+          if (prof.birthDate && document.getElementById('regBirthDate')) {
+            document.getElementById('regBirthDate').value = prof.birthDate.split('T')[0];
+          }
+          if (prof.occupation && document.getElementById('regOccupation')) {
+            document.getElementById('regOccupation').value = prof.occupation;
+          }
+          if (prof.bio && document.getElementById('regBio')) {
+            document.getElementById('regBio').value = prof.bio;
+          }
+          if (prof.modality) {
+            selectedModality = prof.modality;
+            document.querySelectorAll('.modality-select-card').forEach(c => {
+              c.classList.toggle('selected', c.getAttribute('data-modality') === prof.modality);
+            });
+          }
+          if (prof.maxBudget && document.getElementById('regMaxBudget')) {
+            document.getElementById('regMaxBudget').value = prof.maxBudget;
+          }
+          if (prof.preferredSuburbs && prof.preferredSuburbs.length > 0) {
+            document.getElementById('regSuburbs').value = prof.preferredSuburbs.join(', ');
+            document.querySelectorAll('#suburbPillsWrap .suburb-pill').forEach(pill => {
+              const subCode = pill.getAttribute('data-suburb');
+              pill.classList.toggle('selected', prof.preferredSuburbs.includes(subCode));
+            });
+          }
+        }
+      } catch (e) {}
+    }
+
+    function pickOptionCard(inputId, value, cardEl) {
+      const input = document.getElementById(inputId);
+      if (input) input.value = value;
+      const parent = cardEl.closest('.option-cards-list') || cardEl.parentElement;
+      if (parent) {
+        parent.querySelectorAll('.option-select-card').forEach(c => c.classList.remove('selected'));
+      }
+      cardEl.classList.add('selected');
+    }
+
+    function syncOptionCard(inputId, value) {
+      const input = document.getElementById(inputId);
+      if (input) input.value = value;
+      document.querySelectorAll('.option-select-card').forEach(c => {
+        const onclickAttr = c.getAttribute('onclick') || '';
+        if (onclickAttr.includes("'" + inputId + "'") && c.getAttribute('data-val') === value) {
+          const parent = c.closest('.option-cards-list') || c.parentElement;
+          if (parent) parent.querySelectorAll('.option-select-card').forEach(sibling => sibling.classList.remove('selected'));
+          c.classList.add('selected');
+        }
+      });
+    }
+
+    function cancelOnboarding() {
+      if (confirm('Exit registration? Your verified phone is saved. You can sign in anytime to complete your profile.')) {
+        handleLogout();
+      }
     }
 
     function goToOnboardingStep(stepNum) {
@@ -2421,12 +2771,12 @@ export function renderClientAppHtml(): string {
       if (fillEl) fillEl.style.width = percent + '%';
 
       // 5 Subsections with completion ticks (✔)
-      // Node 1: Verify (Step 1)
+      // Node 1: Basics (Steps 1, 2)
       const n1 = document.getElementById('node-step-1');
       const c1 = document.getElementById('circle-step-1');
       if (n1 && c1) {
         n1.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 1) {
+        if (wizardCurrentStep > 2) {
           n1.classList.add('completed');
           c1.innerHTML = '✔';
         } else {
@@ -2435,15 +2785,15 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 2: Basics (Steps 2, 3, 4)
+      // Node 2: About (Step 3)
       const n2 = document.getElementById('node-step-2');
       const c2 = document.getElementById('circle-step-2');
       if (n2 && c2) {
         n2.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 4) {
+        if (wizardCurrentStep > 3) {
           n2.classList.add('completed');
           c2.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 2 && wizardCurrentStep <= 4) {
+        } else if (wizardCurrentStep === 3) {
           n2.classList.add('active');
           c2.innerHTML = '2';
         } else {
@@ -2451,15 +2801,15 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 3: Housing (Steps 5, 6)
+      // Node 3: Housing (Steps 4, 5)
       const n3 = document.getElementById('node-step-3');
       const c3 = document.getElementById('circle-step-3');
       if (n3 && c3) {
         n3.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 6) {
+        if (wizardCurrentStep > 5) {
           n3.classList.add('completed');
           c3.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 5 && wizardCurrentStep <= 6) {
+        } else if (wizardCurrentStep >= 4 && wizardCurrentStep <= 5) {
           n3.classList.add('active');
           c3.innerHTML = '3';
         } else {
@@ -2467,7 +2817,7 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 4: Lifestyle (Steps 7, 8, 9, 10)
+      // Node 4: Lifestyle (Steps 6, 7, 8, 9, 10)
       const n4 = document.getElementById('node-step-4');
       const c4 = document.getElementById('circle-step-4');
       if (n4 && c4) {
@@ -2475,7 +2825,7 @@ export function renderClientAppHtml(): string {
         if (wizardCurrentStep > 10) {
           n4.classList.add('completed');
           c4.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 7 && wizardCurrentStep <= 10) {
+        } else if (wizardCurrentStep >= 6 && wizardCurrentStep <= 10) {
           n4.classList.add('active');
           c4.innerHTML = '4';
         } else {
@@ -2483,7 +2833,7 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 5: Finish & Trust Badge (Steps 11, 12)
+      // Node 5: Finish (Steps 11, 12)
       const n5 = document.getElementById('node-step-5');
       const c5 = document.getElementById('circle-step-5');
       if (n5 && c5) {
@@ -2497,111 +2847,11 @@ export function renderClientAppHtml(): string {
       }
     }
 
-    function autofillPhone(num) {
-      document.getElementById('regPhone').value = num;
-    }
-
     function toggleSuburbPill(suburbCode, el) {
       el.classList.toggle('selected');
       const selectedPills = Array.from(document.querySelectorAll('#suburbPillsWrap .suburb-pill.selected'))
-        .map(p => p.textContent.trim().toUpperCase());
+        .map(p => p.getAttribute('data-suburb') || p.textContent.trim().toUpperCase());
       document.getElementById('regSuburbs').value = selectedPills.join(', ');
-    }
-
-    function setRegAvatar(url) {
-      document.getElementById('regPhotoUrl').value = url;
-      document.getElementById('regPhotoPreview').src = url;
-    }
-
-    // STEP 1: Phone OTP Verification
-    async function handleStep1Auth() {
-      const phone = document.getElementById('regPhone').value.trim();
-      const otpGroup = document.getElementById('otpInputGroup');
-      const btn = document.getElementById('btnStep1');
-
-      if (otpGroup.style.display === 'none') {
-        btn.textContent = 'Requesting OTP...';
-        try {
-          await fetch('/api/v1/auth/otp/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phoneNumber: phone })
-          });
-          otpGroup.style.display = 'flex';
-          btn.textContent = 'Verify OTP & Continue →';
-        } catch (e) {
-          btn.textContent = 'Request OTP Code →';
-          alert('Failed to send OTP. Please check phone number format (+91 followed by 10 digits).');
-        }
-      } else {
-        const otp = document.getElementById('regOtp').value.trim();
-        try {
-          const res = await fetch('/api/v1/auth/otp/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phoneNumber: phone, otp })
-          });
-          const data = await res.json();
-          if (data.accessToken) {
-            currentToken = data.accessToken;
-            localStorage.setItem('buddy_token', currentToken);
-            localStorage.setItem('buddy_phone', phone);
-
-            currentUser = {
-              id: data.user.id,
-              name: 'New Registered User',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-              work: 'Trivandrum Explorer',
-              isOnboardingCompleted: false
-            };
-
-            goToOnboardingStep(2);
-          } else {
-            alert('OTP Verification failed. Universal dev OTP code is 123456');
-          }
-        } catch (e) {
-          alert('Network or server error during OTP verification.');
-        }
-      }
-    }
-
-    // STEP 4: Save Basic Identity
-    async function handleStep4SaveBasics() {
-      const name = document.getElementById('regName').value.trim() || 'Buddy User';
-      const gender = document.getElementById('regGender').value;
-      const prefGender = document.getElementById('regPrefGender').value;
-      const birthDate = document.getElementById('regBirthDate').value;
-      const occupation = document.getElementById('regOccupation').value.trim() || 'Professional';
-      const bio = document.getElementById('regBio').value.trim();
-
-      currentUser.name = name;
-      currentUser.work = occupation;
-      updateHeaderUser(currentUser);
-
-      try {
-        await fetch('/api/v1/profiles/me', {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            displayName: name,
-            gender: gender,
-            preferredGender: prefGender,
-            birthDate: birthDate,
-            occupation: occupation,
-            bio: bio,
-            modality: selectedModality,
-            minBudget: 6000,
-            maxBudget: 10000,
-            moveInFlexibility: 'WITHIN_15_DAYS',
-            preferredSuburbs: ['KAZHAKKOOTTAM', 'KARIAVATTOM']
-          })
-        });
-      } catch (e) {}
-
-      goToOnboardingStep(5);
     }
 
     function pickModalityCard(mod, el) {
@@ -2610,28 +2860,9 @@ export function renderClientAppHtml(): string {
       el.classList.add('selected');
     }
 
-    // STEP 6: Save Housing & Modality
-    async function handleStep6SaveHousing() {
-      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
-      const rawSuburbs = document.getElementById('regSuburbs').value;
-      const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
-
-      try {
-        await fetch('/api/v1/profiles/me', {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            modality: selectedModality,
-            maxBudget: maxBudget,
-            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM']
-          })
-        });
-      } catch (e) {}
-
-      goToOnboardingStep(7);
+    function setRegAvatar(url) {
+      document.getElementById('regPhotoUrl').value = url;
+      document.getElementById('regPhotoPreview').src = url;
     }
 
     // STEP 11: Optional Trust Badge
@@ -2668,14 +2899,64 @@ export function renderClientAppHtml(): string {
       goToOnboardingStep(12);
     }
 
+    function skipAndCompleteRegistration() {
+      document.getElementById('regPhotoUrl').value = '';
+      completeRegistrationAndLaunch();
+    }
+
     // STEP 12: Complete Registration & Launch
     async function completeRegistrationAndLaunch() {
+      const name = document.getElementById('regName').value.trim() || 'Buddy User';
+      const gender = document.getElementById('regGender').value;
+      const prefGender = document.getElementById('regPrefGender').value;
+      const birthDate = document.getElementById('regBirthDate').value || '1998-05-15';
+      const occupation = document.getElementById('regOccupation').value.trim() || 'Software Professional';
+      const bio = document.getElementById('regBio').value.trim();
+      const rawSuburbs = document.getElementById('regSuburbs').value;
+      const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
+
       const sleep = document.getElementById('regSleep').value;
       const clean = document.getElementById('regClean').value;
       const diet = document.getElementById('regDiet').value;
       const smoke = document.getElementById('regSmoke').value;
+      const vibe = document.getElementById('regVibe') ? document.getElementById('regVibe').value : 'BALANCED_CASUAL';
       const photoUrl = document.getElementById('regPhotoUrl').value.trim();
 
+      // 1. Save Full Profile to Backend
+      try {
+        const profRes = await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            displayName: name,
+            gender: gender,
+            preferredGender: prefGender,
+            birthDate: birthDate,
+            occupation: occupation,
+            collegeOrCompany: occupation,
+            bio: bio,
+            modality: selectedModality,
+            minBudget: 3000,
+            maxBudget: maxBudget,
+            moveInFlexibility: 'WITHIN_1_MONTH',
+            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM']
+          })
+        });
+        if (!profRes.ok) {
+          const errData = await profRes.json();
+          alert('Could not save profile: ' + (errData.detail || errData.title || 'Validation error'));
+          return;
+        }
+      } catch (e) {
+        alert('Network error while saving profile. Please try again.');
+        return;
+      }
+
+      // 2. Upload Photo if provided
       if (photoUrl) {
         try {
           await fetch('/api/v1/profiles/me/photos', {
@@ -2690,60 +2971,61 @@ export function renderClientAppHtml(): string {
               isPrimary: true
             })
           });
-          currentUser.avatar = photoUrl;
-          updateHeaderUser(currentUser);
         } catch (e) {}
       }
 
-      await fetch('/api/v1/lifestyle/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer ' + currentToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sleep: {
-            sleepPattern: sleep,
-            shiftSchedule: 'NORMAL_DAY',
-            noiseSensitivity: 'LIGHT_SLEEPER',
-            isDealbreaker: document.getElementById('dbSleep').checked
+      // 3. Save Lifestyle & Vibe Preferences
+      try {
+        await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
           },
-          cleanliness: {
-            cleanlinessLevel: clean,
-            kitchenSinkRule: 'IMMEDIATE_WASH',
-            maidPreference: 'OPEN_TO_MAID',
-            isDealbreaker: document.getElementById('dbClean').checked
-          },
-          dietary: {
-            dietType: diet,
-            kitchenPolicy: 'NO_RESTRICTIONS',
-            isDealbreaker: document.getElementById('dbDiet').checked
-          },
-          social: {
-            guestFrequency: 'OCCASIONAL_FRIENDS',
-            overnightGuestPolicy: 'SAME_GENDER_ONLY',
-            partyPreference: 'OCCASIONAL_WEEKENDS',
-            isDealbreaker: false
-          },
-          substances: {
-            smokingHabit: smoke,
-            alcoholHabit: 'TEETOTALER',
-            isDealbreaker: document.getElementById('dbSmoke').checked
-          },
-          financial: {
-            rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
-            acBillSplit: 'EQUAL_SPLIT',
-            groceryTracking: 'SPLITWISE_APP',
-            isDealbreaker: true
-          },
-          work: {
-            workMode: 'HYBRID',
-            callFrequency: 'LOW',
-            workspacePreference: 'PRIVATE_ROOM_DESK',
-            isDealbreaker: false
-          }
-        })
-      });
+          body: JSON.stringify({
+            sleep: {
+              sleepPattern: sleep,
+              shiftSchedule: 'NORMAL_DAY',
+              noiseSensitivity: 'LIGHT_SLEEPER',
+              isDealbreaker: document.getElementById('dbSleep').checked
+            },
+            cleanliness: {
+              cleanlinessLevel: clean,
+              kitchenSinkRule: 'IMMEDIATE_WASH',
+              maidPreference: 'OPEN_TO_MAID',
+              isDealbreaker: document.getElementById('dbClean').checked
+            },
+            dietary: {
+              dietType: diet,
+              kitchenPolicy: 'NO_RESTRICTIONS',
+              isDealbreaker: document.getElementById('dbDiet').checked
+            },
+            social: {
+              guestFrequency: vibe === 'QUIET_SANCTUARY' ? 'NEVER' : vibe === 'SOCIALLY_ACTIVE' ? 'REGULAR_GUESTS' : 'OCCASIONAL_FRIENDS',
+              overnightGuestPolicy: 'SAME_GENDER_ONLY',
+              partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
+              isDealbreaker: document.getElementById('dbVibe') ? document.getElementById('dbVibe').checked : false
+            },
+            substances: {
+              smokingHabit: smoke,
+              alcoholHabit: 'TEETOTALER',
+              isDealbreaker: document.getElementById('dbSmoke').checked
+            },
+            financial: {
+              rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
+              acBillSplit: 'EQUAL_SPLIT',
+              groceryTracking: 'SPLITWISE_APP',
+              isDealbreaker: true
+            },
+            work: {
+              workMode: 'HYBRID',
+              callFrequency: 'LOW',
+              workspacePreference: 'PRIVATE_ROOM_DESK',
+              isDealbreaker: false
+            }
+          })
+        });
+      } catch (e) {}
 
       alert('🎉 Profile registration complete! Entering your personalized Buddy discovery feed.');
       if (currentUser) currentUser.isOnboardingCompleted = true;
@@ -3009,13 +3291,33 @@ export function renderClientAppHtml(): string {
       renderFilteredMatches();
     }
 
+    let currentRenderedMatches = [];
+
     function renderFilteredMatches() {
       const filtered = (currentMatchFilter === 'ALL')
         ? allLoadedMatches
         : allLoadedMatches.filter(m => (m.candidate?.modality || m.modality) === currentMatchFilter);
+      currentRenderedMatches = filtered;
 
       renderDesktopMatches(filtered);
       renderMobileMatches(filtered);
+    }
+
+    function openChatByIndex(idx) {
+      const m = currentRenderedMatches[idx];
+      if (m) openChatWithMatch(m);
+    }
+
+    function openCandidateByIndex(idx) {
+      const m = currentRenderedMatches[idx];
+      if (m) {
+        const cand = m.candidate || {
+          userId: m.matchedUserId,
+          displayName: m.matchedUserDisplayName,
+          photos: [{ photoUrl: m.matchedUserAvatarUrl }]
+        };
+        openCandidateModal(cand);
+      }
     }
 
     function renderDesktopMatches(matches) {
@@ -3030,14 +3332,14 @@ export function renderClientAppHtml(): string {
             '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 360px; line-height: 1.5;">' +
               'Swipe LIKE on profiles in the Discover deck to connect with compatible roommates in Trivandrum!' +
             '</p>' +
-            '<button class="btn btn-primary" onclick="navigateTab(\'discover\')" style="border-radius: 20px;">' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;discover&apos;)" style="border-radius: 20px;">' +
               'Explore Discover Feed →' +
             '</button>' +
           '</div>';
         return;
       }
 
-      grid.innerHTML = matches.map(m => {
+      grid.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || {
           userId: m.matchedUserId,
           displayName: m.matchedUserDisplayName,
@@ -3078,8 +3380,8 @@ export function renderClientAppHtml(): string {
             '<div class="match-harmony-chips">' + chipsHtml + '</div>' +
           '</div>' +
           '<div class="match-tile-footer">' +
-            '<button class="btn btn-primary" style="flex: 1;" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>💬 Message</button>' +
-            '<button class="btn btn-outline" onclick=\'openCandidateModal(' + JSON.stringify(cand).replace(/"/g, '&quot;') + ')\'>👤 Profile</button>' +
+            '<button class="btn btn-primary" style="flex: 1;" onclick="openChatByIndex(' + idx + ')">💬 Message</button>' +
+            '<button class="btn btn-outline" onclick="openCandidateByIndex(' + idx + ')">👤 Profile</button>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -3100,12 +3402,12 @@ export function renderClientAppHtml(): string {
       }
 
       tray.style.display = 'flex';
-      tray.innerHTML = matches.map(m => {
+      tray.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
         const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
         const firstName = cand.displayName.split(' ')[0];
 
-        return '<div class="mobile-tray-bubble" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+        return '<div class="mobile-tray-bubble" onclick="openChatByIndex(' + idx + ')">' +
           '<div class="mobile-tray-avatar-wrap">' +
             '<img src="' + photo + '" class="mobile-tray-avatar" alt="' + cand.displayName + '">' +
           '</div>' +
@@ -3114,11 +3416,11 @@ export function renderClientAppHtml(): string {
         '</div>';
       }).join('');
 
-      list.innerHTML = matches.map(m => {
+      list.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
         const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
 
-        return '<div class="mobile-conv-item" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+        return '<div class="mobile-conv-item" onclick="openChatByIndex(' + idx + ')">' +
           '<img src="' + photo + '" class="mobile-conv-avatar" alt="' + cand.displayName + '">' +
           '<div class="mobile-conv-info">' +
             '<div class="mobile-conv-top">' +
@@ -3239,11 +3541,6 @@ export function renderClientAppHtml(): string {
       if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
         alert('User blocked successfully.');
         closeChatAndBackToMatches();
-        navigateTab('discover');
-      }
-    }
-      if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
-        alert('User blocked successfully.');
         navigateTab('discover');
       }
     }
