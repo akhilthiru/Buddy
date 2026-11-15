@@ -1,4 +1,5 @@
 import http from 'node:http';
+import net from 'node:net';
 import { app } from './app.ts';
 import { env } from './config/env.ts';
 import { wsGateway, type WsClient } from './modules/messaging/websocket.gateway.ts';
@@ -65,28 +66,26 @@ server.on('upgrade', (req, socket) => {
 if (process.env.NODE_ENV !== 'test') {
   seedDevelopmentData();
 
-  const startServer = (port: number) => {
-    const onError = (err: any) => {
-      if (err.code === 'EADDRINUSE') {
-        console.warn(`Port ${port} is in use, trying port ${port + 1}...`);
-        server.removeListener('error', onError);
-        startServer(port + 1);
-      } else {
-        console.error('Server error:', err);
-      }
-    };
-
-    server.once('error', onError);
-    server.listen(port, () => {
-      server.removeListener('error', onError);
-      console.log(`Flatmate Modular Monolith API listening on port ${port} [${env.NODE_ENV}]`);
-      console.log(`📱 Real Flatmate User App:      http://localhost:${port}/`);
-      console.log(`⚡ Developer API Test Console:  http://localhost:${port}/test-console`);
-      console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${port}/ws`);
+  const getAvailablePort = (desiredPort: number): Promise<number> => {
+    return new Promise((resolve) => {
+      const tester = net.createServer();
+      tester.listen(desiredPort, '0.0.0.0', () => {
+        tester.close(() => resolve(desiredPort));
+      });
+      tester.on('error', () => {
+        resolve(getAvailablePort(desiredPort + 1));
+      });
     });
   };
 
-  startServer(env.PORT);
+  getAvailablePort(env.PORT).then((actualPort) => {
+    server.listen(actualPort, '0.0.0.0', () => {
+      console.log(`Flatmate Modular Monolith API listening on port ${actualPort} [${env.NODE_ENV}]`);
+      console.log(`📱 Real Flatmate User App:      http://localhost:${actualPort}/`);
+      console.log(`⚡ Developer API Test Console:  http://localhost:${actualPort}/test-console`);
+      console.log(`💬 Real-Time WebSocket Gateway: ws://localhost:${actualPort}/ws`);
+    });
+  });
 }
 
 export { server };
