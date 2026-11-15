@@ -62,7 +62,7 @@ export function createProblemDetails(status: number, title: string, detail: stri
   };
 }
 
-class FlatmateApiClient {
+class BuddyApiClient {
   private baseUrl: string;
   private accessToken: string | null = null;
   private useMockFallback: boolean = true;
@@ -140,7 +140,7 @@ class FlatmateApiClient {
       const problem = createProblemDetails(
         500,
         'Network Connection Failure',
-        error instanceof Error ? error.message : 'Unable to connect to Flatmate API server.',
+        error instanceof Error ? error.message : 'Unable to connect to Buddy API server.',
         endpoint
       );
       throw new ApiError(problem);
@@ -499,4 +499,5 @@ class FlatmateApiClient {
   }
 }
 
-export const api = new FlatmateApiClient();
+export const api = new BuddyApiClient();
+export { BuddyApiClient as FlatmateApiClient };

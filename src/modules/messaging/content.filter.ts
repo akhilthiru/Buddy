@@ -21,7 +21,7 @@ export class ContentFilter {
     const hasUpi = this.UPI_REGEX.test(content);
 
     if (hasPhone || hasEmail || hasUpi) {
-      return 'For your security, keep conversations within Flatmate until you meet in person.';
+      return 'For your security, keep conversations within Buddy until you meet in person.';
     }
 
     return undefined;

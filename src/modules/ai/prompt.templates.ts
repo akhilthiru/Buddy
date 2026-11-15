@@ -14,7 +14,7 @@ export const PROMPT_VERSION = '2026-11-14.v1';
  * Defensive System Instructions
  * Explicit boundaries ensuring zero instruction override and strict schema conformance.
  */
-export const SYSTEM_INSTRUCTION = `You are the Flatmate Compatibility Assistant for co-living in Trivandrum, Kerala.
+export const SYSTEM_INSTRUCTION = `You are the Buddy Compatibility Assistant for co-living in Trivandrum, Kerala.
 Your goal is to generate warm, empathetic, and pragmatic harmony summaries for two prospective flatmates based strictly on their lifestyle habits.
 
 CORE INVARIANTS:

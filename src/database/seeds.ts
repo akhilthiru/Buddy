@@ -397,6 +397,6 @@ export function seedDevelopmentData(): void {
 
   // Pre-configure Adarsh and Rahul having mutual interests so new users can test swipes
   // Seed a pre-existing swipe from Adarsh on new male users or test user
-  console.log('✔ Flatmate Development Seed Data loaded (4 profiles across Modalities 1-4, 1 room listing).');
+  console.log('✔ Buddy Development Seed Data loaded (4 profiles across Modalities 1-4, 1 room listing).');
 }
 

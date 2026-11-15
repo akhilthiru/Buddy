@@ -166,7 +166,7 @@ export default function SetupPage() {
         <div className="space-y-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm animate-fade-up">
           <h2 className="text-xl font-bold text-slate-900">How do you want to find a flatmate?</h2>
           <p className="text-xs text-slate-500">
-            Flatmate is person-first. Whether you already have a flat or want to team up, we match by lifestyle compatibility.
+            Buddy is person-first. Whether you already have a flat or want to team up, we match by lifestyle compatibility.
           </p>
 
           <div className="space-y-3 pt-2">

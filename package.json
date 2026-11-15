@@ -1,9 +1,9 @@
 {
-  "name": "flatmate",
+  "name": "buddy",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Flatmate - Person-First Flatmate Discovery & Compatibility Platform",
+  "description": "Buddy - Person-First Roommate & Flatmate Discovery Platform",
   "scripts": {
     "dev": "node --experimental-strip-types src/server.ts",
     "build": "tsc -p tsconfig.backend.json",

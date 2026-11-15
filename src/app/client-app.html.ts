@@ -4,7 +4,7 @@ export function renderClientAppHtml(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flatmate – Person-First Flatmate Discovery | Thiruvananthapuram</title>
+  <title>Buddy – Person-First Flatmate & Roommate Discovery | Thiruvananthapuram</title>
   <style>
     :root {
       --primary: #0D9488;
@@ -822,8 +822,7 @@ export function renderClientAppHtml(): string {
     <div class="header-inner">
       <div class="brand" onclick="navigateTab('discover')">
         <div class="brand-logo">
-          FLATMATE
-          <span class="brand-pill">TVM</span>
+          BUDDY
         </div>
         <div class="brand-location">
           📍 Thiruvananthapuram, Kerala
@@ -898,8 +897,8 @@ export function renderClientAppHtml(): string {
         <!-- STEP 1: PHONE AUTHENTICATION -->
         <div class="wizard-step active" id="reg-step-1">
           <div class="step-title-group">
-            <h2>Welcome to Flatmate</h2>
-            <p>Person-first flatmate discovery in Thiruvananthapuram. Let's begin by verifying your mobile phone number.</p>
+            <h2>Welcome to Buddy</h2>
+            <p>Person-first flatmate & roommate discovery in Thiruvananthapuram. Let's begin by verifying your mobile phone number.</p>
           </div>
 
           <div class="form-group">
@@ -1001,7 +1000,7 @@ export function renderClientAppHtml(): string {
         <div class="wizard-step" id="reg-step-4">
           <div class="step-title-group">
             <h2>Select Your Discovery Modality</h2>
-            <p>Accommodation is optional in Flatmate! Choose your current housing situation:</p>
+            <p>Accommodation is optional in Buddy! Choose your current housing situation:</p>
           </div>
 
           <div class="modality-cards-grid">
@@ -1261,7 +1260,7 @@ export function renderClientAppHtml(): string {
                 <span class="lifestyle-chip">Washing Machine</span>
               </div>
               <button class="btn btn-primary" style="margin-top: 10px;" onclick="navigateTab('discover')">
-                View Flatmate (Adarsh Nair) →
+                View Roommate (Adarsh Nair) →
               </button>
             </div>
           </div>

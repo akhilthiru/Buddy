@@ -187,7 +187,7 @@ export class DiscoveryService {
 
     const candidateUser = db.users.get(candidateUserId);
     if (!candidateUser || candidateUser.status !== 'ACTIVE') {
-      throw new NotFoundError('Candidate is no longer active on Flatmate');
+      throw new NotFoundError('Candidate is no longer active on Buddy');
     }
 
     // Rate Limiting (60/min)

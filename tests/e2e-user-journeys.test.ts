@@ -564,7 +564,7 @@ describe('End-to-End User Discovery Journeys (All 4 Modalities)', () => {
     assert.strictEqual(leakedMsg.statusCode, 201);
     // DPDP Scanner attaches safety advisory notice to the message
     assert.ok(leakedMsg.body.warningNotice, 'Should attach privacy warning on detected phone number');
-    assert.ok(leakedMsg.body.warningNotice.includes('security') && leakedMsg.body.warningNotice.includes('Flatmate'));
+    assert.ok(leakedMsg.body.warningNotice.includes('security') && leakedMsg.body.warningNotice.includes('Buddy'));
   });
 
   // =========================================================================
