@@ -5,6 +5,7 @@ import {
   BadRequestError,
   NotFoundError,
   RateLimitError,
+  RegistrationIncompleteError,
 } from '../../common/errors/problem-details.ts';
 import type {
   DiscoveryCardItem,
@@ -59,35 +60,39 @@ export class DiscoveryService {
 
   /**
    * Retrieves paginated, compatibility-ranked discovery candidate feed.
+   * Supports:
+   * 1. Authenticated users with complete profiles (full deterministic 7-vector scoring)
+   * 2. Authenticated users with incomplete profiles (browse candidate feed without gating)
+   * 3. Guests / unauthenticated visitors (browse candidate feed without gating)
    */
-  static getFeed(userId: string, limit = 20): { cards: DiscoveryCardItem[]; hasMore: boolean } {
-    const user = db.users.get(userId);
-    const userProfile = db.userProfiles.get(userId);
-    const userLifestyle = db.lifestyleProfiles.get(userId);
-
-    if (!user || !userProfile || !userLifestyle) {
-      throw new BadRequestError('Please complete your profile and 7-vector lifestyle settings first');
-    }
+  static getFeed(userId?: string, limit = 20): { cards: DiscoveryCardItem[]; hasMore: boolean } {
+    const user = userId ? db.users.get(userId) : undefined;
+    const userProfile = userId ? db.userProfiles.get(userId) : undefined;
+    const userLifestyle = userId ? db.lifestyleProfiles.get(userId) : undefined;
 
     // Blocked user IDs
     const blockedUserIds = new Set<string>();
-    for (const b of db.userBlocks) {
-      if (b.blockerUserId === userId) blockedUserIds.add(b.blockedUserId);
-      if (b.blockedUserId === userId) blockedUserIds.add(b.blockerUserId);
+    if (userId) {
+      for (const b of db.userBlocks) {
+        if (b.blockerUserId === userId) blockedUserIds.add(b.blockedUserId);
+        if (b.blockedUserId === userId) blockedUserIds.add(b.blockerUserId);
+      }
     }
 
     // Already swiped target IDs
     const swipedUserIds = new Set<string>();
-    for (const s of db.discoverySwipes) {
-      if (s.actorUserId === userId) {
-        swipedUserIds.add(s.targetUserId);
+    if (userId) {
+      for (const s of db.discoverySwipes) {
+        if (s.actorUserId === userId) {
+          swipedUserIds.add(s.targetUserId);
+        }
       }
     }
 
     const candidatePool: Array<{ profile: UserProfileSummary; lifestyle: LifestyleProfile }> = [];
 
     for (const [candidateId, candUser] of db.users.entries()) {
-      if (candidateId === userId) continue;
+      if (userId && candidateId === userId) continue;
       if (candUser.status !== 'ACTIVE') continue;
       if (blockedUserIds.has(candidateId)) continue;
       if (swipedUserIds.has(candidateId)) continue;
@@ -116,21 +121,34 @@ export class DiscoveryService {
       });
     }
 
-    const userSummary: UserProfileSummary = {
-      userId,
-      displayName: userProfile.displayName,
-      gender: userProfile.gender,
-      preferredGender: userProfile.preferredGender,
-      modality: userProfile.modality,
-      minBudget: userProfile.minBudget,
-      maxBudget: userProfile.maxBudget,
-      status: user.status,
-      preferredSuburbs: userProfile.preferredSuburbs,
-      verificationBadge: userProfile.verificationBadge,
-    };
+    let ranked: Array<{ candidate: UserProfileSummary; result: { overallScore: number } }>;
 
-    // Deterministic ranking
-    const ranked = ScoringEngine.rankBatch(userSummary, userLifestyle, candidatePool);
+    if (user && userProfile && userLifestyle && userProfile.isOnboardingCompleted) {
+      const userSummary: UserProfileSummary = {
+        userId: user.id,
+        displayName: userProfile.displayName,
+        gender: userProfile.gender,
+        preferredGender: userProfile.preferredGender,
+        modality: userProfile.modality,
+        minBudget: userProfile.minBudget,
+        maxBudget: userProfile.maxBudget,
+        status: user.status,
+        preferredSuburbs: userProfile.preferredSuburbs,
+        verificationBadge: userProfile.verificationBadge,
+      };
+
+      // Deterministic ranking
+      ranked = ScoringEngine.rankBatch(userSummary, userLifestyle, candidatePool);
+    } else {
+      // Guests or Incomplete Users: Display active candidates with baseline high compatibility tier
+      ranked = candidatePool.map((c, idx) => ({
+        candidate: c.profile,
+        result: {
+          overallScore: Math.max(76, 95 - (idx * 3)),
+        },
+      }));
+    }
+
     const paginated = ranked.slice(0, limit);
 
     const cards: DiscoveryCardItem[] = paginated.map(({ candidate, result }) => {
@@ -188,6 +206,16 @@ export class DiscoveryService {
     const candidateUser = db.users.get(candidateUserId);
     if (!candidateUser || candidateUser.status !== 'ACTIVE') {
       throw new NotFoundError('Candidate is no longer active on Buddy');
+    }
+
+    // Access control: expressing positive interest requires mandatory registration completion!
+    if (action === 'LIKE' || action === 'SUPERLIKE') {
+      const actorProfile = db.userProfiles.get(actorUserId);
+      if (!actorProfile || !actorProfile.isOnboardingCompleted) {
+        throw new RegistrationIncompleteError(
+          'Mandatory registration must be completed before expressing interest or liking profiles'
+        );
+      }
     }
 
     // Rate Limiting (60/min)

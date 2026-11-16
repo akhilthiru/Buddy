@@ -64,6 +64,12 @@ export class ForbiddenError extends AppError {
   }
 }
 
+export class RegistrationIncompleteError extends AppError {
+  constructor(detail = 'Mandatory registration must be completed before performing this action') {
+    super(403, 'Registration Incomplete', detail, 'https://buddy.app/errors/registration-incomplete');
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(detail = 'Requested resource was not found') {
     super(404, 'Not Found', detail, 'https://flatmate.in/errors/not-found');

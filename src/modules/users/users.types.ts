@@ -20,6 +20,7 @@ export interface UpdateProfileRequest {
   maxBudget: number; // >= minBudget
   moveInFlexibility: MoveInFlexibility;
   preferredSuburbs: TrivandrumSuburb[];
+  isOnboardingCompleted?: boolean;
 }
 
 export interface ProfilePhotoResponse {

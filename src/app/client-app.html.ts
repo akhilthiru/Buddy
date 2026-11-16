@@ -134,71 +134,71 @@ export function renderClientAppHtml(): string {
       align-items: center;
       gap: 12px;
     }
-    .restart-reg-btn {
-      background: linear-gradient(135deg, #0D9488, #0F766E);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.15s;
-    }
-    .restart-reg-btn:hover { opacity: 0.92; }
-
     .persona-badge {
       display: flex;
       align-items: center;
       gap: 8px;
       background: white;
       border: 1px solid var(--border);
-      padding: 4px 10px 4px 5px;
+      padding: 4px 12px 4px 5px;
       border-radius: 24px;
       cursor: pointer;
-      transition: border-color 0.15s;
+      transition: all 0.15s ease;
     }
-    .persona-badge:hover { border-color: var(--primary); }
+    .persona-badge:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
     .persona-badge img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     .persona-badge span { font-size: 13px; font-weight: 700; color: var(--text); }
+    .badge-incomplete {
+      font-size: 10px;
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
 
-    /* Auth & Access Control Visibility State */
-    body.unauthenticated .desktop-nav,
-    body.unauthenticated .header-actions,
-    body.unauthenticated .mobile-bottom-nav,
-    body.onboarding-mode .desktop-nav,
-    body.onboarding-mode .header-actions,
+    /* Onboarding Mode: conversational Bumble-style flow without distraction */
+    body.onboarding-mode .app-header,
     body.onboarding-mode .mobile-bottom-nav {
       display: none !important;
     }
 
+    body.onboarding-mode {
+      background: #F8FAFC;
+    }
+    body.onboarding-mode .app-main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
     /* Login & Authentication Gateway Card */
     .login-container {
-      max-width: 460px;
+      max-width: 440px;
       width: 100%;
-      margin: 30px auto;
+      margin: 0 auto;
       background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 36px 32px;
-      box-shadow: var(--shadow-xl);
+      padding: 36px 30px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.07), 0 0 1px 1px rgba(0,0,0,0.04);
       text-align: center;
     }
     .login-brand-icon {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 900;
-      margin: 0 auto 16px auto;
+      margin: 0 auto 14px auto;
       box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25);
     }
     .login-toggle-tabs {
@@ -331,6 +331,9 @@ export function renderClientAppHtml(): string {
       border-radius: 24px;
       padding: 32px 28px;
       box-shadow: var(--shadow-xl);
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
     }
     @media (max-width: 600px) {
       .wizard-container {
@@ -392,26 +395,31 @@ export function renderClientAppHtml(): string {
       justify-content: space-between;
       margin-bottom: 28px;
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
     }
     .wizard-progress-bar::before {
       content: "";
       position: absolute;
       top: 14px;
-      left: 8%;
-      right: 8%;
+      left: 18px;
+      right: 18px;
       height: 3px;
       background: #E2E8F0;
       z-index: 1;
+      border-radius: 2px;
     }
     .progress-fill {
       position: absolute;
       top: 14px;
-      left: 8%;
+      left: 18px;
       height: 3px;
       background: var(--primary);
       z-index: 2;
       transition: width 0.3s ease;
       width: 0%;
+      max-width: calc(100% - 36px);
+      border-radius: 2px;
     }
     .step-node {
       position: relative;
@@ -420,6 +428,20 @@ export function renderClientAppHtml(): string {
       flex-direction: column;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .step-node:hover .step-circle {
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    .step-node:hover .step-label {
+      color: var(--primary-dark);
+    }
+    .step-node:active {
+      transform: scale(0.96);
     }
     .step-circle {
       width: 30px;
@@ -563,10 +585,83 @@ export function renderClientAppHtml(): string {
       cursor: pointer;
     }
 
+    /* Bumble-style Option Selection Cards */
+    .option-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .option-select-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .option-select-card:hover {
+      border-color: #CBD5E1;
+      background: #F8FAFC;
+    }
+    .option-select-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-50);
+      box-shadow: 0 0 0 1.5px var(--primary);
+    }
+    .option-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .option-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .option-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .option-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+    .option-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #CBD5E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      background: white;
+    }
+    .option-select-card.selected .option-radio {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .option-select-card.selected .option-radio::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FFFFFF;
+    }
+
     /* Buttons */
     .btn {
       padding: 12px 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -583,7 +678,45 @@ export function renderClientAppHtml(): string {
     .btn-secondary:hover { background: #CBD5E1; }
     .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .wizard-actions { display: flex; justify-content: space-between; margin-top: 10px; }
+    .wizard-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .wizard-actions .btn {
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      min-height: 44px;
+      box-sizing: border-box;
+    }
+    .wizard-actions .btn-primary {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    .wizard-actions .btn-secondary,
+    .wizard-actions .btn-outline {
+      flex: 0 1 auto;
+    }
+    @media (max-width: 520px) {
+      .wizard-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .wizard-actions .btn {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
+    }
 
     /* -------------------------------------------------------------
        SCREEN: DISCOVERY STAGE (RESPONSIVE FLUID LAYOUT)
@@ -1265,9 +1398,135 @@ export function renderClientAppHtml(): string {
       object-fit: cover;
     }
     .celeb-avatar-right { margin-left: -24px; }
+
+    /* -------------------------------------------------------------
+       SCREEN: UNIFIED PROFILE & ACCOUNT MANAGEMENT (RESPONSIVE)
+       ------------------------------------------------------------- */
+    .profile-view-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: border-box;
+      padding: 0 16px;
+    }
+    .profile-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      box-sizing: border-box;
+    }
+    .profile-header-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
+      box-sizing: border-box;
+    }
+    .profile-header-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-100);
+      flex-shrink: 0;
+    }
+    .profile-header-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .profile-name-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .profile-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #ECFDF5;
+      color: #065F46;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+    .profile-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .profile-phone-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .profile-header-action {
+      flex-shrink: 0;
+    }
+    .profile-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .profile-view-wrap {
+        padding: 0 12px;
+        gap: 14px;
+      }
+      .profile-header-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px 16px;
+        gap: 14px;
+      }
+      .profile-header-avatar {
+        width: 76px;
+        height: 76px;
+      }
+      .profile-name-row {
+        justify-content: center;
+      }
+      .profile-header-action {
+        width: 100%;
+      }
+      .profile-header-action .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 14px;
+      }
+      .profile-card {
+        padding: 18px 16px;
+      }
+      .profile-actions-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .profile-actions-bar .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="">
 
   <!-- TOP APPLICATION HEADER (FLUID RESPONSIVE) -->
   <header class="app-header">
@@ -1288,7 +1547,7 @@ export function renderClientAppHtml(): string {
         </button>
         <button class="nav-btn" id="dnav-matches" onclick="navigateTab('matches')">
           💬 Matches & Chat
-          <span class="badge-count" id="headerMatchesBadge">2</span>
+          <span class="badge-count" id="headerMatchesBadge" style="display: none;">0</span>
         </button>
         <button class="nav-btn" id="dnav-rooms" onclick="navigateTab('rooms')">
           🏠 Room Listings
@@ -1298,18 +1557,19 @@ export function renderClientAppHtml(): string {
         </button>
       </nav>
 
-      <!-- Action items -->
+      <!-- Action items: Unified Profile Entry Point -->
       <div class="header-actions">
-        <button class="restart-reg-btn" onclick="startNewRegistration()">
-          ✨ New Registration
+        <button id="headerSignInBtn" class="btn btn-primary" style="font-size: 13px; padding: 7px 16px; border-radius: 20px;" onclick="navigateTab('profile')">
+          👤 Sign In
         </button>
 
-        <div class="persona-badge" onclick="cyclePersona()" title="Quick switch active demo persona">
+        <div class="persona-badge" id="headerProfileBadge" onclick="navigateTab('profile')" title="My Profile & Account" style="display: none;">
           <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
-          <span id="headerUserName">Adarsh</span>
+          <span id="headerUserName">Profile</span>
+          <span id="headerIncompletePill" class="badge-incomplete" style="display: none;">Incomplete</span>
         </div>
 
-        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
+        <button id="headerLogoutBtn" class="btn btn-outline" style="display: none; font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
           Log Out
         </button>
       </div>
@@ -1320,91 +1580,9 @@ export function renderClientAppHtml(): string {
   <main class="app-main">
 
     <!-- =========================================================
-         VIEW 0: AUTHENTICATION & LOGIN GATEWAY
-         ========================================================= -->
-    <section id="view-login" class="view-panel active">
-      <div class="login-container">
-        <div class="login-brand-icon">🤝</div>
-        <h1 style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">
-          Welcome to Buddy
-        </h1>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
-          Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in to access your portal.
-        </p>
-
-        <div id="loginAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0; font-weight: 600;"></div>
-
-        <div class="login-toggle-tabs">
-          <button class="login-toggle-tab active" id="tabModeSignIn" onclick="setAuthMode('signin')">Sign In</button>
-          <button class="login-toggle-tab" id="tabModeRegister" onclick="setAuthMode('register')">Create Account</button>
-        </div>
-
-        <!-- Phone input group -->
-        <div style="text-align: left; margin-bottom: 16px;">
-          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
-            Mobile Phone Number
-          </label>
-          <input type="text" id="loginPhoneInput" value="+919876543211" placeholder="+91 98765 43210" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600;">
-        </div>
-
-        <div id="loginOtpGroup" style="display: none; text-align: left; margin-bottom: 16px;">
-          <label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">
-            Enter 6-Digit OTP Code
-          </label>
-          <input type="text" id="loginOtpInput" value="123456" placeholder="123456" maxlength="6" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--primary); border-radius: 12px; font-size: 18px; font-weight: 800; letter-spacing: 4px; text-align: center;">
-          <p style="font-size: 12px; color: var(--primary-dark); margin-top: 6px;">✔ Universal dev OTP code is <code>123456</code></p>
-        </div>
-
-        <button class="btn btn-primary" id="btnLoginAction" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="handleLoginSubmit()">
-          Send OTP Code →
-        </button>
-
-        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
-          <p style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
-            ⚡ Quick Sign In as Demo Persona
-          </p>
-          <div class="login-persona-grid">
-            <div class="login-persona-chip" onclick="quickLoginPersona('adarsh')">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Adarsh">
-              <div>
-                <div class="name">Adarsh Nair</div>
-                <div class="role">Has Room (M1)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('kiran')">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Kiran">
-              <div>
-                <div class="name">Kiran Kumar</div>
-                <div class="role">Needs Room (M2)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('rahul')">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Rahul">
-              <div>
-                <div class="name">Rahul Pillai</div>
-                <div class="role">Relocating (M3)</div>
-              </div>
-            </div>
-            <div class="login-persona-chip" onclick="quickLoginPersona('anjali')">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Anjali">
-              <div>
-                <div class="name">Anjali Krishna</div>
-                <div class="role">Team-Up (M4)</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =========================================================
-         VIEW 1: REGISTRATION & ONBOARDING WIZARD
-         ========================================================= -->
-    <!-- =========================================================
          VIEW 1: REGISTRATION & ONBOARDING WIZARD (CONVERSATIONAL BUMBLE-STYLE)
          ========================================================= -->
-    <section id="view-registration" class="view-panel active">
+    <section id="view-registration" class="view-panel">
       <div class="wizard-container">
         
         <!-- Onboarding Top Bar with Back Button & Step Counter -->
@@ -1412,204 +1590,201 @@ export function renderClientAppHtml(): string {
           <button class="onboarding-back-btn" id="obBackBtn" onclick="goBackOnboardingStep()" style="display: none;">
             ← Back
           </button>
-          <span class="onboarding-step-counter" id="obStepCounter">Step 1 of 12</span>
-          <button class="onboarding-exit-btn" onclick="handleLogout()" title="Cancel and Return to Sign In">✕ Exit</button>
+          <span class="onboarding-step-counter" id="obStepCounter">Question 1 of 12</span>
+          <button class="onboarding-exit-btn" onclick="cancelOnboarding()" title="Exit and Return to Profile">✕ Exit</button>
         </div>
 
         <!-- 5 Subsections Progress Bar with Completion Ticks -->
         <div class="wizard-progress-bar">
           <div class="progress-fill" id="wizardProgressFill"></div>
-          <div class="step-node active" id="node-step-1">
+          <div class="step-node active" id="node-step-1" onclick="goToOnboardingStep(1)" role="button" tabindex="0" title="Jump to Basics">
             <div class="step-circle" id="circle-step-1">1</div>
-            <span class="step-label">Verify</span>
-          </div>
-          <div class="step-node" id="node-step-2">
-            <div class="step-circle" id="circle-step-2">2</div>
             <span class="step-label">Basics</span>
           </div>
-          <div class="step-node" id="node-step-3">
+          <div class="step-node" id="node-step-2" onclick="goToOnboardingStep(3)" role="button" tabindex="0" title="Jump to About Me">
+            <div class="step-circle" id="circle-step-2">2</div>
+            <span class="step-label">About</span>
+          </div>
+          <div class="step-node" id="node-step-3" onclick="goToOnboardingStep(4)" role="button" tabindex="0" title="Jump to Housing Preferences">
             <div class="step-circle" id="circle-step-3">3</div>
             <span class="step-label">Housing</span>
           </div>
-          <div class="step-node" id="node-step-4">
+          <div class="step-node" id="node-step-4" onclick="goToOnboardingStep(6)" role="button" tabindex="0" title="Jump to Lifestyle & Habits">
             <div class="step-circle" id="circle-step-4">4</div>
             <span class="step-label">Lifestyle</span>
           </div>
-          <div class="step-node" id="node-step-5">
+          <div class="step-node" id="node-step-5" onclick="goToOnboardingStep(10)" role="button" tabindex="0" title="Jump to Optional Hosting & Finish">
             <div class="step-circle" id="circle-step-5">5</div>
             <span class="step-label">Finish</span>
           </div>
         </div>
 
-        <!-- SUBSECTION 1: MANDATORY VERIFICATION -->
-        <!-- STEP 1: MOBILE OTP AUTHENTICATION -->
+        <!-- SUBSECTION 1: BASICS & IDENTITY -->
+        <!-- STEP 1: DISPLAY NAME -->
         <div class="wizard-step active" id="reg-step-1">
           <div class="step-title-group">
-            <h2>Welcome to Buddy 👋</h2>
-            <p>Person-first flatmate & roommate discovery in Thiruvananthapuram. Let's begin by verifying your mobile number.</p>
+            <h2>What should we call you? 👋</h2>
+            <p>Your name is how potential flatmates and roommates will know you on Buddy.</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
-            <label>Mobile Phone Number</label>
-            <input type="text" id="regPhone" value="+919876543210" placeholder="+91 98765 43210">
-          </div>
-
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="autofillPhone('+919876543210')">
-              Use Test Phone (+91 9876543210)
-            </button>
-          </div>
-
-          <div id="otpInputGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 10px;">
-            <label style="font-size: 13.5px; font-weight: 700;">Enter 6-Digit Verification Code</label>
-            <input type="text" id="regOtp" value="123456" placeholder="123456" maxlength="6">
-            <p style="font-size: 11.5px; color: var(--primary-dark);">✔ Universal dev OTP code is <code>123456</code></p>
-          </div>
-
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <div></div>
-            <button class="btn btn-primary" id="btnStep1" onclick="handleStep1Auth()">
-              Request OTP Code →
-            </button>
-          </div>
-        </div>
-
-        <!-- SUBSECTION 2: BASIC IDENTITY -->
-        <!-- STEP 2: DISPLAY NAME -->
-        <div class="wizard-step" id="reg-step-2">
-          <div class="step-title-group">
-            <h2>What should we call you?</h2>
-            <p>Your name is how potential roommates and flatmates will know you on Buddy.</p>
-          </div>
-
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Your Full Name</label>
-            <input type="text" id="regName" value="Kiran Kumar" placeholder="e.g. Kiran Kumar" onkeypress="if(event.key==='Enter') goToOnboardingStep(3)">
+            <input type="text" id="regName" value="Kiran Kumar" placeholder="e.g. Kiran Kumar" onkeypress="if(event.key==='Enter') goToOnboardingStep(2)">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(3)">Next: Gender →</button>
+          <div class="wizard-actions">
+            <div></div>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(2)">Next: Preferences →</button>
           </div>
         </div>
 
-        <!-- STEP 3: GENDER & PREFERRED GENDER -->
-        <div class="wizard-step" id="reg-step-3">
+        <!-- STEP 2: GENDER & PREFERRED GENDER -->
+        <div class="wizard-step" id="reg-step-2">
           <div class="step-title-group">
             <h2>Gender & Living Preferences</h2>
             <p>Tell us your gender and who you are comfortable sharing an apartment or flat with.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>I identify as</label>
-            <select id="regGender">
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="NON_BINARY">Non-Binary / Other</option>
-            </select>
+            <input type="hidden" id="regGender" value="MALE">
+            <div class="option-cards-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div class="option-select-card selected" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="MALE" onclick="pickOptionCard('regGender', 'MALE', this)">
+                <div class="option-title">👨 Male</div>
+              </div>
+              <div class="option-select-card" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="FEMALE" onclick="pickOptionCard('regGender', 'FEMALE', this)">
+                <div class="option-title">👩 Female</div>
+              </div>
+              <div class="option-select-card" style="padding: 10px; justify-content: center; text-align: center; margin-bottom: 0;" data-val="NON_BINARY" onclick="pickOptionCard('regGender', 'NON_BINARY', this)">
+                <div class="option-title">🧑 Other</div>
+              </div>
+            </div>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 16px;">
             <label>I prefer living with</label>
-            <select id="regPrefGender">
-              <option value="ANY">Any Gender (Open-minded co-living)</option>
-              <option value="MALE">Male Flatmates Only</option>
-              <option value="FEMALE">Female Flatmates Only</option>
-            </select>
+            <input type="hidden" id="regPrefGender" value="ANY">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="ANY" onclick="pickOptionCard('regPrefGender', 'ANY', this)">
+                <div class="option-icon">🌈</div>
+                <div class="option-content">
+                  <div class="option-title">Any Gender</div>
+                  <div class="option-desc">Open-minded co-living environment</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="MALE" onclick="pickOptionCard('regPrefGender', 'MALE', this)">
+                <div class="option-icon">👨</div>
+                <div class="option-content">
+                  <div class="option-title">Male Flatmates Only</div>
+                  <div class="option-desc">All-male flat arrangement</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="FEMALE" onclick="pickOptionCard('regPrefGender', 'FEMALE', this)">
+                <div class="option-icon">👩</div>
+                <div class="option-content">
+                  <div class="option-title">Female Flatmates Only</div>
+                  <div class="option-desc">All-female flat arrangement</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(4)">Next: Work & Age →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(3)">Next: Profile Info →</button>
           </div>
         </div>
 
-        <!-- STEP 4: AGE & OCCUPATION -->
-        <div class="wizard-step" id="reg-step-4">
+        <!-- SUBSECTION 2: ABOUT -->
+        <!-- STEP 3: AGE & OCCUPATION -->
+        <div class="wizard-step" id="reg-step-3">
           <div class="step-title-group">
             <h2>When's your birthday & what do you do?</h2>
             <p>Age verification ensures a safe 18+ community in Trivandrum.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Date of Birth</label>
             <input type="date" id="regBirthDate" value="1998-05-15">
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 12px;">
             <label>Occupation & Company or College</label>
-            <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software" placeholder="e.g. Software Engineer @ Infosys, Student @ CET">
+            <input type="text" id="regOccupation" value="Frontend Engineer @ IBS Software" placeholder="e.g. Software Engineer @ Infosys, Student @ CET" onkeypress="if(event.key==='Enter') goToOnboardingStep(4)">
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 12px;">
             <label>Short Bio (Optional)</label>
             <textarea id="regBio" rows="2" placeholder="Tell potential flatmates a little about your routine and vibe...">Techie looking for a relaxed, clean flatmate near Technopark Phase I. Non-smoker, enjoys football on weekends and quiet evenings.</textarea>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep4SaveBasics()">Save & Continue →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(4)">Next: Housing →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 3: HOUSING SITUATION -->
-        <!-- STEP 5: HOUSING MODALITY -->
-        <div class="wizard-step" id="reg-step-5">
+        <!-- STEP 4: HOUSING MODALITY -->
+        <div class="wizard-step" id="reg-step-4">
           <div class="step-title-group">
             <h2>What's your current housing situation?</h2>
             <p>In Buddy, accommodation is completely optional! Choose what fits your status:</p>
           </div>
 
-          <div class="modality-cards-grid" style="margin-top: 8px;">
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_1', this)">
+          <div class="modality-cards-grid" style="margin-top: 12px;">
+            <div class="modality-select-card" data-modality="MODALITY_1" onclick="pickModalityCard('MODALITY_1', this)">
               <div class="modality-icon">🏠</div>
               <div class="modality-title">Have a Room</div>
               <div class="modality-desc">I have a flat/room in Trivandrum and am searching for a flatmate to move in.</div>
             </div>
 
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_2', this)">
+            <div class="modality-select-card" data-modality="MODALITY_2" onclick="pickModalityCard('MODALITY_2', this)">
               <div class="modality-icon">🛏</div>
               <div class="modality-title">Need a Room</div>
               <div class="modality-desc">I am actively looking for an existing room in a flat shared with compatible people.</div>
             </div>
 
-            <div class="modality-select-card" onclick="pickModalityCard('MODALITY_3', this)">
+            <div class="modality-select-card" data-modality="MODALITY_3" onclick="pickModalityCard('MODALITY_3', this)">
               <div class="modality-icon">🔄</div>
               <div class="modality-title">Want to Relocate</div>
               <div class="modality-desc">Currently renting, but want to relocate to a new area with a compatible flatmate.</div>
             </div>
 
-            <div class="modality-select-card selected" onclick="pickModalityCard('MODALITY_4', this)">
+            <div class="modality-select-card selected" data-modality="MODALITY_4" onclick="pickModalityCard('MODALITY_4', this)">
               <div class="modality-icon">🤝</div>
               <div class="modality-title">Team-Up First</div>
               <div class="modality-desc">Person-first! Find a compatible flatmate first, then flat-hunt together in TVM.</div>
             </div>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(6)">Next: Suburbs & Budget →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(5)">Next: Suburbs →</button>
           </div>
         </div>
 
-        <!-- STEP 6: LOCATION & BUDGET -->
-        <div class="wizard-step" id="reg-step-6">
+        <!-- STEP 5: LOCATION & BUDGET -->
+        <div class="wizard-step" id="reg-step-5">
           <div class="step-title-group">
             <h2>Where & what budget?</h2>
             <p>Select your preferred Trivandrum neighborhoods and maximum monthly budget per head.</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Select Preferred Suburbs (Tap to select)</label>
             <div class="suburb-pills-wrap" id="suburbPillsWrap">
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('KAZHAKKOOTTAM', this)">Kazhakkoottam</span>
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('KARIAVATTOM', this)">Kariavattom</span>
-              <span class="suburb-pill selected" onclick="toggleSuburbPill('SREEKARYAM', this)">Sreekaryam</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('ULLOOR', this)">Ulloor</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('PATTOM', this)">Pattom</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('KOWDIAR', this)">Kowdiar</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('VELLAYAMBALAM', this)">Vellayambalam</span>
-              <span class="suburb-pill" onclick="toggleSuburbPill('MANACAUD', this)">Manacaud</span>
+              <span class="suburb-pill selected" data-suburb="KAZHAKKOOTTAM" onclick="toggleSuburbPill('KAZHAKKOOTTAM', this)">Kazhakkoottam</span>
+              <span class="suburb-pill selected" data-suburb="KARIAVATTOM" onclick="toggleSuburbPill('KARIAVATTOM', this)">Kariavattom</span>
+              <span class="suburb-pill selected" data-suburb="SREEKARYAM" onclick="toggleSuburbPill('SREEKARYAM', this)">Sreekaryam</span>
+              <span class="suburb-pill" data-suburb="ULLOOR" onclick="toggleSuburbPill('ULLOOR', this)">Ulloor</span>
+              <span class="suburb-pill" data-suburb="PATTOM" onclick="toggleSuburbPill('PATTOM', this)">Pattom</span>
+              <span class="suburb-pill" data-suburb="KOWDIAR" onclick="toggleSuburbPill('KOWDIAR', this)">Kowdiar</span>
+              <span class="suburb-pill" data-suburb="VELLAYAMBALAM" onclick="toggleSuburbPill('VELLAYAMBALAM', this)">Vellayambalam</span>
+              <span class="suburb-pill" data-suburb="MANACAUD" onclick="toggleSuburbPill('MANACAUD', this)">Manacaud</span>
             </div>
             <input type="hidden" id="regSuburbs" value="KAZHAKKOOTTAM, KARIAVATTOM, SREEKARYAM">
           </div>
@@ -1619,149 +1794,305 @@ export function renderClientAppHtml(): string {
             <input type="number" id="regMaxBudget" value="9500" min="2000" step="500">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="handleStep6SaveHousing()">Next: Lifestyle Rhythms →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(6)">Next: Daily Rhythm →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 4: CORE LIFESTYLE -->
-        <!-- STEP 7: SLEEP RHYTHM -->
-        <div class="wizard-step" id="reg-step-7">
+        <!-- STEP 6: SLEEP RHYTHM -->
+        <div class="wizard-step" id="reg-step-6">
           <div class="step-title-group">
             <h2>🌙 Sleep Schedule & Daily Rhythm</h2>
             <p>Daily routines impact living harmony the most. When are you awake and sleeping?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Sleep Schedule</label>
-            <select id="regSleep">
-              <option value="EARLY_BIRD">Early Bird (Sleep by 10:30 PM, Awake by 6:30 AM)</option>
-              <option value="NIGHT_OWL">Night Owl (Sleep 1:00 AM+, Awake 9:00 AM+)</option>
-              <option value="FLEXIBLE">Flexible Routine</option>
-            </select>
+            <input type="hidden" id="regSleep" value="EARLY_BIRD">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="EARLY_BIRD" onclick="pickOptionCard('regSleep', 'EARLY_BIRD', this)">
+                <div class="option-icon">🌅</div>
+                <div class="option-content">
+                  <div class="option-title">Early Bird</div>
+                  <div class="option-desc">Sleep by 10:30 PM, awake by 6:30 AM</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="NIGHT_OWL" onclick="pickOptionCard('regSleep', 'NIGHT_OWL', this)">
+                <div class="option-icon">🦉</div>
+                <div class="option-content">
+                  <div class="option-title">Night Owl</div>
+                  <div class="option-desc">Sleep 1:00 AM+, awake 9:00 AM+</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="FLEXIBLE" onclick="pickOptionCard('regSleep', 'FLEXIBLE', this)">
+                <div class="option-icon">⚡</div>
+                <div class="option-content">
+                  <div class="option-title">Flexible Routine</div>
+                  <div class="option-desc">Adapts to work shifts and weekend schedules</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
-              <input type="checkbox" id="dbSleep" checked> Strict Dealbreaker (Do not match me with opposing sleep patterns)
+              <input type="checkbox" id="dbSleep" checked> Strict Dealbreaker (Opposing sleep patterns filtered)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(8)">Next: Cleanliness →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(7)">Next: Cleanliness →</button>
           </div>
         </div>
 
-        <!-- STEP 8: CLEANLINESS -->
-        <div class="wizard-step" id="reg-step-8">
+        <!-- STEP 7: CLEANLINESS -->
+        <div class="wizard-step" id="reg-step-7">
           <div class="step-title-group">
             <h2>🧹 Cleanliness & Kitchen Sink Standards</h2>
             <p>How clean do you keep your common areas and kitchen sink?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Cleanliness Level</label>
-            <select id="regClean">
-              <option value="METICULOUS">Meticulous (Dishes washed immediately, spotless counters)</option>
-              <option value="MODERATE">Moderate (Cleaned by end of day)</option>
-              <option value="RELAXED">Relaxed (Weekly cleanings)</option>
-            </select>
+            <input type="hidden" id="regClean" value="METICULOUS">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="METICULOUS" onclick="pickOptionCard('regClean', 'METICULOUS', this)">
+                <div class="option-icon">✨</div>
+                <div class="option-content">
+                  <div class="option-title">Meticulous</div>
+                  <div class="option-desc">Dishes washed immediately, spotless common spaces</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="MODERATE" onclick="pickOptionCard('regClean', 'MODERATE', this)">
+                <div class="option-icon">🧼</div>
+                <div class="option-content">
+                  <div class="option-title">Moderate</div>
+                  <div class="option-desc">Cleaned daily, tidy by end of day</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="RELAXED" onclick="pickOptionCard('regClean', 'RELAXED', this)">
+                <div class="option-icon">🛋️</div>
+                <div class="option-content">
+                  <div class="option-title">Relaxed</div>
+                  <div class="option-desc">Casual living, scheduled weekly cleanings</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbClean" checked> Strict Dealbreaker (Cleanliness level must align)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(9)">Next: Dietary Policy →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(8)">Next: Dietary Policy →</button>
           </div>
         </div>
 
-        <!-- STEP 9: DIETARY POLICY -->
-        <div class="wizard-step" id="reg-step-9">
+        <!-- STEP 8: DIETARY POLICY -->
+        <div class="wizard-step" id="reg-step-8">
           <div class="step-title-group">
             <h2>🍲 Food & Kitchen Sharing Policy</h2>
             <p>Do you cook non-veg, require a pure vegetarian kitchen, or eat eggs?</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Dietary Type</label>
-            <select id="regDiet">
-              <option value="NON_VEGETARIAN">Non-Vegetarian (Cooking non-veg at home is fine)</option>
-              <option value="STRICT_VEGETARIAN">Strict Vegetarian (Requires veg-only kitchen)</option>
-              <option value="EGGETARIAN">Eggetarian</option>
-            </select>
+            <input type="hidden" id="regDiet" value="NON_VEGETARIAN">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="NON_VEGETARIAN" onclick="pickOptionCard('regDiet', 'NON_VEGETARIAN', this)">
+                <div class="option-icon">🍗</div>
+                <div class="option-content">
+                  <div class="option-title">Non-Vegetarian</div>
+                  <div class="option-desc">Cooking meat & non-veg at home is completely fine</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="STRICT_VEGETARIAN" onclick="pickOptionCard('regDiet', 'STRICT_VEGETARIAN', this)">
+                <div class="option-icon">🥦</div>
+                <div class="option-content">
+                  <div class="option-title">Strict Vegetarian</div>
+                  <div class="option-desc">Requires pure veg-only kitchen environment</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="EGGETARIAN" onclick="pickOptionCard('regDiet', 'EGGETARIAN', this)">
+                <div class="option-icon">🍳</div>
+                <div class="option-content">
+                  <div class="option-title">Eggetarian</div>
+                  <div class="option-desc">Vegetarian diet with eggs allowed in kitchen</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbDiet"> Strict Dealbreaker (Strict veg-only kitchen policy)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
+          <div class="wizard-actions">
             <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="goToOnboardingStep(10)">Next: Smoking & Substances →</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(9)">Next: Smoking Habits →</button>
           </div>
         </div>
 
-        <!-- STEP 10: SMOKING & SUBSTANCES -->
-        <div class="wizard-step" id="reg-step-10">
+        <!-- STEP 9: SMOKING & SUBSTANCES -->
+        <div class="wizard-step" id="reg-step-9">
           <div class="step-title-group">
             <h2>🚭 Smoking & Substance Habits</h2>
             <p>Smoke-free living is an important boundary for many roommates.</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Smoking Preference</label>
-            <select id="regSmoke">
-              <option value="NON_SMOKER_STRICT">Strict Non-Smoker (Zero smoking in flat or balcony)</option>
-              <option value="BALCONY_ONLY">Balcony Only (Smoking outside on balcony only)</option>
-              <option value="SMOKER">Smoker Friendly</option>
-            </select>
+            <input type="hidden" id="regSmoke" value="NON_SMOKER_STRICT">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="NON_SMOKER_STRICT" onclick="pickOptionCard('regSmoke', 'NON_SMOKER_STRICT', this)">
+                <div class="option-icon">🚭</div>
+                <div class="option-content">
+                  <div class="option-title">Strict Non-Smoker</div>
+                  <div class="option-desc">Zero smoking permitted inside flat or on balcony</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="BALCONY_ONLY" onclick="pickOptionCard('regSmoke', 'BALCONY_ONLY', this)">
+                <div class="option-icon">🌿</div>
+                <div class="option-content">
+                  <div class="option-title">Balcony Only</div>
+                  <div class="option-desc">Smoking permitted outside on open balcony only</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="SMOKER" onclick="pickOptionCard('regSmoke', 'SMOKER', this)">
+                <div class="option-icon">💨</div>
+                <div class="option-content">
+                  <div class="option-title">Smoker Friendly</div>
+                  <div class="option-desc">Comfortable sharing with casual smokers</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top: 10px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
             <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
               <input type="checkbox" id="dbSmoke" checked> Strict Dealbreaker (Strict non-smoker requirement)
             </label>
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
+          <div class="wizard-actions">
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="goToOnboardingStep(10)">Optional (2m) →</button>
+            <button class="btn btn-primary" onclick="finishMandatoryAndLaunch()">Finish & Match 🚀</button>
+          </div>
+        </div>
+
+        <!-- STEP 10: HOUSEHOLD VIBE & HOSTING (ENHANCEMENT 5) -->
+        <div class="wizard-step" id="reg-step-10">
+          <div class="step-title-group">
+            <h2>🎉 Household Vibe & Hosting Preferences</h2>
+            <p>Do you prefer a tranquil retreat with minimal guests, or a socially active home with friends over?</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label>Household Hosting & Vibe</label>
+            <input type="hidden" id="regVibe" value="BALANCED_CASUAL">
+            <div class="option-cards-list">
+              <div class="option-select-card" data-val="QUIET_SANCTUARY" onclick="pickOptionCard('regVibe', 'QUIET_SANCTUARY', this)">
+                <div class="option-icon">🧘</div>
+                <div class="option-content">
+                  <div class="option-title">Quiet Sanctuary</div>
+                  <div class="option-desc">Tranquil, peaceful retreat with minimal or no guests</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card selected" data-val="BALANCED_CASUAL" onclick="pickOptionCard('regVibe', 'BALANCED_CASUAL', this)">
+                <div class="option-icon">⚖️</div>
+                <div class="option-content">
+                  <div class="option-title">Balanced & Casual</div>
+                  <div class="option-desc">Quiet on workdays, occasional friends over with notice</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="SOCIALLY_ACTIVE" onclick="pickOptionCard('regVibe', 'SOCIALLY_ACTIVE', this)">
+                <div class="option-icon">🎉</div>
+                <div class="option-content">
+                  <div class="option-title">Socially Active</div>
+                  <div class="option-desc">Loves hosting friends, casual dinners & weekend gatherings</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px 14px; border-radius: 12px;">
+            <label class="dealbreaker-toggle" style="color: #92400E; font-size: 13px;">
+              <input type="checkbox" id="dbVibe"> Strict Dealbreaker (Hosting vibe must align)
+            </label>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
             <button class="btn btn-primary" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
           </div>
         </div>
 
         <!-- SUBSECTION 5: TRUST BADGE & FINISH -->
-        <!-- STEP 11: OPTIONAL TRUST BADGE (POSITIONED TOWARDS END) -->
+        <!-- STEP 11: OPTIONAL TRUST BADGE -->
         <div class="wizard-step" id="reg-step-11">
           <div class="step-title-group">
             <h2>Claim Your Verified Trust Badge ⭐</h2>
             <p><strong>Optional:</strong> Verified profiles from Technopark IT firms and Trivandrum colleges receive 3x more mutual matches. You can verify now or skip and do it later!</p>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Institution / Workplace Type</label>
-            <select id="regInstType">
-              <option value="CORPORATE">Technopark Professional (Infosys, TCS, UST, Allianz, IBS, etc.)</option>
-              <option value="ACADEMIC">College Student (CET Trivandrum, Univ. of Kerala, etc.)</option>
-            </select>
+            <input type="hidden" id="regInstType" value="CORPORATE">
+            <div class="option-cards-list">
+              <div class="option-select-card selected" data-val="CORPORATE" onclick="pickOptionCard('regInstType', 'CORPORATE', this)">
+                <div class="option-icon">💼</div>
+                <div class="option-content">
+                  <div class="option-title">Technopark Professional</div>
+                  <div class="option-desc">Infosys, TCS, UST, Allianz, IBS Software, etc.</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+              <div class="option-select-card" data-val="ACADEMIC" onclick="pickOptionCard('regInstType', 'ACADEMIC', this)">
+                <div class="option-icon">🎓</div>
+                <div class="option-content">
+                  <div class="option-title">College Student</div>
+                  <div class="option-desc">CET Trivandrum, University of Kerala, etc.</div>
+                </div>
+                <div class="option-radio"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="form-group" style="margin-top: 10px;">
+          <div class="form-group" style="margin-top: 14px;">
             <label>Institutional Email (Optional)</label>
             <input type="email" id="regInstEmail" value="kiran.kumar@infosys.com" placeholder="name@company.com or name@cet.ac.in">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="skipTrustBadge()">Skip for Now</button>
-            <button class="btn btn-primary" onclick="handleStepTrustBadge()">Verify Email & Next →</button>
+          <div class="wizard-actions">
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(12)">Next: Photo →</button>
           </div>
         </div>
 
@@ -1769,11 +2100,11 @@ export function renderClientAppHtml(): string {
         <div class="wizard-step" id="reg-step-12">
           <div class="step-title-group">
             <h2>Add a Profile Photo 📸</h2>
-            <p><strong>Optional:</strong> Profiles with photos get 4x more replies. Pick a photo or finish now and add one later.</p>
+            <p><strong>Optional:</strong> Profiles with photos get 4x more replies. Pick an avatar or finish and add one later.</p>
           </div>
 
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 12px 0;">
-            <img id="regPhotoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 16px 0;">
+            <img id="regPhotoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);">
             <div style="display: flex; gap: 8px;">
               <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80')">Photo 1</button>
               <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="setRegAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80')">Photo 2</button>
@@ -1787,10 +2118,11 @@ export function renderClientAppHtml(): string {
             <input type="text" id="regPhotoUrl" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" oninput="document.getElementById('regPhotoPreview').src = this.value">
           </div>
 
-          <div class="wizard-actions" style="margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-primary" onclick="completeRegistrationAndLaunch()">
-              🎉 Complete Profile & Start Discovering!
+          <div class="wizard-actions">
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="finishMandatoryAndLaunch()">
+              Start Discovering 🚀
             </button>
           </div>
         </div>
@@ -1798,13 +2130,10 @@ export function renderClientAppHtml(): string {
       </div>
     </section>
 
-      </div>
-    </section>
-
     <!-- =========================================================
          VIEW 2: DISCOVERY STAGE (FLUID RESPONSIVE DECK)
          ========================================================= -->
-    <section id="view-discover" class="view-panel">
+    <section id="view-discover" class="view-panel active">
       <div class="discover-stage">
         
         <!-- Left Column: Swipe Deck -->
@@ -1967,42 +2296,11 @@ export function renderClientAppHtml(): string {
     </section>
 
     <!-- =========================================================
-         VIEW 5: MY PROFILE & LIFESTYLE CONFIGURATION
+         VIEW 5: UNIFIED PROFILE & ACCOUNT MANAGEMENT
          ========================================================= -->
     <section id="view-profile" class="view-panel">
-      <div style="max-width: 700px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;">
-        
-        <div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);">
-          <img id="myProfAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-          <div style="flex: 1;">
-            <h2 id="myProfName" style="font-size: 20px; font-weight: 800;">Adarsh Nair</h2>
-            <p id="myProfWork" style="font-size: 13px; color: var(--text-muted);">Senior Backend Engineer @ TCS Technopark</p>
-            <div style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; background: #E0F2FE; color: #0369A1; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 12px;">
-              ✔ Verified Professional
-            </div>
-          </div>
-          <button class="btn btn-outline" onclick="startNewRegistration()">Edit Registration</button>
-        </div>
-
-        <div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-sm);">
-          <h3 style="font-size: 16px; font-weight: 800;">Your Discovery Settings</h3>
-          
-          <div class="form-group">
-            <label>Current Modality</label>
-            <input type="text" id="myProfModality" value="Modality 1: I have a room available in Kazhakkoottam" readonly style="background: #F8FAFC;">
-          </div>
-
-          <div class="form-group">
-            <label>Budget & Suburbs</label>
-            <input type="text" value="₹7,000 - ₹9,000/mo • Kazhakkoottam, Kariavattom" readonly style="background: #F8FAFC;">
-          </div>
-
-          <div style="border-top: 1px solid var(--border); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 13px; color: var(--text-muted);">Looking to switch perspective or test as someone else?</span>
-            <button class="btn btn-secondary" onclick="cyclePersona()">Cycle Next Demo Persona</button>
-          </div>
-        </div>
-
+      <div id="profileContainer" class="profile-view-wrap">
+        <!-- Dynamically rendered by renderProfileView() -->
       </div>
     </section>
 
@@ -2051,6 +2349,44 @@ export function renderClientAppHtml(): string {
     </div>
   </div>
 
+  <!-- GUEST ACTION PROMPT MODAL -->
+  <div class="modal-backdrop" id="guestPromptModal">
+    <div class="modal-box" style="text-align: center; max-width: 380px;">
+      <div style="font-size: 42px; margin-bottom: 8px;">🤝</div>
+      <h2 style="font-size: 20px; font-weight: 800; color: var(--text);">Sign In to Buddy</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0 20px 0; line-height: 1.5;" id="guestPromptText">
+        Please sign in or create a quick account to connect with flatmates and save your preferences in Trivandrum.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 12px; font-weight: 800;" onclick="closeGuestPromptModal(); navigateTab('profile');">
+          Sign In / Create Account →
+        </button>
+        <button class="btn btn-outline" style="width: 100%; border-radius: 12px; padding: 10px;" onclick="closeGuestPromptModal()">
+          Keep Browsing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOMPLETE REGISTRATION MODAL -->
+  <div class="modal-backdrop" id="incompleteRegModal">
+    <div class="modal-box" style="text-align: center; max-width: 380px;">
+      <div style="font-size: 42px; margin-bottom: 8px;">✨</div>
+      <h2 style="font-size: 20px; font-weight: 800; color: var(--text);">Complete Registration to Connect</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 8px 0 20px 0; line-height: 1.5;">
+        You're only 1 minute away from sending interest to <strong id="incompletePromptName" style="color: var(--primary);">Candidate</strong>! Finish your quick mandatory preferences to unlock matching.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 12px; font-weight: 800;" onclick="closeIncompleteRegModal(); startNewRegistration();">
+          Complete Registration (1 Min) →
+        </button>
+        <button class="btn btn-outline" style="width: 100%; border-radius: 12px; padding: 10px;" onclick="closeIncompleteRegModal()">
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // State
     let currentToken = null;
@@ -2060,8 +2396,11 @@ export function renderClientAppHtml(): string {
     let activeMatchPartner = null;
     let selectedModality = 'MODALITY_4';
     let wizardCurrentStep = 1;
+    let pendingInterestCandidate = null;
+    let authMode = 'signin';
+    let otpSent = false;
 
-    // Personas
+    // Personas: Including an Incomplete user persona (Kiran) for interactive testing
     const PERSONAS = {
       adarsh: {
         id: 'usr_adarsh_001',
@@ -2069,15 +2408,17 @@ export function renderClientAppHtml(): string {
         name: 'Adarsh Nair',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
         work: 'Senior Backend Engineer @ TCS Technopark',
-        modality: 'MODALITY_1'
+        modality: 'MODALITY_1',
+        isOnboardingCompleted: true
       },
-      sneha: {
-        id: 'usr_sneha_002',
-        phone: '+919876543212',
-        name: 'Sneha Menon',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
-        work: 'M.Tech AI @ CET Trivandrum',
-        modality: 'MODALITY_2'
+      kiran: {
+        id: 'usr_kiran_002',
+        phone: '+919876543299',
+        name: 'Kiran Kumar',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+        work: 'Technopark Associate • Needs Room (M2)',
+        modality: 'MODALITY_2',
+        isOnboardingCompleted: false
       },
       rahul: {
         id: 'usr_rahul_003',
@@ -2085,7 +2426,8 @@ export function renderClientAppHtml(): string {
         name: 'Rahul Pillai',
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
         work: 'Financial Analyst @ UST Global',
-        modality: 'MODALITY_3'
+        modality: 'MODALITY_3',
+        isOnboardingCompleted: true
       },
       anjali: {
         id: 'usr_anjali_004',
@@ -2093,34 +2435,100 @@ export function renderClientAppHtml(): string {
         name: 'Anjali Krishna',
         avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80',
         work: 'HR Specialist @ Allianz Technopark',
-        modality: 'MODALITY_4'
+        modality: 'MODALITY_4',
+        isOnboardingCompleted: true
       }
     };
 
-    // App Initialization
-    let authMode = 'signin';
-    let otpSent = false;
+    function showToast(msg) {
+      let toast = document.getElementById('buddyToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'buddyToast';
+        toast.style.position = 'fixed';
+        toast.style.bottom = '80px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = '#0F172A';
+        toast.style.color = '#FFFFFF';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '24px';
+        toast.style.fontSize = '14px';
+        toast.style.fontWeight = '700';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+        toast.style.transition = 'opacity 0.3s ease';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => { toast.style.display = 'none'; }, 300);
+      }, 3500);
+    }
+
+    function showGuestPromptModal(actionName) {
+      const modal = document.getElementById('guestPromptModal');
+      const text = document.getElementById('guestPromptText');
+      if (text) {
+        text.textContent = (actionName === 'like')
+          ? 'Please sign in or create an account to express interest in roommate candidates in Trivandrum.'
+          : 'Please sign in or create an account to pass or save your roommate preferences.';
+      }
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeGuestPromptModal() {
+      const modal = document.getElementById('guestPromptModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function showIncompleteRegModal(candidateName) {
+      const modal = document.getElementById('incompleteRegModal');
+      const nameEl = document.getElementById('incompletePromptName');
+      if (nameEl) nameEl.textContent = candidateName || 'Candidate';
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeIncompleteRegModal() {
+      const modal = document.getElementById('incompleteRegModal');
+      if (modal) modal.classList.remove('active');
+    }
 
     function setAuthMode(mode) {
       authMode = mode;
-      document.getElementById('tabModeSignIn').classList.toggle('active', mode === 'signin');
-      document.getElementById('tabModeRegister').classList.toggle('active', mode === 'register');
-      document.getElementById('loginOtpGroup').style.display = 'none';
+      const tSign = document.getElementById('tabModeSignIn');
+      const tReg = document.getElementById('tabModeRegister');
+      if (tSign) tSign.classList.toggle('active', mode === 'signin');
+      if (tReg) tReg.classList.toggle('active', mode === 'register');
+      const otpGroup = document.getElementById('loginOtpGroup');
+      if (otpGroup) otpGroup.style.display = 'none';
       otpSent = false;
-      document.getElementById('btnLoginAction').textContent = 'Send OTP Code →';
+      const btnAction = document.getElementById('btnLoginAction');
+      if (btnAction) btnAction.textContent = 'Send OTP Code →';
       const alertBox = document.getElementById('loginAlertBox');
-      alertBox.style.display = 'none';
+      if (alertBox) alertBox.style.display = 'none';
+      const titleEl = document.getElementById('loginTitle');
+      const descEl = document.getElementById('loginDesc');
+      const phoneInput = document.getElementById('loginPhoneInput');
       if (mode === 'register') {
-        document.getElementById('loginPhoneInput').value = '+919876599999';
+        if (titleEl) titleEl.textContent = 'Create Buddy Account';
+        if (descEl) descEl.textContent = 'Join flatmate & roommate discovery in Thiruvananthapuram. Verify your mobile to begin.';
+        if (phoneInput) phoneInput.value = '+919876599999';
       } else {
-        document.getElementById('loginPhoneInput').value = '+919876543211';
+        if (titleEl) titleEl.textContent = 'Welcome to Buddy';
+        if (descEl) descEl.textContent = 'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in with your mobile number to unlock matching and chat.';
+        if (phoneInput) phoneInput.value = '+919876543211';
       }
     }
 
     async function handleLoginSubmit() {
-      const phone = document.getElementById('loginPhoneInput').value.trim();
+      const phoneInput = document.getElementById('loginPhoneInput');
+      const phone = phoneInput ? phoneInput.value.trim() : '';
       const alertBox = document.getElementById('loginAlertBox');
-      alertBox.style.display = 'none';
+      if (alertBox) alertBox.style.display = 'none';
 
       if (!otpSent) {
         // Step 1: Send OTP
@@ -2135,21 +2543,28 @@ export function renderClientAppHtml(): string {
             throw new Error(data.detail || data.title || 'Failed to send OTP');
           }
           otpSent = true;
-          document.getElementById('loginOtpGroup').style.display = 'block';
-          document.getElementById('btnLoginAction').textContent = 'Verify OTP & Enter Buddy →';
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#ECFDF5';
-          alertBox.style.color = '#065F46';
-          alertBox.textContent = '✔ OTP code sent! Use dev code 123456 to verify.';
+          const otpGroup = document.getElementById('loginOtpGroup');
+          if (otpGroup) otpGroup.style.display = 'block';
+          const btnAction = document.getElementById('btnLoginAction');
+          if (btnAction) btnAction.textContent = 'Verify OTP & Enter Buddy →';
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#ECFDF5';
+            alertBox.style.color = '#065F46';
+            alertBox.textContent = '✔ OTP code sent! Use dev code 123456 to verify.';
+          }
         } catch (e) {
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#FEF2F2';
-          alertBox.style.color = '#991B1B';
-          alertBox.textContent = 'Error: ' + e.message;
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#FEF2F2';
+            alertBox.style.color = '#991B1B';
+            alertBox.textContent = 'Error: ' + e.message;
+          }
         }
       } else {
         // Step 2: Verify OTP
-        const otp = document.getElementById('loginOtpInput').value.trim();
+        const otpInput = document.getElementById('loginOtpInput');
+        const otp = otpInput ? otpInput.value.trim() : '123456';
         try {
           const res = await fetch('/api/v1/auth/otp/verify', {
             method: 'POST',
@@ -2166,30 +2581,30 @@ export function renderClientAppHtml(): string {
           localStorage.setItem('buddy_phone', phone);
 
           const isRegistered = data.user && data.user.isOnboardingCompleted;
+          currentUser = {
+            id: data.user.id,
+            phone: phone,
+            name: (data.user && data.user.name) || '',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+            isOnboardingCompleted: isRegistered
+          };
+
+          updateHeaderUser(currentUser);
+          await loadFeed();
+          await loadMatches();
+
           if (!isRegistered) {
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.add('onboarding-mode');
-            currentUser = {
-              id: data.user.id,
-              phone: phone,
-              name: 'New Buddy User',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-              isOnboardingCompleted: false
-            };
-            startNewRegistration();
+            navigateTab('profile');
           } else {
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.remove('onboarding-mode');
-            await loadUserProfile();
-            await loadFeed();
-            await loadMatches();
             navigateTab('discover');
           }
         } catch (e) {
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#FEF2F2';
-          alertBox.style.color = '#991B1B';
-          alertBox.textContent = 'Verification error: ' + e.message;
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#FEF2F2';
+            alertBox.style.color = '#991B1B';
+            alertBox.textContent = 'Verification error: ' + e.message;
+          }
         }
       }
     }
@@ -2197,10 +2612,36 @@ export function renderClientAppHtml(): string {
     async function quickLoginPersona(key) {
       const p = PERSONAS[key];
       if (!p) return;
-      document.body.classList.remove('unauthenticated');
-      document.body.classList.remove('onboarding-mode');
       await loginAsPersona(p);
       navigateTab('discover');
+    }
+
+    async function loginAsPersona(p) {
+      currentUser = { ...p };
+
+      // Authenticate with server
+      await fetch('/api/v1/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: p.phone })
+      });
+      const res = await fetch('/api/v1/auth/otp/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: p.phone, otp: '123456' })
+      });
+      const data = await res.json();
+      currentToken = data.accessToken;
+      localStorage.setItem('buddy_token', currentToken);
+      localStorage.setItem('buddy_phone', p.phone);
+
+      const isRegistered = data.user ? data.user.isOnboardingCompleted : p.isOnboardingCompleted;
+      currentUser.id = data.user ? data.user.id : p.id;
+      currentUser.isOnboardingCompleted = isRegistered;
+
+      updateHeaderUser(currentUser);
+      await loadFeed();
+      await loadMatches();
     }
 
     async function handleLogout() {
@@ -2214,16 +2655,17 @@ export function renderClientAppHtml(): string {
       } catch (e) {}
       currentToken = null;
       currentUser = null;
+      pendingInterestCandidate = null;
       localStorage.removeItem('buddy_token');
       localStorage.removeItem('buddy_phone');
-      document.body.classList.add('unauthenticated');
       document.body.classList.remove('onboarding-mode');
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      const loginView = document.getElementById('view-login');
-      if (loginView) loginView.classList.add('active');
+      updateHeaderUser(null);
+      await loadFeed();
+      navigateTab('profile');
     }
 
     async function loadUserProfile() {
+      if (!currentToken) return;
       try {
         const res = await fetch('/api/v1/profiles/me', {
           headers: { 'Authorization': 'Bearer ' + currentToken }
@@ -2242,6 +2684,342 @@ export function renderClientAppHtml(): string {
           updateHeaderUser(currentUser);
         }
       } catch (e) {}
+    }
+
+    function updateHeaderUser(u) {
+      const signInBtn = document.getElementById('headerSignInBtn');
+      const badge = document.getElementById('headerProfileBadge');
+      const logoutBtn = document.getElementById('headerLogoutBtn');
+      const incompletePill = document.getElementById('headerIncompletePill');
+
+      if (!u || !currentToken) {
+        if (signInBtn) signInBtn.style.display = 'inline-flex';
+        if (badge) badge.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      } else {
+        if (signInBtn) signInBtn.style.display = 'none';
+        if (badge) badge.style.display = 'inline-flex';
+        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+        const avatarEl = document.getElementById('headerUserAvatar');
+        if (avatarEl && u.avatar) avatarEl.src = u.avatar;
+        const nameEl = document.getElementById('headerUserName');
+        if (nameEl) nameEl.textContent = (u.name ? u.name.split(' ')[0] : 'Profile');
+        if (incompletePill) {
+          incompletePill.style.display = (!u.isOnboardingCompleted) ? 'inline-block' : 'none';
+        }
+      }
+    }
+
+    function cyclePersona() {
+      const keys = Object.keys(PERSONAS);
+      const currentKey = keys.find(k => PERSONAS[k].id === (currentUser && currentUser.id)) || 'adarsh';
+      const nextKey = keys[(keys.indexOf(currentKey) + 1) % keys.length];
+      loginAsPersona(PERSONAS[nextKey]);
+    }
+
+    // Dynamic Central Profile View (Handles Guest, Incomplete, and Complete States)
+    function renderProfileView() {
+      const container = document.getElementById('profileContainer');
+      if (!container) return;
+
+      if (!currentToken) {
+        // GUEST: Render Login Gateway Card
+        container.innerHTML = 
+          '<div class="login-container">' +
+            '<div class="login-brand-icon">🤝</div>' +
+            '<h1 id="loginTitle" style="font-size: 24px; font-weight: 900; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px;">' +
+              'Welcome to Buddy' +
+            '</h1>' +
+            '<p id="loginDesc" style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">' +
+              'Person-first flatmate & roommate discovery in Thiruvananthapuram. Sign in with your mobile number to unlock matching and chat.' +
+            '</p>' +
+            '<div id="loginAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0; font-weight: 600;"></div>' +
+            '<div class="login-toggle-tabs">' +
+              '<button class="login-toggle-tab active" id="tabModeSignIn" onclick="setAuthMode(&apos;signin&apos;)">Sign In</button>' +
+              '<button class="login-toggle-tab" id="tabModeRegister" onclick="setAuthMode(&apos;register&apos;)">Create Account</button>' +
+            '</div>' +
+            '<div style="text-align: left; margin-bottom: 16px;">' +
+              '<label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">' +
+                'Mobile Phone Number' +
+              '</label>' +
+              '<input type="text" id="loginPhoneInput" value="+919876543211" placeholder="+91 98765 43210" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600;">' +
+            '</div>' +
+            '<div id="loginOtpGroup" style="display: none; text-align: left; margin-bottom: 16px;">' +
+              '<label style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">' +
+                'Enter 6-Digit OTP Code' +
+              '</label>' +
+              '<input type="text" id="loginOtpInput" value="123456" placeholder="123456" maxlength="6" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--primary); border-radius: 12px; font-size: 18px; font-weight: 800; letter-spacing: 4px; text-align: center;">' +
+              '<p style="font-size: 12px; color: var(--primary-dark); margin-top: 6px;">✔ Universal dev OTP code is <code>123456</code></p>' +
+            '</div>' +
+            '<button class="btn btn-primary" id="btnLoginAction" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="handleLoginSubmit()">' +
+              'Send OTP Code →' +
+            '</button>' +
+            '<div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">' +
+              '<p style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">' +
+                '⚡ Quick Sign In as Demo Persona' +
+              '</p>' +
+              '<div class="login-persona-grid">' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;adarsh&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Adarsh">' +
+                  '<div>' +
+                    '<div class="name">Adarsh Nair</div>' +
+                    '<div class="role">Complete • Has Room (M1)</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;kiran&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Kiran">' +
+                  '<div>' +
+                    '<div class="name">Kiran Kumar</div>' +
+                    '<div class="role" style="color: #D97706; font-weight: 700;">⚠️ Incomplete Reg</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;rahul&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Rahul">' +
+                  '<div>' +
+                    '<div class="name">Rahul Pillai</div>' +
+                    '<div class="role">Complete • Relocating (M3)</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="login-persona-chip" onclick="quickLoginPersona(&apos;anjali&apos;)">' +
+                  '<img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Anjali">' +
+                  '<div>' +
+                    '<div class="name">Anjali Krishna</div>' +
+                    '<div class="role">Complete • Team-Up (M4)</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        // LOGGED IN, REGISTRATION INCOMPLETE
+        container.innerHTML = 
+          '<div style="background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 24px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">' +
+              '<div style="display: inline-flex; align-items: center; gap: 6px; background: #FEF3C7; color: #92400E; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px;">' +
+                '⚠️ Registration Incomplete' +
+              '</div>' +
+              '<span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">' + (currentUser.phone || '') + '</span>' +
+            '</div>' +
+            '<h2 style="font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px;">' +
+              'Complete Your Registration 🚀' +
+            '</h2>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">' +
+              'Your mobile number is verified! Complete 4 quick questions about your living preferences and lifestyle to unlock expressing interest (LIKE), matching, and messaging with flatmates in Trivandrum.' +
+            '</p>' +
+            '<div style="background: #F1F5F9; border-radius: 12px; padding: 14px; margin-bottom: 20px;">' +
+              '<div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px;">' +
+                '<span>Registration Progress</span>' +
+                '<span style="color: var(--primary);">Step 1 of 2 Complete (50%)</span>' +
+              '</div>' +
+              '<div style="width: 100%; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">' +
+                '<div style="width: 50%; height: 100%; background: linear-gradient(90deg, #F59E0B, var(--primary)); border-radius: 4px;"></div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 20px;">' +
+              '<div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">' +
+                'Mandatory Requirements (Takes 1 min)' +
+              '</div>' +
+              '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #059669; font-weight: 600;">' +
+                  '<span>✔</span> <span>Mobile Number Verified (' + (currentUser.phone || '') + ')</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Name & 18+ Age Verification</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Gender & Living Preferences</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Modality, Preferred Suburbs & Budget</span>' +
+                '</div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
+                  '<span>○</span> <span>Core Lifestyle (Sleep, Cleanliness, Food, Smoking)</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 15px; font-weight: 800; border-radius: 14px; justify-content: center; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);" onclick="startNewRegistration()">' +
+              'Complete Registration (1 Min) →' +
+            '</button>' +
+          '</div>' +
+          '<div class="profile-card profile-actions-bar">' +
+            '<div>' +
+              '<div style="font-size: 14px; font-weight: 700; color: var(--text);">Account Management</div>' +
+              '<div style="font-size: 12px; color: var(--text-muted);">Signed in as ' + (currentUser.phone || '') + '</div>' +
+            '</div>' +
+            '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
+              'Log Out' +
+            '</button>' +
+          '</div>';
+        return;
+      }
+
+      // LOGGED IN, REGISTRATION COMPLETE
+      container.innerHTML = 
+        '<div class="profile-header-card">' +
+          '<img id="myProfAvatar" class="profile-header-avatar" src="' + (currentUser.avatar || '') + '" alt="' + (currentUser.name || 'User') + '">' +
+          '<div class="profile-header-details">' +
+            '<div class="profile-name-row">' +
+              '<h2 id="myProfName" class="profile-name-title">' + (currentUser.name || 'Buddy User') + '</h2>' +
+              '<div class="profile-badge-active">' +
+                '✔ Active Member' +
+              '</div>' +
+            '</div>' +
+            '<p id="myProfWork" class="profile-subtext">' + (currentUser.work || 'Trivandrum Community Member') + '</p>' +
+            '<div class="profile-phone-text">📱 ' + (currentUser.phone || '') + '</div>' +
+          '</div>' +
+          '<div class="profile-header-action">' +
+            '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="startNewRegistration()">' +
+              '✏️ Edit Preferences' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="profile-card" style="padding: 20px;">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+            '<span style="font-size: 14px; font-weight: 800; color: var(--text);">Profile Strength</span>' +
+            '<span style="font-size: 13px; font-weight: 800; color: var(--primary);">85% • Strong</span>' +
+          '</div>' +
+          '<div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">' +
+            '<div style="width: 85%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px;"></div>' +
+          '</div>' +
+          '<p style="font-size: 12px; color: var(--text-muted);">' +
+            'Complete optional hosting and verification details below to stand out to 3x more potential roommates!' +
+          '</p>' +
+        '</div>' +
+        '<div class="profile-card" style="display: flex; flex-direction: column; gap: 18px;">' +
+          '<div style="display: flex; align-items: center; justify-content: space-between;">' +
+            '<div>' +
+              '<h3 style="font-size: 16px; font-weight: 800; color: var(--text);">Optional Profile Enhancements</h3>' +
+              '<p style="font-size: 12px; color: var(--text-muted);">Customize your profile bio, hosting habits, and trust verification.</p>' +
+            '</div>' +
+            '<span style="font-size: 11px; background: #EEF2FF; color: #4F46E5; font-weight: 800; padding: 3px 8px; border-radius: 10px;">Optional</span>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">📸 Profile Photos & Bio</div>' +
+            '<div class="form-group" style="margin-bottom: 10px;">' +
+              '<label style="font-size: 12px;">Photo Avatar URL</label>' +
+              '<input type="text" id="profAvatarInput" value="' + (currentUser.avatar || '') + '" style="background: white; font-size: 13px;">' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label style="font-size: 12px;">About Me / Bio</label>' +
+              '<textarea id="profBioInput" rows="2" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; resize: vertical;" placeholder="Tell roommates about yourself, your hobbies, or workplace...">Friendly, clean, and respectful professional looking for a quiet and cooperative living environment in Trivandrum.</textarea>' +
+            '</div>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🏠 Household Vibe & Hosting Policy</div>' +
+            '<div class="form-group" style="margin-bottom: 10px;">' +
+              '<label style="font-size: 12px;">Household Atmosphere</label>' +
+              '<select id="profHouseholdVibe" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+                '<option value="QUIET_SANCTUARY">Quiet Sanctuary (Focus on restful living, minimal noise)</option>' +
+                '<option value="BALANCED_CASUAL" selected>Balanced & Casual (Friendly & easygoing, occasional chats)</option>' +
+                '<option value="SOCIALLY_ACTIVE">Socially Active (Enjoys hosting, frequent friendly gatherings)</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label style="font-size: 12px;">Guest & Visitor Frequency</label>' +
+              '<select id="profGuestPolicy" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+                '<option value="NEVER">Rarely or Never (No outside overnight visitors)</option>' +
+                '<option value="OCCASIONAL_FRIENDS" selected>Weekends Only (Advance notice preferred)</option>' +
+                '<option value="REGULAR_GUESTS">Anytime (Friends and guests are always welcome)</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">' +
+              '<div style="font-size: 13.5px; font-weight: 700; color: var(--text);">🛡️ Verified Trust Badge</div>' +
+              '<span style="font-size: 11px; background: #E0F2FE; color: #0369A1; font-weight: 800; padding: 2px 8px; border-radius: 10px;">Blue Check</span>' +
+            '</div>' +
+            '<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">' +
+              'Verify with your official Technopark company email or College ID (.edu/.ac.in) for verified badge.' +
+            '</p>' +
+            '<div style="display: flex; gap: 8px; flex-wrap: wrap;">' +
+              '<input type="text" id="profEmailVerifyInput" placeholder="name@technopark-company.com" style="flex: 1 1 200px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+              '<button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; border-radius: 10px;" onclick="showToast(&apos;Verification link sent to institutional email!&apos;)">' +
+                'Verify' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center;" onclick="saveOptionalProfileDetails()">' +
+            'Save Optional Details ✔' +
+          '</button>' +
+        '</div>' +
+        '<div class="profile-card profile-actions-bar">' +
+          '<button class="btn btn-secondary" style="border-radius: 10px; font-size: 13px;" onclick="cyclePersona()">' +
+            'Switch Demo Persona' +
+          '</button>' +
+          '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
+            'Log Out' +
+          '</button>' +
+        '</div>';
+    }
+
+    async function saveOptionalProfileDetails() {
+      const avatarInput = document.getElementById('profAvatarInput');
+      const avatar = avatarInput ? avatarInput.value : '';
+      const vibe = document.getElementById('profHouseholdVibe')?.value || 'BALANCED_CASUAL';
+      const guest = document.getElementById('profGuestPolicy')?.value || 'OCCASIONAL_FRIENDS';
+
+      if (avatar && currentUser) {
+        currentUser.avatar = avatar;
+        updateHeaderUser(currentUser);
+      }
+
+      try {
+        await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            social: {
+              guestFrequency: guest,
+              overnightGuestPolicy: 'SAME_GENDER_ONLY',
+              partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
+              isDealbreaker: false
+            }
+          })
+        });
+        showToast('Optional profile details updated successfully! ✔');
+      } catch (e) {
+        showToast('Profile updated locally.');
+      }
+    }
+
+    // Navigation Switcher
+    function navigateTab(tabName) {
+      if (tabName === 'login') {
+        tabName = 'profile';
+      }
+
+      if (tabName === 'registration') {
+        document.body.classList.add('onboarding-mode');
+      } else {
+        document.body.classList.remove('onboarding-mode');
+      }
+
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.m-nav-item').forEach(b => b.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + tabName);
+      if (targetView) targetView.classList.add('active');
+
+      const dnav = document.getElementById('dnav-' + tabName);
+      if (dnav) dnav.classList.add('active');
+      const mnav = document.getElementById('mnav-' + tabName);
+      if (mnav) mnav.classList.add('active');
+
+      if (tabName === 'discover') renderDeck();
+      if (tabName === 'matches') {
+        closeChatAndBackToMatches();
+        loadMatches();
+      }
+      if (tabName === 'profile') {
+        renderProfileView();
+      }
     }
 
     // App Initialization
@@ -2274,14 +3052,6 @@ export function renderClientAppHtml(): string {
               modality: prof.modality,
               isOnboardingCompleted: prof.isOnboardingCompleted
             };
-            if (!prof.isOnboardingCompleted) {
-              document.body.classList.remove('unauthenticated');
-              document.body.classList.add('onboarding-mode');
-              startNewRegistration();
-              return;
-            }
-            document.body.classList.remove('unauthenticated');
-            document.body.classList.remove('onboarding-mode');
             updateHeaderUser(currentUser);
             await loadFeed();
             await loadMatches();
@@ -2289,101 +3059,107 @@ export function renderClientAppHtml(): string {
             return;
           }
         } catch (e) {
-          // Token verification failed, fallback to login
+          // Token verification failed, fallback to guest
         }
       }
 
-      // Default: Unauthenticated -> Show Login Gateway
-      document.body.classList.add('unauthenticated');
-      document.body.classList.remove('onboarding-mode');
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      const loginView = document.getElementById('view-login');
-      if (loginView) loginView.classList.add('active');
-    }
-
-    async function loginAsPersona(p) {
-      currentUser = p;
-      updateHeaderUser(p);
-
-      // Authenticate with server
-      await fetch('/api/v1/auth/otp/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: p.phone })
-      });
-      const res = await fetch('/api/v1/auth/otp/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: p.phone, otp: '123456' })
-      });
-      const data = await res.json();
-      currentToken = data.accessToken;
-      localStorage.setItem('buddy_token', currentToken);
-      localStorage.setItem('buddy_phone', p.phone);
-
+      // Guest: Browse Discover Feed without gating
+      currentToken = null;
+      currentUser = null;
+      updateHeaderUser(null);
       await loadFeed();
-      await loadMatches();
-    }
-
-    function updateHeaderUser(p) {
-      document.getElementById('headerUserAvatar').src = p.avatar;
-      document.getElementById('headerUserName').textContent = p.name.split(' ')[0];
-      document.getElementById('myProfAvatar').src = p.avatar;
-      document.getElementById('myProfName').textContent = p.name;
-      document.getElementById('myProfWork').textContent = p.work;
-    }
-
-    function cyclePersona() {
-      const keys = Object.keys(PERSONAS);
-      const currentKey = keys.find(k => PERSONAS[k].id === currentUser.id) || 'adarsh';
-      const nextKey = keys[(keys.indexOf(currentKey) + 1) % keys.length];
-      loginAsPersona(PERSONAS[nextKey]);
-    }
-
-    // Navigation Switcher
-    function navigateTab(tabName) {
-      // Access Control & Auth Gatekeeper
-      if (!currentToken && tabName !== 'login' && tabName !== 'registration') {
-        document.body.classList.add('unauthenticated');
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-        const loginView = document.getElementById('view-login');
-        if (loginView) loginView.classList.add('active');
-        return;
-      }
-
-      if (currentUser && !currentUser.isOnboardingCompleted && tabName !== 'registration') {
-        alert('Please complete registration before accessing the portal.');
-        tabName = 'registration';
-      }
-
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.m-nav-item').forEach(b => b.classList.remove('active'));
-
-      const targetView = document.getElementById('view-' + tabName);
-      if (targetView) targetView.classList.add('active');
-
-      const dnav = document.getElementById('dnav-' + tabName);
-      if (dnav) dnav.classList.add('active');
-      const mnav = document.getElementById('mnav-' + tabName);
-      if (mnav) mnav.classList.add('active');
-
-      if (tabName === 'discover') renderDeck();
-      if (tabName === 'matches') {
-        closeChatAndBackToMatches();
-        loadMatches();
-      }
+      navigateTab('discover');
     }
 
     // -------------------------------------------------------------
     // PROGRESSIVE CONVERSATIONAL ONBOARDING WIZARD LOGIC (BUMBLE-STYLE)
     // -------------------------------------------------------------
-    function startNewRegistration() {
+    async function startNewRegistration() {
       wizardCurrentStep = 1;
       document.body.classList.remove('unauthenticated');
       document.body.classList.add('onboarding-mode');
+      
+      // Hide all panels, activate registration view
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      const regView = document.getElementById('view-registration');
+      if (regView) regView.classList.add('active');
+
+      await populateWizardFromExistingProfile();
       updateWizardUI();
-      navigateTab('registration');
+    }
+
+    async function populateWizardFromExistingProfile() {
+      if (!currentToken) return;
+      try {
+        const res = await fetch('/api/v1/profiles/me', {
+          headers: { 'Authorization': 'Bearer ' + currentToken }
+        });
+        if (res.ok) {
+          const prof = await res.json();
+          if (prof.displayName && document.getElementById('regName')) {
+            document.getElementById('regName').value = prof.displayName;
+          }
+          if (prof.gender) {
+            syncOptionCard('regGender', prof.gender);
+          }
+          if (prof.preferredGender) {
+            syncOptionCard('regPrefGender', prof.preferredGender);
+          }
+          if (prof.birthDate && document.getElementById('regBirthDate')) {
+            document.getElementById('regBirthDate').value = prof.birthDate.split('T')[0];
+          }
+          if (prof.occupation && document.getElementById('regOccupation')) {
+            document.getElementById('regOccupation').value = prof.occupation;
+          }
+          if (prof.bio && document.getElementById('regBio')) {
+            document.getElementById('regBio').value = prof.bio;
+          }
+          if (prof.modality) {
+            selectedModality = prof.modality;
+            document.querySelectorAll('.modality-select-card').forEach(c => {
+              c.classList.toggle('selected', c.getAttribute('data-modality') === prof.modality);
+            });
+          }
+          if (prof.maxBudget && document.getElementById('regMaxBudget')) {
+            document.getElementById('regMaxBudget').value = prof.maxBudget;
+          }
+          if (prof.preferredSuburbs && prof.preferredSuburbs.length > 0) {
+            document.getElementById('regSuburbs').value = prof.preferredSuburbs.join(', ');
+            document.querySelectorAll('#suburbPillsWrap .suburb-pill').forEach(pill => {
+              const subCode = pill.getAttribute('data-suburb');
+              pill.classList.toggle('selected', prof.preferredSuburbs.includes(subCode));
+            });
+          }
+        }
+      } catch (e) {}
+    }
+
+    function pickOptionCard(inputId, value, cardEl) {
+      const input = document.getElementById(inputId);
+      if (input) input.value = value;
+      const parent = cardEl.closest('.option-cards-list') || cardEl.parentElement;
+      if (parent) {
+        parent.querySelectorAll('.option-select-card').forEach(c => c.classList.remove('selected'));
+      }
+      cardEl.classList.add('selected');
+    }
+
+    function syncOptionCard(inputId, value) {
+      const input = document.getElementById(inputId);
+      if (input) input.value = value;
+      document.querySelectorAll('.option-select-card').forEach(c => {
+        const onclickAttr = c.getAttribute('onclick') || '';
+        if (onclickAttr.includes("'" + inputId + "'") && c.getAttribute('data-val') === value) {
+          const parent = c.closest('.option-cards-list') || c.parentElement;
+          if (parent) parent.querySelectorAll('.option-select-card').forEach(sibling => sibling.classList.remove('selected'));
+          c.classList.add('selected');
+        }
+      });
+    }
+
+    function cancelOnboarding() {
+      document.body.classList.remove('onboarding-mode');
+      navigateTab('profile');
     }
 
     function goToOnboardingStep(stepNum) {
@@ -2415,18 +3191,20 @@ export function renderClientAppHtml(): string {
       const counter = document.getElementById('obStepCounter');
       if (counter) counter.textContent = 'Question ' + wizardCurrentStep + ' of 12';
 
-      // Update progress fill percentage (1 to 12)
-      const percent = Math.min(100, Math.round(((wizardCurrentStep - 1) / 11) * 100));
+      // Update progress fill percentage (1 to 12) strictly within track bounds
+      const percent = Math.min(100, Math.max(0, Math.round(((wizardCurrentStep - 1) / 11) * 100)));
       const fillEl = document.getElementById('wizardProgressFill');
-      if (fillEl) fillEl.style.width = percent + '%';
+      if (fillEl) {
+        fillEl.style.width = 'calc((100% - 36px) * ' + (percent / 100) + ')';
+      }
 
       // 5 Subsections with completion ticks (✔)
-      // Node 1: Verify (Step 1)
+      // Node 1: Basics (Steps 1, 2)
       const n1 = document.getElementById('node-step-1');
       const c1 = document.getElementById('circle-step-1');
       if (n1 && c1) {
         n1.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 1) {
+        if (wizardCurrentStep > 2) {
           n1.classList.add('completed');
           c1.innerHTML = '✔';
         } else {
@@ -2435,15 +3213,15 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 2: Basics (Steps 2, 3, 4)
+      // Node 2: About (Step 3)
       const n2 = document.getElementById('node-step-2');
       const c2 = document.getElementById('circle-step-2');
       if (n2 && c2) {
         n2.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 4) {
+        if (wizardCurrentStep > 3) {
           n2.classList.add('completed');
           c2.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 2 && wizardCurrentStep <= 4) {
+        } else if (wizardCurrentStep === 3) {
           n2.classList.add('active');
           c2.innerHTML = '2';
         } else {
@@ -2451,15 +3229,15 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 3: Housing (Steps 5, 6)
+      // Node 3: Housing (Steps 4, 5)
       const n3 = document.getElementById('node-step-3');
       const c3 = document.getElementById('circle-step-3');
       if (n3 && c3) {
         n3.classList.remove('active', 'completed');
-        if (wizardCurrentStep > 6) {
+        if (wizardCurrentStep > 5) {
           n3.classList.add('completed');
           c3.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 5 && wizardCurrentStep <= 6) {
+        } else if (wizardCurrentStep >= 4 && wizardCurrentStep <= 5) {
           n3.classList.add('active');
           c3.innerHTML = '3';
         } else {
@@ -2467,7 +3245,7 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 4: Lifestyle (Steps 7, 8, 9, 10)
+      // Node 4: Lifestyle (Steps 6, 7, 8, 9, 10)
       const n4 = document.getElementById('node-step-4');
       const c4 = document.getElementById('circle-step-4');
       if (n4 && c4) {
@@ -2475,7 +3253,7 @@ export function renderClientAppHtml(): string {
         if (wizardCurrentStep > 10) {
           n4.classList.add('completed');
           c4.innerHTML = '✔';
-        } else if (wizardCurrentStep >= 7 && wizardCurrentStep <= 10) {
+        } else if (wizardCurrentStep >= 6 && wizardCurrentStep <= 10) {
           n4.classList.add('active');
           c4.innerHTML = '4';
         } else {
@@ -2483,7 +3261,7 @@ export function renderClientAppHtml(): string {
         }
       }
 
-      // Node 5: Finish & Trust Badge (Steps 11, 12)
+      // Node 5: Finish (Steps 11, 12)
       const n5 = document.getElementById('node-step-5');
       const c5 = document.getElementById('circle-step-5');
       if (n5 && c5) {
@@ -2497,111 +3275,11 @@ export function renderClientAppHtml(): string {
       }
     }
 
-    function autofillPhone(num) {
-      document.getElementById('regPhone').value = num;
-    }
-
     function toggleSuburbPill(suburbCode, el) {
       el.classList.toggle('selected');
       const selectedPills = Array.from(document.querySelectorAll('#suburbPillsWrap .suburb-pill.selected'))
-        .map(p => p.textContent.trim().toUpperCase());
+        .map(p => p.getAttribute('data-suburb') || p.textContent.trim().toUpperCase());
       document.getElementById('regSuburbs').value = selectedPills.join(', ');
-    }
-
-    function setRegAvatar(url) {
-      document.getElementById('regPhotoUrl').value = url;
-      document.getElementById('regPhotoPreview').src = url;
-    }
-
-    // STEP 1: Phone OTP Verification
-    async function handleStep1Auth() {
-      const phone = document.getElementById('regPhone').value.trim();
-      const otpGroup = document.getElementById('otpInputGroup');
-      const btn = document.getElementById('btnStep1');
-
-      if (otpGroup.style.display === 'none') {
-        btn.textContent = 'Requesting OTP...';
-        try {
-          await fetch('/api/v1/auth/otp/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phoneNumber: phone })
-          });
-          otpGroup.style.display = 'flex';
-          btn.textContent = 'Verify OTP & Continue →';
-        } catch (e) {
-          btn.textContent = 'Request OTP Code →';
-          alert('Failed to send OTP. Please check phone number format (+91 followed by 10 digits).');
-        }
-      } else {
-        const otp = document.getElementById('regOtp').value.trim();
-        try {
-          const res = await fetch('/api/v1/auth/otp/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phoneNumber: phone, otp })
-          });
-          const data = await res.json();
-          if (data.accessToken) {
-            currentToken = data.accessToken;
-            localStorage.setItem('buddy_token', currentToken);
-            localStorage.setItem('buddy_phone', phone);
-
-            currentUser = {
-              id: data.user.id,
-              name: 'New Registered User',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-              work: 'Trivandrum Explorer',
-              isOnboardingCompleted: false
-            };
-
-            goToOnboardingStep(2);
-          } else {
-            alert('OTP Verification failed. Universal dev OTP code is 123456');
-          }
-        } catch (e) {
-          alert('Network or server error during OTP verification.');
-        }
-      }
-    }
-
-    // STEP 4: Save Basic Identity
-    async function handleStep4SaveBasics() {
-      const name = document.getElementById('regName').value.trim() || 'Buddy User';
-      const gender = document.getElementById('regGender').value;
-      const prefGender = document.getElementById('regPrefGender').value;
-      const birthDate = document.getElementById('regBirthDate').value;
-      const occupation = document.getElementById('regOccupation').value.trim() || 'Professional';
-      const bio = document.getElementById('regBio').value.trim();
-
-      currentUser.name = name;
-      currentUser.work = occupation;
-      updateHeaderUser(currentUser);
-
-      try {
-        await fetch('/api/v1/profiles/me', {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            displayName: name,
-            gender: gender,
-            preferredGender: prefGender,
-            birthDate: birthDate,
-            occupation: occupation,
-            bio: bio,
-            modality: selectedModality,
-            minBudget: 6000,
-            maxBudget: 10000,
-            moveInFlexibility: 'WITHIN_15_DAYS',
-            preferredSuburbs: ['KAZHAKKOOTTAM', 'KARIAVATTOM']
-          })
-        });
-      } catch (e) {}
-
-      goToOnboardingStep(5);
     }
 
     function pickModalityCard(mod, el) {
@@ -2610,28 +3288,9 @@ export function renderClientAppHtml(): string {
       el.classList.add('selected');
     }
 
-    // STEP 6: Save Housing & Modality
-    async function handleStep6SaveHousing() {
-      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
-      const rawSuburbs = document.getElementById('regSuburbs').value;
-      const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
-
-      try {
-        await fetch('/api/v1/profiles/me', {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            modality: selectedModality,
-            maxBudget: maxBudget,
-            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM']
-          })
-        });
-      } catch (e) {}
-
-      goToOnboardingStep(7);
+    function setRegAvatar(url) {
+      document.getElementById('regPhotoUrl').value = url;
+      document.getElementById('regPhotoPreview').src = url;
     }
 
     // STEP 11: Optional Trust Badge
@@ -2668,14 +3327,70 @@ export function renderClientAppHtml(): string {
       goToOnboardingStep(12);
     }
 
-    // STEP 12: Complete Registration & Launch
+    function skipAndCompleteRegistration() {
+      const photoInput = document.getElementById('regPhotoUrl');
+      if (photoInput) photoInput.value = '';
+      completeRegistrationAndLaunch();
+    }
+
+    function finishMandatoryAndLaunch() {
+      completeRegistrationAndLaunch();
+    }
+
+    // Complete Registration & Launch
     async function completeRegistrationAndLaunch() {
+      const name = document.getElementById('regName').value.trim() || 'Buddy User';
+      const gender = document.getElementById('regGender').value;
+      const prefGender = document.getElementById('regPrefGender').value;
+      const birthDate = (document.getElementById('regBirthDate') && document.getElementById('regBirthDate').value) || '1998-05-15';
+      const occupation = (document.getElementById('regOccupation') && document.getElementById('regOccupation').value.trim()) || 'Software Professional';
+      const bio = (document.getElementById('regBio') && document.getElementById('regBio').value.trim()) || '';
+      const rawSuburbs = (document.getElementById('regSuburbs') && document.getElementById('regSuburbs').value) || 'KAZHAKKOOTTAM';
+      const suburbs = rawSuburbs.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+      const maxBudget = parseInt(document.getElementById('regMaxBudget').value, 10) || 9500;
+
       const sleep = document.getElementById('regSleep').value;
       const clean = document.getElementById('regClean').value;
       const diet = document.getElementById('regDiet').value;
       const smoke = document.getElementById('regSmoke').value;
-      const photoUrl = document.getElementById('regPhotoUrl').value.trim();
+      const vibe = document.getElementById('regVibe') ? document.getElementById('regVibe').value : 'BALANCED_CASUAL';
+      const photoUrl = document.getElementById('regPhotoUrl') ? document.getElementById('regPhotoUrl').value.trim() : '';
 
+      // 1. Save Full Profile to Backend with isOnboardingCompleted: true
+      try {
+        const profRes = await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            displayName: name,
+            gender: gender,
+            preferredGender: prefGender,
+            birthDate: birthDate,
+            occupation: occupation,
+            collegeOrCompany: occupation,
+            bio: bio,
+            modality: selectedModality,
+            minBudget: 3000,
+            maxBudget: maxBudget,
+            moveInFlexibility: 'WITHIN_1_MONTH',
+            preferredSuburbs: suburbs.length > 0 ? suburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM'],
+            isOnboardingCompleted: true
+          })
+        });
+        if (!profRes.ok) {
+          const errData = await profRes.json();
+          alert('Could not save profile: ' + (errData.detail || errData.title || 'Validation error'));
+          return;
+        }
+      } catch (e) {
+        alert('Network error while saving profile. Please try again.');
+        return;
+      }
+
+      // 2. Upload Photo if provided
       if (photoUrl) {
         try {
           await fetch('/api/v1/profiles/me/photos', {
@@ -2690,68 +3405,99 @@ export function renderClientAppHtml(): string {
               isPrimary: true
             })
           });
-          currentUser.avatar = photoUrl;
-          updateHeaderUser(currentUser);
         } catch (e) {}
       }
 
-      await fetch('/api/v1/lifestyle/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer ' + currentToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sleep: {
-            sleepPattern: sleep,
-            shiftSchedule: 'NORMAL_DAY',
-            noiseSensitivity: 'LIGHT_SLEEPER',
-            isDealbreaker: document.getElementById('dbSleep').checked
+      // 3. Save Lifestyle & Vibe Preferences
+      try {
+        await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
           },
-          cleanliness: {
-            cleanlinessLevel: clean,
-            kitchenSinkRule: 'IMMEDIATE_WASH',
-            maidPreference: 'OPEN_TO_MAID',
-            isDealbreaker: document.getElementById('dbClean').checked
-          },
-          dietary: {
-            dietType: diet,
-            kitchenPolicy: 'NO_RESTRICTIONS',
-            isDealbreaker: document.getElementById('dbDiet').checked
-          },
-          social: {
-            guestFrequency: 'OCCASIONAL_FRIENDS',
-            overnightGuestPolicy: 'SAME_GENDER_ONLY',
-            partyPreference: 'OCCASIONAL_WEEKENDS',
-            isDealbreaker: false
-          },
-          substances: {
-            smokingHabit: smoke,
-            alcoholHabit: 'TEETOTALER',
-            isDealbreaker: document.getElementById('dbSmoke').checked
-          },
-          financial: {
-            rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
-            acBillSplit: 'EQUAL_SPLIT',
-            groceryTracking: 'SPLITWISE_APP',
-            isDealbreaker: true
-          },
-          work: {
-            workMode: 'HYBRID',
-            callFrequency: 'LOW',
-            workspacePreference: 'PRIVATE_ROOM_DESK',
-            isDealbreaker: false
-          }
-        })
-      });
+          body: JSON.stringify({
+            sleep: {
+              sleepPattern: sleep,
+              shiftSchedule: 'NORMAL_DAY',
+              noiseSensitivity: 'LIGHT_SLEEPER',
+              isDealbreaker: document.getElementById('dbSleep') ? document.getElementById('dbSleep').checked : false
+            },
+            cleanliness: {
+              cleanlinessLevel: clean,
+              kitchenSinkRule: 'IMMEDIATE_WASH',
+              maidPreference: 'OPEN_TO_MAID',
+              isDealbreaker: document.getElementById('dbClean') ? document.getElementById('dbClean').checked : false
+            },
+            dietary: {
+              dietType: diet,
+              kitchenPolicy: 'NO_RESTRICTIONS',
+              isDealbreaker: document.getElementById('dbDiet') ? document.getElementById('dbDiet').checked : false
+            },
+            social: {
+              guestFrequency: vibe === 'QUIET_SANCTUARY' ? 'NEVER' : vibe === 'SOCIALLY_ACTIVE' ? 'REGULAR_GUESTS' : 'OCCASIONAL_FRIENDS',
+              overnightGuestPolicy: 'SAME_GENDER_ONLY',
+              partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
+              isDealbreaker: document.getElementById('dbVibe') ? document.getElementById('dbVibe').checked : false
+            },
+            substances: {
+              smokingHabit: smoke,
+              alcoholHabit: 'TEETOTALER',
+              isDealbreaker: document.getElementById('dbSmoke') ? document.getElementById('dbSmoke').checked : false
+            },
+            financial: {
+              rentPaymentHabit: 'STRICT_1ST_OF_MONTH',
+              acBillSplit: 'EQUAL_SPLIT',
+              groceryTracking: 'SPLITWISE_APP',
+              isDealbreaker: true
+            },
+            work: {
+              workMode: 'HYBRID',
+              callFrequency: 'LOW',
+              workspacePreference: 'PRIVATE_ROOM_DESK',
+              isDealbreaker: false
+            }
+          })
+        });
+      } catch (e) {}
 
-      alert('🎉 Profile registration complete! Entering your personalized Buddy discovery feed.');
-      if (currentUser) currentUser.isOnboardingCompleted = true;
-      document.body.classList.remove('unauthenticated');
+      if (currentUser) {
+        currentUser.name = name;
+        currentUser.isOnboardingCompleted = true;
+        if (photoUrl) currentUser.avatar = photoUrl;
+      }
+
       document.body.classList.remove('onboarding-mode');
+      updateHeaderUser(currentUser);
       await loadUserProfile();
       await loadFeed();
       await loadMatches();
+
+      // Check for deferred interest / like!
+      if (pendingInterestCandidate) {
+        const cand = pendingInterestCandidate;
+        pendingInterestCandidate = null;
+        try {
+          const res = await fetch('/api/v1/discovery/swipe', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ candidateUserId: cand.userId, action: 'LIKE' })
+          });
+          const data = await res.json();
+          navigateTab('discover');
+          if (data && (data.isMutualMatch || data.isMatch)) {
+            triggerCelebration(cand);
+          } else {
+            showToast('Interest sent to ' + cand.displayName + '! 🎉');
+          }
+          return;
+        } catch (e) {}
+      }
+
+      showToast('🎉 Profile registration complete! Discovery feed unlocked.');
       navigateTab('discover');
     }
 
@@ -2760,9 +3506,11 @@ export function renderClientAppHtml(): string {
     // -------------------------------------------------------------
     async function loadFeed() {
       try {
-        const res = await fetch('/api/v1/discovery/feed?limit=10', {
-          headers: { 'Authorization': 'Bearer ' + currentToken }
-        });
+        const headers = {};
+        if (currentToken) {
+          headers['Authorization'] = 'Bearer ' + currentToken;
+        }
+        const res = await fetch('/api/v1/discovery/feed?limit=10', { headers });
         const data = await res.json();
         candidates = data.cards || [];
         currentCardIndex = 0;
@@ -2891,7 +3639,32 @@ export function renderClientAppHtml(): string {
 
     async function executeSwipeAction(cardEl, action) {
       const candidate = candidates[currentCardIndex];
-      const dir = (action === 'LIKE') ? 1 : -1;
+      if (!candidate) return;
+
+      // 1. Guest Check: Must authenticate before performing interactions
+      if (!currentToken) {
+        cardEl.style.transition = 'transform 0.25s ease';
+        cardEl.style.transform = 'translate(0px, 0px) rotate(0deg)';
+        cardEl.style.opacity = '1';
+        showGuestPromptModal(action === 'LIKE' ? 'like' : 'pass');
+        return;
+      }
+
+      // 2. Incomplete Registration Check:
+      // PASS is permitted; LIKE / expressing positive interest requires mandatory registration completion
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        if (action === 'LIKE' || action === 'SUPERLIKE') {
+          cardEl.style.transition = 'transform 0.25s ease';
+          cardEl.style.transform = 'translate(0px, 0px) rotate(0deg)';
+          cardEl.style.opacity = '1';
+          pendingInterestCandidate = candidate;
+          showIncompleteRegModal(candidate.displayName);
+          return;
+        }
+        // action === 'PASS' continues below (allowed for incomplete users)
+      }
+
+      const dir = (action === 'LIKE' || action === 'SUPERLIKE') ? 1 : -1;
 
       cardEl.style.transition = 'transform 0.35s ease-out, opacity 0.3s';
       cardEl.style.transform = 'translate(' + (dir * 500) + 'px, 40px) rotate(' + (dir * 30) + 'deg)';
@@ -2983,6 +3756,13 @@ export function renderClientAppHtml(): string {
     }
 
     async function loadMatches() {
+      if (!currentToken || (currentUser && !currentUser.isOnboardingCompleted)) {
+        allLoadedMatches = [];
+        const badge = document.getElementById('headerMatchesBadge');
+        if (badge) badge.style.display = 'none';
+        renderFilteredMatches();
+        return;
+      }
       try {
         const res = await fetch('/api/v1/matches', {
           headers: { 'Authorization': 'Bearer ' + currentToken }
@@ -2991,14 +3771,18 @@ export function renderClientAppHtml(): string {
         allLoadedMatches = data.matches || [];
 
         const badge = document.getElementById('headerMatchesBadge');
-        if (badge) badge.textContent = allLoadedMatches.length;
+        if (badge) {
+          badge.textContent = allLoadedMatches.length;
+          badge.style.display = allLoadedMatches.length > 0 ? 'inline-block' : 'none';
+        }
         
         const pill = document.getElementById('matchesHeaderPill');
         if (pill) pill.textContent = allLoadedMatches.length + ' Connection' + (allLoadedMatches.length === 1 ? '' : 's');
 
         renderFilteredMatches();
       } catch (e) {
-        // Fallback
+        allLoadedMatches = [];
+        renderFilteredMatches();
       }
     }
 
@@ -3009,18 +3793,68 @@ export function renderClientAppHtml(): string {
       renderFilteredMatches();
     }
 
+    let currentRenderedMatches = [];
+
     function renderFilteredMatches() {
       const filtered = (currentMatchFilter === 'ALL')
         ? allLoadedMatches
         : allLoadedMatches.filter(m => (m.candidate?.modality || m.modality) === currentMatchFilter);
+      currentRenderedMatches = filtered;
 
       renderDesktopMatches(filtered);
       renderMobileMatches(filtered);
     }
 
+    function openChatByIndex(idx) {
+      const m = currentRenderedMatches[idx];
+      if (m) openChatWithMatch(m);
+    }
+
+    function openCandidateByIndex(idx) {
+      const m = currentRenderedMatches[idx];
+      if (m) {
+        const cand = m.candidate || {
+          userId: m.matchedUserId,
+          displayName: m.matchedUserDisplayName,
+          photos: [{ photoUrl: m.matchedUserAvatarUrl }]
+        };
+        openCandidateModal(cand);
+      }
+    }
+
     function renderDesktopMatches(matches) {
       const grid = document.getElementById('desktopMatchGrid');
       if (!grid) return;
+
+      if (!currentToken) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; background: white; border: 1px solid var(--border); border-radius: 20px; padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">' +
+            '<div style="font-size: 48px;">🔒</div>' +
+            '<h3 style="font-size: 20px; font-weight: 800;">Sign In to View Matches</h3>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 360px; line-height: 1.5;">' +
+              'Sign in or create an account to view your matches and chat with compatible flatmates.' +
+            '</p>' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;profile&apos;)" style="border-radius: 20px;">' +
+              'Sign In / Register →' +
+            '</button>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        grid.innerHTML = 
+          '<div style="grid-column: 1 / -1; background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">' +
+            '<div style="font-size: 48px;">✨</div>' +
+            '<h3 style="font-size: 20px; font-weight: 800;">Complete Registration to Unlock Matching</h3>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 380px; line-height: 1.5;">' +
+              'Finish your quick mandatory profile (1 min) so potential flatmates can match and chat with you.' +
+            '</p>' +
+            '<button class="btn btn-primary" onclick="startNewRegistration()" style="border-radius: 20px;">' +
+              'Complete Registration (1 Min) →' +
+            '</button>' +
+          '</div>';
+        return;
+      }
 
       if (matches.length === 0) {
         grid.innerHTML = 
@@ -3030,14 +3864,14 @@ export function renderClientAppHtml(): string {
             '<p style="font-size: 13.5px; color: var(--text-muted); max-width: 360px; line-height: 1.5;">' +
               'Swipe LIKE on profiles in the Discover deck to connect with compatible roommates in Trivandrum!' +
             '</p>' +
-            '<button class="btn btn-primary" onclick="navigateTab(\'discover\')" style="border-radius: 20px;">' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;discover&apos;)" style="border-radius: 20px;">' +
               'Explore Discover Feed →' +
             '</button>' +
           '</div>';
         return;
       }
 
-      grid.innerHTML = matches.map(m => {
+      grid.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || {
           userId: m.matchedUserId,
           displayName: m.matchedUserDisplayName,
@@ -3078,8 +3912,8 @@ export function renderClientAppHtml(): string {
             '<div class="match-harmony-chips">' + chipsHtml + '</div>' +
           '</div>' +
           '<div class="match-tile-footer">' +
-            '<button class="btn btn-primary" style="flex: 1;" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>💬 Message</button>' +
-            '<button class="btn btn-outline" onclick=\'openCandidateModal(' + JSON.stringify(cand).replace(/"/g, '&quot;') + ')\'>👤 Profile</button>' +
+            '<button class="btn btn-primary" style="flex: 1;" onclick="openChatByIndex(' + idx + ')">💬 Message</button>' +
+            '<button class="btn btn-outline" onclick="openCandidateByIndex(' + idx + ')">👤 Profile</button>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -3089,6 +3923,28 @@ export function renderClientAppHtml(): string {
       const tray = document.getElementById('mobileNewMatchesTray');
       const list = document.getElementById('mobileConvList');
       if (!tray || !list) return;
+
+      if (!currentToken) {
+        tray.style.display = 'none';
+        list.innerHTML = 
+          '<div style="padding: 40px 16px; text-align: center;">' +
+            '<div style="font-size: 36px; margin-bottom: 8px;">🔒</div>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">Sign in to view matches and chat.</p>' +
+            '<button class="btn btn-primary" onclick="navigateTab(&apos;profile&apos;)" style="border-radius: 20px; padding: 8px 18px; font-size: 13px;">Sign In →</button>' +
+          '</div>';
+        return;
+      }
+
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        tray.style.display = 'none';
+        list.innerHTML = 
+          '<div style="padding: 40px 16px; text-align: center;">' +
+            '<div style="font-size: 36px; margin-bottom: 8px;">✨</div>' +
+            '<p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">Complete registration to unlock matching & chat.</p>' +
+            '<button class="btn btn-primary" onclick="startNewRegistration()" style="border-radius: 20px; padding: 8px 18px; font-size: 13px;">Complete Registration (1 Min) →</button>' +
+          '</div>';
+        return;
+      }
 
       if (matches.length === 0) {
         tray.style.display = 'none';
@@ -3100,12 +3956,12 @@ export function renderClientAppHtml(): string {
       }
 
       tray.style.display = 'flex';
-      tray.innerHTML = matches.map(m => {
+      tray.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
         const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
         const firstName = cand.displayName.split(' ')[0];
 
-        return '<div class="mobile-tray-bubble" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+        return '<div class="mobile-tray-bubble" onclick="openChatByIndex(' + idx + ')">' +
           '<div class="mobile-tray-avatar-wrap">' +
             '<img src="' + photo + '" class="mobile-tray-avatar" alt="' + cand.displayName + '">' +
           '</div>' +
@@ -3114,11 +3970,11 @@ export function renderClientAppHtml(): string {
         '</div>';
       }).join('');
 
-      list.innerHTML = matches.map(m => {
+      list.innerHTML = matches.map((m, idx) => {
         const cand = m.candidate || { displayName: m.matchedUserDisplayName, photos: [{ photoUrl: m.matchedUserAvatarUrl }] };
         const photo = (cand.photos && cand.photos[0] ? cand.photos[0].photoUrl : m.matchedUserAvatarUrl) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80';
 
-        return '<div class="mobile-conv-item" onclick=\'openChatWithMatch(' + JSON.stringify(m).replace(/"/g, '&quot;') + ')\'>' +
+        return '<div class="mobile-conv-item" onclick="openChatByIndex(' + idx + ')">' +
           '<img src="' + photo + '" class="mobile-conv-avatar" alt="' + cand.displayName + '">' +
           '<div class="mobile-conv-info">' +
             '<div class="mobile-conv-top">' +
@@ -3184,8 +4040,17 @@ export function renderClientAppHtml(): string {
 
     function sendChatMessage() {
       const input = document.getElementById('chatInputBox');
-      const text = input.value.trim();
+      const text = input ? input.value.trim() : '';
       if (!text) return;
+
+      if (!currentToken) {
+        showGuestPromptModal('message');
+        return;
+      }
+      if (currentUser && !currentUser.isOnboardingCompleted) {
+        showToast('Please complete registration to send messages.');
+        return;
+      }
 
       const stream = document.getElementById('msgStream');
       const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -3239,11 +4104,6 @@ export function renderClientAppHtml(): string {
       if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
         alert('User blocked successfully.');
         closeChatAndBackToMatches();
-        navigateTab('discover');
-      }
-    }
-      if (confirm('Block ' + activeMatchPartner.displayName + '? This will hide their profile and terminate chat.')) {
-        alert('User blocked successfully.');
         navigateTab('discover');
       }
     }
