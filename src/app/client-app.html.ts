@@ -331,6 +331,9 @@ export function renderClientAppHtml(): string {
       border-radius: 24px;
       padding: 32px 28px;
       box-shadow: var(--shadow-xl);
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
     }
     @media (max-width: 600px) {
       .wizard-container {
@@ -392,26 +395,31 @@ export function renderClientAppHtml(): string {
       justify-content: space-between;
       margin-bottom: 28px;
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
     }
     .wizard-progress-bar::before {
       content: "";
       position: absolute;
       top: 14px;
-      left: 8%;
-      right: 8%;
+      left: 18px;
+      right: 18px;
       height: 3px;
       background: #E2E8F0;
       z-index: 1;
+      border-radius: 2px;
     }
     .progress-fill {
       position: absolute;
       top: 14px;
-      left: 8%;
+      left: 18px;
       height: 3px;
       background: var(--primary);
       z-index: 2;
       transition: width 0.3s ease;
       width: 0%;
+      max-width: calc(100% - 36px);
+      border-radius: 2px;
     }
     .step-node {
       position: relative;
@@ -420,6 +428,20 @@ export function renderClientAppHtml(): string {
       flex-direction: column;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .step-node:hover .step-circle {
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    .step-node:hover .step-label {
+      color: var(--primary-dark);
+    }
+    .step-node:active {
+      transform: scale(0.96);
     }
     .step-circle {
       width: 30px;
@@ -660,22 +682,40 @@ export function renderClientAppHtml(): string {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-top: 24px;
+      width: 100%;
+      box-sizing: border-box;
     }
     .wizard-actions .btn {
-      border-radius: 14px;
-      padding: 12px 20px;
-      font-size: 13.5px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
+      min-height: 44px;
+      box-sizing: border-box;
     }
     .wizard-actions .btn-primary {
-      flex: 1;
+      flex: 1 1 auto;
       justify-content: center;
     }
-    .wizard-actions .btn-secondary {
-      flex-shrink: 0;
+    .wizard-actions .btn-secondary,
+    .wizard-actions .btn-outline {
+      flex: 0 1 auto;
+    }
+    @media (max-width: 520px) {
+      .wizard-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .wizard-actions .btn {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
     }
 
     /* -------------------------------------------------------------
@@ -1358,6 +1398,132 @@ export function renderClientAppHtml(): string {
       object-fit: cover;
     }
     .celeb-avatar-right { margin-left: -24px; }
+
+    /* -------------------------------------------------------------
+       SCREEN: UNIFIED PROFILE & ACCOUNT MANAGEMENT (RESPONSIVE)
+       ------------------------------------------------------------- */
+    .profile-view-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: border-box;
+      padding: 0 16px;
+    }
+    .profile-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      box-sizing: border-box;
+    }
+    .profile-header-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
+      box-sizing: border-box;
+    }
+    .profile-header-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-100);
+      flex-shrink: 0;
+    }
+    .profile-header-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .profile-name-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .profile-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #ECFDF5;
+      color: #065F46;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+    .profile-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .profile-phone-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .profile-header-action {
+      flex-shrink: 0;
+    }
+    .profile-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .profile-view-wrap {
+        padding: 0 12px;
+        gap: 14px;
+      }
+      .profile-header-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px 16px;
+        gap: 14px;
+      }
+      .profile-header-avatar {
+        width: 76px;
+        height: 76px;
+      }
+      .profile-name-row {
+        justify-content: center;
+      }
+      .profile-header-action {
+        width: 100%;
+      }
+      .profile-header-action .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 14px;
+      }
+      .profile-card {
+        padding: 18px 16px;
+      }
+      .profile-actions-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .profile-actions-bar .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body class="">
@@ -1431,23 +1597,23 @@ export function renderClientAppHtml(): string {
         <!-- 5 Subsections Progress Bar with Completion Ticks -->
         <div class="wizard-progress-bar">
           <div class="progress-fill" id="wizardProgressFill"></div>
-          <div class="step-node active" id="node-step-1">
+          <div class="step-node active" id="node-step-1" onclick="goToOnboardingStep(1)" role="button" tabindex="0" title="Jump to Basics">
             <div class="step-circle" id="circle-step-1">1</div>
             <span class="step-label">Basics</span>
           </div>
-          <div class="step-node" id="node-step-2">
+          <div class="step-node" id="node-step-2" onclick="goToOnboardingStep(3)" role="button" tabindex="0" title="Jump to About Me">
             <div class="step-circle" id="circle-step-2">2</div>
             <span class="step-label">About</span>
           </div>
-          <div class="step-node" id="node-step-3">
+          <div class="step-node" id="node-step-3" onclick="goToOnboardingStep(4)" role="button" tabindex="0" title="Jump to Housing Preferences">
             <div class="step-circle" id="circle-step-3">3</div>
             <span class="step-label">Housing</span>
           </div>
-          <div class="step-node" id="node-step-4">
+          <div class="step-node" id="node-step-4" onclick="goToOnboardingStep(6)" role="button" tabindex="0" title="Jump to Lifestyle & Habits">
             <div class="step-circle" id="circle-step-4">4</div>
             <span class="step-label">Lifestyle</span>
           </div>
-          <div class="step-node" id="node-step-5">
+          <div class="step-node" id="node-step-5" onclick="goToOnboardingStep(10)" role="button" tabindex="0" title="Jump to Optional Hosting & Finish">
             <div class="step-circle" id="circle-step-5">5</div>
             <span class="step-label">Finish</span>
           </div>
@@ -1830,13 +1996,9 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">
-              Finish & Start Matching 🚀
-            </button>
-            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(10)">
-              Optional Details (2 min) →
-            </button>
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="goToOnboardingStep(10)">Optional (2m) →</button>
+            <button class="btn btn-primary" onclick="finishMandatoryAndLaunch()">Finish & Match 🚀</button>
           </div>
         </div>
 
@@ -1885,9 +2047,9 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
-            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(11)">Next: Trust Badge →</button>
           </div>
         </div>
 
@@ -1928,9 +2090,9 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="goBackOnboardingStep()">← Back</button>
-            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
-            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="goToOnboardingStep(12)">Next: Photo →</button>
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="goToOnboardingStep(12)">Next: Photo →</button>
           </div>
         </div>
 
@@ -1957,9 +2119,10 @@ export function renderClientAppHtml(): string {
           </div>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
-            <button class="btn btn-primary" style="border-radius: 12px; font-size: 13px;" onclick="finishMandatoryAndLaunch()">
-              Start Discovering →
+            <button class="btn btn-outline" onclick="goBackOnboardingStep()">← Back</button>
+            <button class="btn btn-secondary" onclick="finishMandatoryAndLaunch()">Skip for Now</button>
+            <button class="btn btn-primary" onclick="finishMandatoryAndLaunch()">
+              Start Discovering 🚀
             </button>
           </div>
         </div>
@@ -2136,7 +2299,7 @@ export function renderClientAppHtml(): string {
          VIEW 5: UNIFIED PROFILE & ACCOUNT MANAGEMENT
          ========================================================= -->
     <section id="view-profile" class="view-panel">
-      <div id="profileContainer" style="max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;">
+      <div id="profileContainer" class="profile-view-wrap">
         <!-- Dynamically rendered by renderProfileView() -->
       </div>
     </section>
@@ -2681,7 +2844,7 @@ export function renderClientAppHtml(): string {
               'Complete Registration (1 Min) →' +
             '</button>' +
           '</div>' +
-          '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">' +
+          '<div class="profile-card profile-actions-bar">' +
             '<div>' +
               '<div style="font-size: 14px; font-weight: 700; color: var(--text);">Account Management</div>' +
               '<div style="font-size: 12px; color: var(--text-muted);">Signed in as ' + (currentUser.phone || '') + '</div>' +
@@ -2695,23 +2858,25 @@ export function renderClientAppHtml(): string {
 
       // LOGGED IN, REGISTRATION COMPLETE
       container.innerHTML = 
-        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);">' +
-          '<img id="myProfAvatar" src="' + (currentUser.avatar || '') + '" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-100);">' +
-          '<div style="flex: 1;">' +
-            '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">' +
-              '<h2 id="myProfName" style="font-size: 20px; font-weight: 800; color: var(--text);">' + (currentUser.name || 'Buddy User') + '</h2>' +
-              '<div style="display: inline-flex; align-items: center; gap: 4px; background: #ECFDF5; color: #065F46; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 12px;">' +
+        '<div class="profile-header-card">' +
+          '<img id="myProfAvatar" class="profile-header-avatar" src="' + (currentUser.avatar || '') + '" alt="' + (currentUser.name || 'User') + '">' +
+          '<div class="profile-header-details">' +
+            '<div class="profile-name-row">' +
+              '<h2 id="myProfName" class="profile-name-title">' + (currentUser.name || 'Buddy User') + '</h2>' +
+              '<div class="profile-badge-active">' +
                 '✔ Active Member' +
               '</div>' +
             '</div>' +
-            '<p id="myProfWork" style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">' + (currentUser.work || 'Trivandrum Community Member') + '</p>' +
-            '<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">📱 ' + (currentUser.phone || '') + '</div>' +
+            '<p id="myProfWork" class="profile-subtext">' + (currentUser.work || 'Trivandrum Community Member') + '</p>' +
+            '<div class="profile-phone-text">📱 ' + (currentUser.phone || '') + '</div>' +
           '</div>' +
-          '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="startNewRegistration()">' +
-            'Edit Preferences' +
-          '</button>' +
+          '<div class="profile-header-action">' +
+            '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="startNewRegistration()">' +
+              '✏️ Edit Preferences' +
+            '</button>' +
+          '</div>' +
         '</div>' +
-        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm);">' +
+        '<div class="profile-card" style="padding: 20px;">' +
           '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
             '<span style="font-size: 14px; font-weight: 800; color: var(--text);">Profile Strength</span>' +
             '<span style="font-size: 13px; font-weight: 800; color: var(--primary);">85% • Strong</span>' +
@@ -2723,7 +2888,7 @@ export function renderClientAppHtml(): string {
             'Complete optional hosting and verification details below to stand out to 3x more potential roommates!' +
           '</p>' +
         '</div>' +
-        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: var(--shadow-sm);">' +
+        '<div class="profile-card" style="display: flex; flex-direction: column; gap: 18px;">' +
           '<div style="display: flex; align-items: center; justify-content: space-between;">' +
             '<div>' +
               '<h3 style="font-size: 16px; font-weight: 800; color: var(--text);">Optional Profile Enhancements</h3>' +
@@ -2769,8 +2934,8 @@ export function renderClientAppHtml(): string {
             '<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">' +
               'Verify with your official Technopark company email or College ID (.edu/.ac.in) for verified badge.' +
             '</p>' +
-            '<div style="display: flex; gap: 8px;">' +
-              '<input type="text" id="profEmailVerifyInput" placeholder="name@technopark-company.com" style="flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+            '<div style="display: flex; gap: 8px; flex-wrap: wrap;">' +
+              '<input type="text" id="profEmailVerifyInput" placeholder="name@technopark-company.com" style="flex: 1 1 200px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
               '<button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; border-radius: 10px;" onclick="showToast(&apos;Verification link sent to institutional email!&apos;)">' +
                 'Verify' +
               '</button>' +
@@ -2780,7 +2945,7 @@ export function renderClientAppHtml(): string {
             'Save Optional Details ✔' +
           '</button>' +
         '</div>' +
-        '<div style="background: white; border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">' +
+        '<div class="profile-card profile-actions-bar">' +
           '<button class="btn btn-secondary" style="border-radius: 10px; font-size: 13px;" onclick="cyclePersona()">' +
             'Switch Demo Persona' +
           '</button>' +
@@ -3026,10 +3191,12 @@ export function renderClientAppHtml(): string {
       const counter = document.getElementById('obStepCounter');
       if (counter) counter.textContent = 'Question ' + wizardCurrentStep + ' of 12';
 
-      // Update progress fill percentage (1 to 12)
-      const percent = Math.min(100, Math.round(((wizardCurrentStep - 1) / 11) * 100));
+      // Update progress fill percentage (1 to 12) strictly within track bounds
+      const percent = Math.min(100, Math.max(0, Math.round(((wizardCurrentStep - 1) / 11) * 100)));
       const fillEl = document.getElementById('wizardProgressFill');
-      if (fillEl) fillEl.style.width = percent + '%';
+      if (fillEl) {
+        fillEl.style.width = 'calc((100% - 36px) * ' + (percent / 100) + ')';
+      }
 
       // 5 Subsections with completion ticks (✔)
       // Node 1: Basics (Steps 1, 2)
