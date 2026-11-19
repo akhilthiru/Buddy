@@ -135,3 +135,154 @@ describe('Discovery Gesture Physics & Compatibility Scoring Rules', () => {
     assert.strictEqual(adarsh.modality, 'MODALITY_4');
   });
 });
+
+describe('Centralised Profile Completion Calculation Engine', () => {
+  // Pure implementation of the 18-field completion formula for verification
+  function calculateProfileCompletion(user: any, lifestyle: any) {
+    const p = (user && user.profile) ? user.profile : (user || {});
+    const l = lifestyle || {};
+
+    const hasName = Boolean(p.displayName || p.name);
+    const hasGender = Boolean(p.gender);
+    const hasBirthDate = Boolean(p.birthDate);
+    const hasPhoto = Boolean(p.avatar || (p.photos && p.photos.length > 0));
+    const basicsCount = [hasName, hasGender, hasBirthDate, hasPhoto].filter(Boolean).length;
+
+    const hasOcc = Boolean(p.occupation || p.work);
+    const hasComp = Boolean(p.collegeOrCompany);
+    const hasBio = Boolean(p.bio && p.bio.trim().length > 0);
+    const aboutCount = [hasOcc, hasComp, hasBio].filter(Boolean).length;
+
+    const hasMod = Boolean(p.modality);
+    const hasPrefGen = Boolean(p.preferredGender);
+    const hasSubs = Boolean(p.preferredSuburbs && p.preferredSuburbs.length > 0);
+    const hasBudget = Boolean(p.maxBudget && p.maxBudget > 0);
+    const housingCount = [hasMod, hasPrefGen, hasSubs, hasBudget].filter(Boolean).length;
+
+    const hasSleep = Boolean(l.sleep && l.sleep.sleepPattern);
+    const hasClean = Boolean(l.cleanliness && l.cleanliness.cleanlinessLevel);
+    const hasDiet = Boolean(l.dietary && l.dietary.dietType);
+    const hasSmoke = Boolean(l.substances && l.substances.smokingHabit);
+    const lifestyleCount = [hasSleep, hasClean, hasDiet, hasSmoke].filter(Boolean).length;
+
+    const hasVibe = Boolean((l.household && l.household.householdVibe) || (l.social && l.social.partyPreference));
+    const hasGuest = Boolean(l.social && l.social.guestFrequency);
+    const hostingCount = [hasVibe, hasGuest].filter(Boolean).length;
+
+    const isVerified = Boolean((p.verificationBadge && p.verificationBadge !== 'UNVERIFIED') || p.institutionalEmailVerified);
+    const trustCount = isVerified ? 1 : 0;
+
+    const totalFields = 18;
+    const completedFields = basicsCount + aboutCount + housingCount + lifestyleCount + hostingCount + trustCount;
+    const percentage = Math.min(100, Math.round((completedFields / totalFields) * 100));
+
+    function getStatus(count: number, max: number) {
+      if (count === max) return { key: 'completed', label: 'Completed ✔', pillClass: 'completed' };
+      if (count > 0) return { key: 'partial', label: `${count} of ${max} completed`, pillClass: 'partial' };
+      return { key: 'not-started', label: 'Not Started', pillClass: 'not-started' };
+    }
+
+    return {
+      totalFields,
+      completedFields,
+      percentage,
+      sections: {
+        basics: { count: basicsCount, total: 4, status: getStatus(basicsCount, 4) },
+        about: { count: aboutCount, total: 3, status: getStatus(aboutCount, 3) },
+        housing: { count: housingCount, total: 4, status: getStatus(housingCount, 4) },
+        lifestyle: { count: lifestyleCount, total: 4, status: getStatus(lifestyleCount, 4) },
+        hosting: { count: hostingCount, total: 2, status: getStatus(hostingCount, 2) },
+        trust: { count: trustCount, total: 1, status: getStatus(trustCount, 1) },
+      }
+    };
+  }
+
+  test('Fully populated user achieves 100% completion across all 6 sections', () => {
+    const fullUser = {
+      profile: {
+        displayName: 'Adarsh Nair',
+        gender: 'MALE',
+        birthDate: '1999-04-12',
+        photos: [{ photoUrl: 'https://example.com/photo.jpg' }],
+        occupation: 'Senior Backend Engineer',
+        collegeOrCompany: 'TCS Technopark',
+        bio: 'Calm, tidy, badminton enthusiast in Trivandrum',
+        modality: 'MODALITY_1',
+        preferredGender: 'MALE',
+        preferredSuburbs: ['KAZHAKKOOTTAM'],
+        maxBudget: 9000,
+        verificationBadge: 'VERIFIED_PROFESSIONAL'
+      }
+    };
+
+    const fullLifestyle = {
+      sleep: { sleepPattern: 'EARLY_BIRD' },
+      cleanliness: { cleanlinessLevel: 'METICULOUS' },
+      dietary: { dietType: 'NON_VEGETARIAN' },
+      substances: { smokingHabit: 'NON_SMOKER_STRICT' },
+      household: { householdVibe: 'BALANCED_CASUAL' },
+      social: { guestFrequency: 'OCCASIONAL_FRIENDS', partyPreference: 'WEEKEND_GATHERINGS' }
+    };
+
+    const comp = calculateProfileCompletion(fullUser, fullLifestyle);
+    assert.strictEqual(comp.totalFields, 18);
+    assert.strictEqual(comp.completedFields, 18);
+    assert.strictEqual(comp.percentage, 100);
+    assert.strictEqual(comp.sections.basics.status.key, 'completed');
+    assert.strictEqual(comp.sections.about.status.key, 'completed');
+    assert.strictEqual(comp.sections.housing.status.key, 'completed');
+    assert.strictEqual(comp.sections.lifestyle.status.key, 'completed');
+    assert.strictEqual(comp.sections.hosting.status.key, 'completed');
+    assert.strictEqual(comp.sections.trust.status.key, 'completed');
+  });
+
+  test('Incomplete user (e.g. Kiran with only phone verified and basic name) accurately scores partial fields', () => {
+    const incompleteUser = {
+      profile: {
+        displayName: 'Kiran Kumar',
+        gender: 'MALE',
+        birthDate: null,
+        photos: [],
+        occupation: 'Technopark Associate',
+        collegeOrCompany: '',
+        bio: '',
+        modality: 'MODALITY_2',
+        preferredGender: 'ANY',
+        preferredSuburbs: [],
+        maxBudget: 0,
+        verificationBadge: 'UNVERIFIED'
+      }
+    };
+
+    const comp = calculateProfileCompletion(incompleteUser, null);
+    assert.strictEqual(comp.totalFields, 18);
+    // Basics: name, gender (2/4)
+    assert.strictEqual(comp.sections.basics.count, 2);
+    assert.strictEqual(comp.sections.basics.status.key, 'partial');
+    // About: occupation (1/3)
+    assert.strictEqual(comp.sections.about.count, 1);
+    assert.strictEqual(comp.sections.about.status.key, 'partial');
+    // Housing: modality, preferredGender (2/4)
+    assert.strictEqual(comp.sections.housing.count, 2);
+    // Lifestyle: 0/4
+    assert.strictEqual(comp.sections.lifestyle.count, 0);
+    assert.strictEqual(comp.sections.lifestyle.status.key, 'not-started');
+    // Trust: 0/1
+    assert.strictEqual(comp.sections.trust.count, 0);
+    assert.strictEqual(comp.sections.trust.status.key, 'not-started');
+
+    // Total: 2 + 1 + 2 = 5 / 18 -> 28%
+    assert.strictEqual(comp.completedFields, 5);
+    assert.strictEqual(comp.percentage, 28);
+  });
+
+  test('Completely empty profile returns 0% with all sections Not Started', () => {
+    const emptyComp = calculateProfileCompletion(null, null);
+    assert.strictEqual(emptyComp.completedFields, 0);
+    assert.strictEqual(emptyComp.percentage, 0);
+    Object.values(emptyComp.sections).forEach((sec) => {
+      assert.strictEqual(sec.count, 0);
+      assert.strictEqual(sec.status.key, 'not-started');
+    });
+  });
+});

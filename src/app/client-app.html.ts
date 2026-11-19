@@ -1524,6 +1524,167 @@ export function renderClientAppHtml(): string {
         justify-content: center;
       }
     }
+
+    /* Profile Section Highlights */
+    .section-highlight {
+      outline: 3px solid var(--primary) !important;
+      box-shadow: 0 0 0 6px rgba(13, 148, 136, 0.25), var(--shadow-lg) !important;
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
+    }
+
+    /* Mobile Preferences Button in Top Header */
+    .mobile-pref-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #F1F5F9;
+      border: 1.5px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .mobile-pref-btn:hover {
+      background: #E2E8F0;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    @media (max-width: 860px) {
+      .mobile-pref-btn { display: inline-flex; }
+      #headerProfileBadge { display: none !important; }
+      #headerLogoutBtn { display: none !important; }
+    }
+
+    /* Quick Jump Section Pills */
+    .quick-jump-pill {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .quick-jump-pill:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    /* Profile Completion Dashboard */
+    .completion-dashboard-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: border-box;
+      padding: 0 16px;
+    }
+    .completion-meter-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .circular-progress-svg {
+      width: 104px;
+      height: 104px;
+      transform: rotate(-90deg);
+    }
+    .circular-progress-bg {
+      fill: none;
+      stroke: #F1F5F9;
+      stroke-width: 9;
+    }
+    .circular-progress-bar {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 9;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+    .completion-meter-center {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .completion-meter-text {
+      position: absolute;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .completion-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .completion-section-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .completion-section-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .comp-status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .comp-status-pill.completed {
+      background: #ECFDF5;
+      color: #065F46;
+    }
+    .comp-status-pill.partial {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+    .comp-status-pill.not-started {
+      background: #F1F5F9;
+      color: var(--text-muted);
+    }
+    @media (max-width: 600px) {
+      .completion-meter-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+      .completion-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body class="">
@@ -1552,26 +1713,25 @@ export function renderClientAppHtml(): string {
         <button class="nav-btn" id="dnav-rooms" onclick="navigateTab('rooms')">
           🏠 Room Listings
         </button>
-        <button class="nav-btn" id="dnav-profile" onclick="navigateTab('profile')">
-          👤 My Profile
-        </button>
       </nav>
 
       <!-- Action items: Unified Profile Entry Point -->
       <div class="header-actions">
+        <!-- Mobile Header: Preferences Only -->
+        <button id="headerMobilePrefBtn" class="mobile-pref-btn" onclick="openPreferencesModal()" title="Matching Preferences">
+          🎚️ Preferences
+        </button>
+
         <button id="headerSignInBtn" class="btn btn-primary" style="font-size: 13px; padding: 7px 16px; border-radius: 20px;" onclick="navigateTab('profile')">
           👤 Sign In
         </button>
 
+        <!-- Web Header: Avatar Only as Centralised Profile Entry Point -->
         <div class="persona-badge" id="headerProfileBadge" onclick="navigateTab('profile')" title="My Profile & Account" style="display: none;">
           <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
           <span id="headerUserName">Profile</span>
           <span id="headerIncompletePill" class="badge-incomplete" style="display: none;">Incomplete</span>
         </div>
-
-        <button id="headerLogoutBtn" class="btn btn-outline" style="display: none; font-size: 12px; padding: 6px 12px; border-radius: 8px;" onclick="handleLogout()" title="Log Out">
-          Log Out
-        </button>
       </div>
     </div>
   </header>
@@ -2304,6 +2464,15 @@ export function renderClientAppHtml(): string {
       </div>
     </section>
 
+    <!-- =========================================================
+         VIEW 6: PROFILE COMPLETION DASHBOARD
+         ========================================================= -->
+    <section id="view-profile-completion" class="view-panel">
+      <div id="completionDashboardContainer" class="completion-dashboard-wrap">
+        <!-- Dynamically rendered by renderProfileCompletionDashboard() -->
+      </div>
+    </section>
+
   </main>
 
   <!-- MOBILE BOTTOM BAR -->
@@ -2387,10 +2556,67 @@ export function renderClientAppHtml(): string {
     </div>
   </div>
 
+  <!-- MATCHING PREFERENCES MODAL (MOBILE HEADER ACCESS) -->
+  <div class="modal-backdrop" id="modalPreferences">
+    <div class="modal-box" style="text-align: left; max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🎚️</span>
+          <h2 style="font-size: 19px; font-weight: 900; color: var(--text);">Match Preferences</h2>
+        </div>
+        <button class="onboarding-exit-btn" onclick="closePreferencesModal()" style="font-size: 16px;">✕</button>
+      </div>
+
+      <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+        Adjust your roommate discovery criteria. These filters update your match scoring and recommendations.
+      </p>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label style="font-size: 13px;">Living Modality Status</label>
+        <select id="modalPrefModality" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">
+          <option value="MODALITY_1">Has Room Available (Seeking Flatmate)</option>
+          <option value="MODALITY_2">Seeking Room in Existing Flat</option>
+          <option value="MODALITY_3">Has Flat, Relocating with New Roommate</option>
+          <option value="MODALITY_4" selected>Team-Up First to Search Together</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label style="font-size: 13px;">Roommate Gender Preference</label>
+        <select id="modalPrefGender" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">
+          <option value="ANY" selected>Any Gender Welcome</option>
+          <option value="MALE">Male Flatmates Only</option>
+          <option value="FEMALE">Female Flatmates Only</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label style="font-size: 13px;">Maximum Monthly Rent (₹)</label>
+        <input type="number" id="modalPrefBudget" value="9500" step="500" min="2000" max="35000" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 700;">
+      </div>
+
+      <div style="margin-top: 14px; background: #FFFBEB; border: 1px solid #FDE68A; padding: 12px; border-radius: 10px; margin-bottom: 18px;">
+        <label class="dealbreaker-toggle" style="color: #92400E; font-size: 12.5px;">
+          <input type="checkbox" id="modalPrefSmokeDealbreaker" checked> Strict Non-Smoker Required
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-outline" style="flex: 1; border-radius: 12px; padding: 11px;" onclick="closePreferencesModal()">
+          Cancel
+        </button>
+        <button class="btn btn-primary" style="flex: 1.5; border-radius: 12px; padding: 11px; font-weight: 800;" onclick="saveMatchingPreferencesFromModal()">
+          Apply Filters ✔
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // State
     let currentToken = null;
     let currentUser = null;
+    let currentLifestyle = null;
     let candidates = [];
     let currentCardIndex = 0;
     let activeMatchPartner = null;
@@ -2639,6 +2865,7 @@ export function renderClientAppHtml(): string {
       currentUser.id = data.user ? data.user.id : p.id;
       currentUser.isOnboardingCompleted = isRegistered;
 
+      await loadUserProfile();
       updateHeaderUser(currentUser);
       await loadFeed();
       await loadMatches();
@@ -2655,6 +2882,7 @@ export function renderClientAppHtml(): string {
       } catch (e) {}
       currentToken = null;
       currentUser = null;
+      currentLifestyle = null;
       pendingInterestCandidate = null;
       localStorage.removeItem('buddy_token');
       localStorage.removeItem('buddy_phone');
@@ -2674,14 +2902,24 @@ export function renderClientAppHtml(): string {
           const prof = await res.json();
           currentUser = {
             id: prof.userId,
-            phone: localStorage.getItem('buddy_phone') || '+919876543210',
+            phone: localStorage.getItem('buddy_phone') || (currentUser ? currentUser.phone : '+919876543210'),
             name: prof.displayName,
-            avatar: prof.photos && prof.photos[0] ? prof.photos[0].photoUrl : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+            avatar: prof.photos && prof.photos[0] ? prof.photos[0].photoUrl : ((currentUser && currentUser.avatar) || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'),
             work: prof.occupation,
             modality: prof.modality,
-            isOnboardingCompleted: prof.isOnboardingCompleted
+            isOnboardingCompleted: prof.isOnboardingCompleted,
+            profile: prof
           };
           updateHeaderUser(currentUser);
+        }
+      } catch (e) {}
+
+      try {
+        const lRes = await fetch('/api/v1/lifestyle/me', {
+          headers: { 'Authorization': 'Bearer ' + currentToken }
+        });
+        if (lRes.ok) {
+          currentLifestyle = await lRes.json();
         }
       } catch (e) {}
     }
@@ -2689,17 +2927,14 @@ export function renderClientAppHtml(): string {
     function updateHeaderUser(u) {
       const signInBtn = document.getElementById('headerSignInBtn');
       const badge = document.getElementById('headerProfileBadge');
-      const logoutBtn = document.getElementById('headerLogoutBtn');
       const incompletePill = document.getElementById('headerIncompletePill');
 
       if (!u || !currentToken) {
         if (signInBtn) signInBtn.style.display = 'inline-flex';
         if (badge) badge.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
       } else {
         if (signInBtn) signInBtn.style.display = 'none';
         if (badge) badge.style.display = 'inline-flex';
-        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
         const avatarEl = document.getElementById('headerUserAvatar');
         if (avatarEl && u.avatar) avatarEl.src = u.avatar;
         const nameEl = document.getElementById('headerUserName');
@@ -2710,14 +2945,535 @@ export function renderClientAppHtml(): string {
       }
     }
 
-    function cyclePersona() {
+    async function cyclePersona() {
       const keys = Object.keys(PERSONAS);
       const currentKey = keys.find(k => PERSONAS[k].id === (currentUser && currentUser.id)) || 'adarsh';
       const nextKey = keys[(keys.indexOf(currentKey) + 1) % keys.length];
-      loginAsPersona(PERSONAS[nextKey]);
+      await loginAsPersona(PERSONAS[nextKey]);
+      renderProfileView();
     }
 
-    // Dynamic Central Profile View (Handles Guest, Incomplete, and Complete States)
+    // Matching Preferences Modal Handlers (Mobile Header)
+    function openPreferencesModal() {
+      const modal = document.getElementById('modalPreferences');
+      if (!modal) return;
+      const modEl = document.getElementById('modalPrefModality');
+      const genEl = document.getElementById('modalPrefGender');
+      const budEl = document.getElementById('modalPrefBudget');
+      const smkEl = document.getElementById('modalPrefSmokeDealbreaker');
+
+      if (currentUser) {
+        if (modEl) modEl.value = currentUser.modality || (currentUser.profile && currentUser.profile.modality) || 'MODALITY_4';
+        if (genEl) genEl.value = (currentUser.profile && currentUser.profile.preferredGender) || 'ANY';
+        if (budEl) budEl.value = (currentUser.profile && currentUser.profile.maxBudget) || 9500;
+      }
+      if (currentLifestyle && smkEl) {
+        smkEl.checked = currentLifestyle.substances ? Boolean(currentLifestyle.substances.isDealbreaker) : true;
+      }
+      modal.classList.add('active');
+    }
+
+    function closePreferencesModal() {
+      const modal = document.getElementById('modalPreferences');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function saveMatchingPreferencesFromModal() {
+      const modVal = document.getElementById('modalPrefModality')?.value || 'MODALITY_4';
+      const genVal = document.getElementById('modalPrefGender')?.value || 'ANY';
+      const budVal = parseInt(document.getElementById('modalPrefBudget')?.value, 10) || 9500;
+      const smkDb = document.getElementById('modalPrefSmokeDealbreaker')?.checked ?? true;
+
+      if (currentUser) {
+        currentUser.modality = modVal;
+        selectedModality = modVal;
+      }
+
+      if (currentToken) {
+        try {
+          await fetch('/api/v1/profiles/me', {
+            method: 'PUT',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(getMergedProfilePayload({
+              modality: modVal,
+              preferredGender: genVal,
+              maxBudget: budVal
+            }))
+          });
+
+          await fetch('/api/v1/lifestyle/me', {
+            method: 'PUT',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(getMergedLifestylePayload({
+              substances: {
+                smokingHabit: (currentLifestyle && currentLifestyle.substances && currentLifestyle.substances.smokingHabit) || 'NON_SMOKER_STRICT',
+                alcoholHabit: (currentLifestyle && currentLifestyle.substances && currentLifestyle.substances.alcoholHabit) || 'TEETOTALER',
+                isDealbreaker: smkDb
+              }
+            }))
+          });
+        } catch (e) {}
+      }
+
+      closePreferencesModal();
+      showToast('Matching preferences updated! Refreshing feed... ✔');
+      await loadUserProfile();
+      await loadFeed();
+    }
+
+    // Dynamic Profile Completion Calculation (18 Fields)
+    function calculateProfileCompletion(user, lifestyle) {
+      const p = (user && user.profile) ? user.profile : (user || {});
+      const l = lifestyle || {};
+
+      // Section 1: Basics (4 fields)
+      const hasName = Boolean(p.displayName || p.name);
+      const hasGender = Boolean(p.gender);
+      const hasBirthDate = Boolean(p.birthDate);
+      const hasPhoto = Boolean(p.avatar || (p.photos && p.photos.length > 0));
+      const basicsCount = [hasName, hasGender, hasBirthDate, hasPhoto].filter(Boolean).length;
+
+      // Section 2: About & Work (3 fields)
+      const hasOcc = Boolean(p.occupation || p.work);
+      const hasComp = Boolean(p.collegeOrCompany);
+      const hasBio = Boolean(p.bio && p.bio.trim().length > 0);
+      const aboutCount = [hasOcc, hasComp, hasBio].filter(Boolean).length;
+
+      // Section 3: Housing & Criteria (4 fields)
+      const hasMod = Boolean(p.modality);
+      const hasPrefGen = Boolean(p.preferredGender);
+      const hasSubs = Boolean(p.preferredSuburbs && p.preferredSuburbs.length > 0);
+      const hasBudget = Boolean(p.maxBudget && p.maxBudget > 0);
+      const housingCount = [hasMod, hasPrefGen, hasSubs, hasBudget].filter(Boolean).length;
+
+      // Section 4: Lifestyle & Habits (4 fields)
+      const hasSleep = Boolean(l.sleep && l.sleep.sleepPattern);
+      const hasClean = Boolean(l.cleanliness && l.cleanliness.cleanlinessLevel);
+      const hasDiet = Boolean(l.dietary && l.dietary.dietType);
+      const hasSmoke = Boolean(l.substances && l.substances.smokingHabit);
+      const lifestyleCount = [hasSleep, hasClean, hasDiet, hasSmoke].filter(Boolean).length;
+
+      // Section 5: Household Vibe & Hosting (2 fields)
+      const hasVibe = Boolean((l.household && l.household.householdVibe) || (l.social && l.social.partyPreference));
+      const hasGuest = Boolean(l.social && l.social.guestFrequency);
+      const hostingCount = [hasVibe, hasGuest].filter(Boolean).length;
+
+      // Section 6: Trust & Verification (1 field)
+      const isVerified = Boolean((p.verificationBadge && p.verificationBadge !== 'UNVERIFIED') || p.institutionalEmailVerified);
+      const trustCount = isVerified ? 1 : 0;
+
+      const totalFields = 18;
+      const completedFields = basicsCount + aboutCount + housingCount + lifestyleCount + hostingCount + trustCount;
+      const percentage = Math.min(100, Math.round((completedFields / totalFields) * 100));
+
+      function getStatus(count, max) {
+        if (count === max) return { key: 'completed', label: 'Completed ✔', pillClass: 'completed' };
+        if (count > 0) return { key: 'partial', label: count + ' of ' + max + ' completed', pillClass: 'partial' };
+        return { key: 'not-started', label: 'Not Started', pillClass: 'not-started' };
+      }
+
+      let tierTitle = '';
+      let tierMessage = '';
+      if (percentage >= 90) {
+        tierTitle = 'Profile Star! ⭐';
+        tierMessage = 'Awesome! Your profile is comprehensive and verified. You stand out to 3x more potential flatmates in Trivandrum.';
+      } else if (percentage >= 70) {
+        tierTitle = 'Looking Great! 🚀';
+        tierMessage = 'Your profile is strong! Complete the remaining sections to reach 100% and get maximum match compatibility.';
+      } else if (percentage >= 40) {
+        tierTitle = 'Your profile has potential! 💡';
+        tierMessage = 'Complete a few more sections to improve your profile and help find better roommate matches.';
+      } else {
+        tierTitle = "Let's build your profile! 🌱";
+        tierMessage = 'Adding details about your habits, budget, and lifestyle helps us recommend your ideal flatmates.';
+      }
+
+      return {
+        totalFields,
+        completedFields,
+        percentage,
+        tierTitle,
+        tierMessage,
+        sections: {
+          basics: { count: basicsCount, total: 4, status: getStatus(basicsCount, 4), id: 'prof-sec-basics', name: 'Basic Information', icon: '🪪' },
+          about: { count: aboutCount, total: 3, status: getStatus(aboutCount, 3), id: 'prof-sec-about', name: 'About & Work', icon: '💼' },
+          housing: { count: housingCount, total: 4, status: getStatus(housingCount, 4), id: 'prof-sec-housing', name: 'Housing & Criteria', icon: '🏡' },
+          lifestyle: { count: lifestyleCount, total: 4, status: getStatus(lifestyleCount, 4), id: 'prof-sec-lifestyle', name: 'Lifestyle & Habits', icon: '🌿' },
+          hosting: { count: hostingCount, total: 2, status: getStatus(hostingCount, 2), id: 'prof-sec-hosting', name: 'Household & Hosting', icon: '🎉' },
+          trust: { count: trustCount, total: 1, status: getStatus(trustCount, 1), id: 'prof-sec-trust', name: 'Trust & Verification', icon: '⭐' }
+        }
+      };
+    }
+
+    // Profile Completion Dashboard Screen
+    function renderProfileCompletionDashboard() {
+      const container = document.getElementById('completionDashboardContainer');
+      if (!container) return;
+
+      const comp = calculateProfileCompletion(currentUser, currentLifestyle);
+      const circumference = 2 * Math.PI * 45; // 282.74
+      const offset = Math.max(0, circumference - (circumference * comp.percentage / 100));
+
+      let cardsHtml = '';
+      const secs = [
+        comp.sections.basics,
+        comp.sections.about,
+        comp.sections.housing,
+        comp.sections.lifestyle,
+        comp.sections.hosting,
+        comp.sections.trust
+      ];
+
+      for (const s of secs) {
+        cardsHtml += 
+          '<div class="completion-section-card" onclick="navigateToProfileSection(&apos;' + s.id + '&apos;)">' +
+            '<div class="comp-sec-icon">' + s.icon + '</div>' +
+            '<div style="font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px;">' + s.name + '</div>' +
+            '<div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">' + s.count + ' of ' + s.total + ' completed</div>' +
+            '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+              '<span class="comp-status-pill ' + s.status.pillClass + '">' + s.status.label + '</span>' +
+              '<span style="font-size: 13px; font-weight: 800; color: var(--primary);">Edit →</span>' +
+            '</div>' +
+          '</div>';
+      }
+
+      container.innerHTML = 
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">' +
+          '<button class="btn btn-outline" style="border-radius: 20px; font-size: 13px; padding: 6px 14px; gap: 6px;" onclick="navigateTab(&apos;profile&apos;)">' +
+            '← Back to Profile' +
+          '</button>' +
+          '<div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Buddy Profile Hub</div>' +
+        '</div>' +
+
+        '<div class="completion-meter-card">' +
+          '<div style="position: relative; width: 104px; height: 104px; flex-shrink: 0;">' +
+            '<svg class="circular-progress-svg" viewBox="0 0 100 100">' +
+              '<circle class="circular-progress-bg" cx="50" cy="50" r="45"></circle>' +
+              '<circle class="circular-progress-bar" cx="50" cy="50" r="45" style="stroke-dasharray: ' + Math.round(circumference) + '; stroke-dashoffset: ' + Math.round(offset) + ';"></circle>' +
+            '</svg>' +
+            '<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">' +
+              '<span style="font-size: 24px; font-weight: 900; color: var(--text);">' + comp.percentage + '%</span>' +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="display: inline-flex; align-items: center; gap: 6px; background: #ECFDF5; color: #065F46; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; margin-bottom: 6px;">' +
+              'Profile Health' +
+            '</div>' +
+            '<h2 style="font-size: 20px; font-weight: 900; color: var(--text); margin-bottom: 4px;">' + comp.tierTitle + '</h2>' +
+            '<p style="font-size: 13px; color: var(--text-muted); line-height: 1.45; margin-bottom: 10px;">' + comp.tierMessage + '</p>' +
+            '<div style="font-size: 12.5px; font-weight: 700; color: var(--primary-dark);">' +
+              '✔ ' + comp.completedFields + ' of ' + comp.totalFields + ' profile fields completed' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">' +
+            '<h3 style="font-size: 16px; font-weight: 800; color: var(--text);">Profile Sections</h3>' +
+            '<span style="font-size: 12px; color: var(--text-muted);">Click any card to edit details</span>' +
+          '</div>' +
+          '<div class="completion-cards-grid">' +
+            cardsHtml +
+          '</div>' +
+        '</div>';
+    }
+
+    // Deep-Link Navigation to Profile Sections
+    function navigateToProfileSection(sectionId) {
+      navigateTab('profile');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('section-highlight');
+          setTimeout(() => el.classList.remove('section-highlight'), 2200);
+          const firstInput = el.querySelector('input:not([type="hidden"]), select, textarea');
+          if (firstInput) firstInput.focus();
+        }
+      }, 150);
+    }
+
+    function jumpToSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.classList.add('section-highlight');
+        setTimeout(() => el.classList.remove('section-highlight'), 1800);
+      }
+    }
+
+    // Helpers to Merge Payloads
+    function getMergedProfilePayload(updates) {
+      const p = (currentUser && currentUser.profile) ? currentUser.profile : (currentUser || {});
+      const birthDateStr = p.birthDate ? (typeof p.birthDate === 'string' ? p.birthDate.split('T')[0] : '1998-05-15') : '1998-05-15';
+      const suburbs = (p.preferredSuburbs && p.preferredSuburbs.length > 0) ? p.preferredSuburbs : ['KAZHAKKOOTTAM', 'KARIAVATTOM'];
+
+      return {
+        displayName: (updates.displayName !== undefined ? updates.displayName : (p.displayName || currentUser.name || 'Buddy User')).trim(),
+        gender: updates.gender || p.gender || 'MALE',
+        preferredGender: updates.preferredGender || p.preferredGender || 'ANY',
+        birthDate: updates.birthDate || birthDateStr,
+        occupation: (updates.occupation !== undefined ? updates.occupation : (p.occupation || currentUser.work || 'Software Professional')).trim(),
+        collegeOrCompany: (updates.collegeOrCompany !== undefined ? updates.collegeOrCompany : (p.collegeOrCompany || 'Technopark')).trim(),
+        bio: (updates.bio !== undefined ? updates.bio : (p.bio || '')).trim(),
+        modality: updates.modality || p.modality || currentUser.modality || 'MODALITY_4',
+        minBudget: updates.minBudget || p.minBudget || 3000,
+        maxBudget: updates.maxBudget ? parseInt(updates.maxBudget, 10) : (p.maxBudget || 9500),
+        moveInFlexibility: updates.moveInFlexibility || p.moveInFlexibility || 'WITHIN_1_MONTH',
+        preferredSuburbs: (updates.preferredSuburbs && updates.preferredSuburbs.length > 0) ? updates.preferredSuburbs : suburbs,
+        isOnboardingCompleted: typeof updates.isOnboardingCompleted === 'boolean' ? updates.isOnboardingCompleted : (currentUser.isOnboardingCompleted !== false)
+      };
+    }
+
+    function getMergedLifestylePayload(updates) {
+      const l = currentLifestyle || {};
+      const defSleep = { sleepPattern: 'EARLY_BIRD', shiftSchedule: 'NORMAL_DAY', noiseSensitivity: 'LIGHT_SLEEPER', isDealbreaker: false };
+      const defClean = { cleanlinessLevel: 'METICULOUS', kitchenSinkRule: 'IMMEDIATE_WASH', maidPreference: 'OPEN_TO_MAID', isDealbreaker: false };
+      const defDiet = { dietType: 'NON_VEGETARIAN', kitchenPolicy: 'NO_RESTRICTIONS', isDealbreaker: false };
+      const defSocial = { guestFrequency: 'OCCASIONAL_FRIENDS', overnightGuestPolicy: 'SAME_GENDER_ONLY', partyPreference: 'WEEKEND_GATHERINGS', isDealbreaker: false };
+      const defSubst = { smokingHabit: 'NON_SMOKER_STRICT', alcoholHabit: 'TEETOTALER', isDealbreaker: true };
+      const defFin = { rentPaymentHabit: 'STRICT_1ST_OF_MONTH', acBillSplit: 'EQUAL_SPLIT', groceryTracking: 'SPLITWISE_APP', isDealbreaker: true };
+      const defWork = { workMode: 'HYBRID', callFrequency: 'LOW', workspacePreference: 'PRIVATE_ROOM_DESK', isDealbreaker: false };
+      const defHouse = { householdVibe: 'BALANCED_CASUAL', isDealbreaker: false };
+
+      return {
+        sleep: { ...(l.sleep || defSleep), ...(updates.sleep || {}) },
+        cleanliness: { ...(l.cleanliness || defClean), ...(updates.cleanliness || {}) },
+        dietary: { ...(l.dietary || defDiet), ...(updates.dietary || {}) },
+        social: { ...(l.social || defSocial), ...(updates.social || {}) },
+        substances: { ...(l.substances || defSubst), ...(updates.substances || {}) },
+        financial: { ...(l.financial || defFin), ...(updates.financial || {}) },
+        work: { ...(l.work || defWork), ...(updates.work || {}) },
+        household: { ...(l.household || defHouse), ...(updates.household || {}) }
+      };
+    }
+
+    function toggleProfileSuburbPill(el) {
+      el.classList.toggle('selected');
+    }
+
+    // Section Save Handlers
+    async function saveProfileBasics() {
+      const name = document.getElementById('profBasicsName')?.value.trim();
+      const gender = document.getElementById('profBasicsGender')?.value;
+      const birthDate = document.getElementById('profBasicsBirthDate')?.value;
+      const photoUrl = document.getElementById('profBasicsPhotoUrl')?.value.trim();
+
+      if (!name) { alert('Please enter your full name'); return; }
+      if (!birthDate) { alert('Please select your date of birth'); return; }
+
+      try {
+        const payload = getMergedProfilePayload({ displayName: name, gender, birthDate });
+        const res = await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Error saving basics: ' + (err.detail || err.title || 'Validation error'));
+          return;
+        }
+
+        if (photoUrl && photoUrl !== currentUser.avatar) {
+          await fetch('/api/v1/profiles/me/photos', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ photoUrl, orderIndex: 0, isPrimary: true })
+          });
+          currentUser.avatar = photoUrl;
+        }
+
+        currentUser.name = name;
+        updateHeaderUser(currentUser);
+        await loadUserProfile();
+        showToast('Basic information saved! ✔');
+        renderProfileView();
+      } catch (e) {
+        showToast('Error saving basic info: ' + e.message);
+      }
+    }
+
+    async function saveProfileAbout() {
+      const occupation = document.getElementById('profAboutOccupation')?.value.trim();
+      const collegeOrCompany = document.getElementById('profAboutCompany')?.value.trim();
+      const bio = document.getElementById('profAboutBio')?.value.trim();
+
+      try {
+        const payload = getMergedProfilePayload({ occupation, collegeOrCompany, bio });
+        const res = await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Error saving about: ' + (err.detail || err.title || 'Validation error'));
+          return;
+        }
+        currentUser.work = occupation;
+        await loadUserProfile();
+        showToast('About & Work details saved! ✔');
+        renderProfileView();
+      } catch (e) {
+        showToast('Error saving details: ' + e.message);
+      }
+    }
+
+    async function saveProfileHousing() {
+      const modality = document.getElementById('profHousingModality')?.value;
+      const preferredGender = document.getElementById('profHousingPrefGender')?.value;
+      const budget = parseInt(document.getElementById('profHousingBudget')?.value, 10);
+      const moveInFlexibility = document.getElementById('profHousingFlexibility')?.value;
+
+      const selectedPills = Array.from(document.querySelectorAll('#profHousingSuburbsWrap .suburb-pill.selected'))
+        .map(p => p.getAttribute('data-suburb') || p.textContent.trim().toUpperCase());
+      const suburbs = selectedPills.length > 0 ? selectedPills : ['KAZHAKKOOTTAM', 'KARIAVATTOM'];
+
+      try {
+        const payload = getMergedProfilePayload({
+          modality,
+          preferredGender,
+          maxBudget: budget,
+          moveInFlexibility,
+          preferredSuburbs: suburbs
+        });
+        const res = await fetch('/api/v1/profiles/me', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Error saving housing criteria: ' + (err.detail || err.title || 'Validation error'));
+          return;
+        }
+        currentUser.modality = modality;
+        selectedModality = modality;
+        await loadUserProfile();
+        await loadFeed();
+        showToast('Housing & criteria saved! Matching feed updated ✔');
+        renderProfileView();
+      } catch (e) {
+        showToast('Error saving housing: ' + e.message);
+      }
+    }
+
+    async function saveProfileLifestyle() {
+      const sleepPattern = document.getElementById('profLifeSleep')?.value;
+      const sleepDb = document.getElementById('profLifeSleepDb')?.checked ?? false;
+      const cleanlinessLevel = document.getElementById('profLifeClean')?.value;
+      const cleanDb = document.getElementById('profLifeCleanDb')?.checked ?? false;
+      const dietType = document.getElementById('profLifeDiet')?.value;
+      const dietDb = document.getElementById('profLifeDietDb')?.checked ?? false;
+      const smokingHabit = document.getElementById('profLifeSmoke')?.value;
+      const smokeDb = document.getElementById('profLifeSmokeDb')?.checked ?? false;
+
+      try {
+        const payload = getMergedLifestylePayload({
+          sleep: { sleepPattern, isDealbreaker: sleepDb },
+          cleanliness: { cleanlinessLevel, isDealbreaker: cleanDb },
+          dietary: { dietType, isDealbreaker: dietDb },
+          substances: { smokingHabit, isDealbreaker: smokeDb }
+        });
+        const res = await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Error saving lifestyle: ' + (err.detail || err.title || 'Validation error'));
+          return;
+        }
+        await loadUserProfile();
+        await loadFeed();
+        showToast('Lifestyle habits saved! Compatibility recalculated ✔');
+        renderProfileView();
+      } catch (e) {
+        showToast('Error saving lifestyle: ' + e.message);
+      }
+    }
+
+    async function saveProfileHosting() {
+      const vibe = document.getElementById('profHostVibe')?.value;
+      const vibeDb = document.getElementById('profHostVibeDb')?.checked ?? false;
+      const guest = document.getElementById('profHostGuest')?.value;
+
+      try {
+        const payload = getMergedLifestylePayload({
+          social: {
+            guestFrequency: guest,
+            partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
+            isDealbreaker: vibeDb
+          },
+          household: {
+            householdVibe: vibe,
+            isDealbreaker: vibeDb
+          }
+        });
+        const res = await fetch('/api/v1/lifestyle/me', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Error saving hosting preferences: ' + (err.detail || err.title || 'Validation error'));
+          return;
+        }
+        await loadUserProfile();
+        showToast('Household vibe & hosting preferences saved! ✔');
+        renderProfileView();
+      } catch (e) {
+        showToast('Error saving preferences: ' + e.message);
+      }
+    }
+
+    async function saveProfileTrust() {
+      const email = document.getElementById('profTrustEmail')?.value.trim();
+      const type = document.getElementById('profTrustType')?.value || 'CORPORATE';
+      if (!email) {
+        alert('Please enter your official institutional or company email.');
+        return;
+      }
+      try {
+        const reqRes = await fetch('/api/v1/auth/institution/verify-request', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + currentToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ institutionType: type, institutionName: 'Technopark/CET', email })
+        });
+        const reqData = await reqRes.json();
+        if (reqData.previewToken) {
+          await fetch('/api/v1/auth/institution/verify-confirm', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + currentToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: reqData.previewToken })
+          });
+          showToast('Trust badge verified successfully! ⭐');
+          await loadUserProfile();
+          renderProfileView();
+        } else {
+          showToast('Verification link sent to ' + email + ' ✉️');
+        }
+      } catch (e) {
+        showToast('Verification request failed: ' + e.message);
+      }
+    }
+
+    // Centralised Profile Management Screen
     function renderProfileView() {
       const container = document.getElementById('profileContainer');
       if (!container) return;
@@ -2793,199 +3549,369 @@ export function renderClientAppHtml(): string {
         return;
       }
 
-      if (currentUser && !currentUser.isOnboardingCompleted) {
-        // LOGGED IN, REGISTRATION INCOMPLETE
-        container.innerHTML = 
-          '<div style="background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 24px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);">' +
-            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">' +
+      // LOGGED IN: Centralised Profile Management
+      const prof = (currentUser && currentUser.profile) ? currentUser.profile : (currentUser || {});
+      const l = currentLifestyle || {};
+      const comp = calculateProfileCompletion(currentUser, currentLifestyle);
+      const isComplete = currentUser.isOnboardingCompleted;
+      const birthDateStr = prof.birthDate ? (typeof prof.birthDate === 'string' ? prof.birthDate.split('T')[0] : '1998-05-15') : '1998-05-15';
+
+      // 1. Top Header or Incomplete Banner
+      let topHtml = '';
+      if (!isComplete) {
+        topHtml = 
+          '<div style="background: white; border: 1.5px solid #FCD34D; border-radius: 20px; padding: 22px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">' +
               '<div style="display: inline-flex; align-items: center; gap: 6px; background: #FEF3C7; color: #92400E; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px;">' +
                 '⚠️ Registration Incomplete' +
               '</div>' +
               '<span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">' + (currentUser.phone || '') + '</span>' +
             '</div>' +
-            '<h2 style="font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px;">' +
+            '<h2 style="font-size: 20px; font-weight: 900; color: var(--text); margin-bottom: 6px;">' +
               'Complete Your Registration 🚀' +
             '</h2>' +
-            '<p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">' +
-              'Your mobile number is verified! Complete 4 quick questions about your living preferences and lifestyle to unlock expressing interest (LIKE), matching, and messaging with flatmates in Trivandrum.' +
+            '<p style="font-size: 13px; color: var(--text-muted); line-height: 1.45; margin-bottom: 14px;">' +
+              'Your phone is verified! Complete your core living preferences to unlock swiping right (LIKE), matching, and messaging in Trivandrum.' +
             '</p>' +
-            '<div style="background: #F1F5F9; border-radius: 12px; padding: 14px; margin-bottom: 20px;">' +
-              '<div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px;">' +
-                '<span>Registration Progress</span>' +
-                '<span style="color: var(--primary);">Step 1 of 2 Complete (50%)</span>' +
-              '</div>' +
-              '<div style="width: 100%; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">' +
-                '<div style="width: 50%; height: 100%; background: linear-gradient(90deg, #F59E0B, var(--primary)); border-radius: 4px;"></div>' +
-              '</div>' +
+            '<div style="display: flex; gap: 10px; flex-wrap: wrap;">' +
+              '<button class="btn btn-primary" style="flex: 1 1 180px; padding: 13px; font-size: 14px; font-weight: 800; border-radius: 12px; justify-content: center;" onclick="startNewRegistration()">' +
+                'Complete via Wizard (1 min) →' +
+              '</button>' +
+              '<button class="btn btn-outline" style="flex: 1 1 140px; border-radius: 12px; font-size: 13px; padding: 13px; justify-content: center;" onclick="jumpToSection(&apos;prof-sec-basics&apos;)">' +
+                'Edit Direct Below ↓' +
+              '</button>' +
             '</div>' +
-            '<div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 20px;">' +
-              '<div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">' +
-                'Mandatory Requirements (Takes 1 min)' +
-              '</div>' +
-              '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">' +
-                '<div style="display: flex; align-items: center; gap: 8px; color: #059669; font-weight: 600;">' +
-                  '<span>✔</span> <span>Mobile Number Verified (' + (currentUser.phone || '') + ')</span>' +
-                '</div>' +
-                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
-                  '<span>○</span> <span>Name & 18+ Age Verification</span>' +
-                '</div>' +
-                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
-                  '<span>○</span> <span>Gender & Living Preferences</span>' +
-                '</div>' +
-                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
-                  '<span>○</span> <span>Modality, Preferred Suburbs & Budget</span>' +
-                '</div>' +
-                '<div style="display: flex; align-items: center; gap: 8px; color: #D97706; font-weight: 600;">' +
-                  '<span>○</span> <span>Core Lifestyle (Sleep, Cleanliness, Food, Smoking)</span>' +
-                '</div>' +
-              '</div>' +
+          '</div>';
+      } else {
+        topHtml = 
+          '<div class="profile-header-card">' +
+            '<div style="position: relative; flex-shrink: 0;">' +
+              '<img id="myProfAvatar" class="profile-header-avatar" src="' + (currentUser.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80') + '" alt="' + (currentUser.name || 'User') + '">' +
+              '<button onclick="jumpToSection(&apos;prof-sec-basics&apos;); document.getElementById(&apos;profBasicsPhotoUrl&apos;)?.focus();" title="Change Photo" style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; border: 2px solid white; border-radius: 50%; width: 28px; height: 28px; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer;">📷</button>' +
             '</div>' +
-            '<button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 15px; font-weight: 800; border-radius: 14px; justify-content: center; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);" onclick="startNewRegistration()">' +
-              'Complete Registration (1 Min) →' +
+            '<div class="profile-header-details">' +
+              '<div class="profile-name-row">' +
+                '<h2 id="myProfName" class="profile-name-title">' + (currentUser.name || 'Buddy Member') + '</h2>' +
+                ((prof.verificationBadge && prof.verificationBadge !== 'UNVERIFIED') 
+                  ? '<div style="display: inline-flex; align-items: center; gap: 4px; background: #E0F2FE; color: #0369A1; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 12px;">⭐ ' + (prof.verificationBadge === 'VERIFIED_STUDENT' ? 'Student Verified' : 'Work Verified') + '</div>'
+                  : '<div class="profile-badge-active">✔ Active Member</div>'
+                ) +
+              '</div>' +
+              '<p id="myProfWork" class="profile-subtext">' + (currentUser.work || prof.occupation || 'Trivandrum Resident') + (prof.collegeOrCompany ? ' • ' + prof.collegeOrCompany : '') + '</p>' +
+              '<div class="profile-phone-text">📱 ' + (currentUser.phone || '') + '</div>' +
+            '</div>' +
+            '<div class="profile-header-action">' +
+              '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="jumpToSection(&apos;prof-sec-housing&apos;)">' +
+                '🎚️ Preferences' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      // 2. Profile Completion Banner
+      const completionHtml = 
+        '<div class="profile-card" style="padding: 20px; background: white;">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+            '<div style="display: flex; align-items: center; gap: 8px;">' +
+              '<span style="font-size: 15px; font-weight: 900; color: var(--text);">Profile Completion</span>' +
+              '<span style="font-size: 12px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 2px 8px; border-radius: 10px;">' + comp.percentage + '%</span>' +
+            '</div>' +
+            '<button class="btn btn-outline" style="border-radius: 10px; font-size: 12px; padding: 4px 10px; font-weight: 700;" onclick="navigateTab(&apos;profile-completion&apos;)">' +
+              'View Breakdown →' +
             '</button>' +
           '</div>' +
-          '<div class="profile-card profile-actions-bar">' +
-            '<div>' +
-              '<div style="font-size: 14px; font-weight: 700; color: var(--text);">Account Management</div>' +
-              '<div style="font-size: 12px; color: var(--text-muted);">Signed in as ' + (currentUser.phone || '') + '</div>' +
+          '<div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">' +
+            '<div style="width: ' + comp.percentage + '%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px; transition: width 0.5s ease;"></div>' +
+          '</div>' +
+          '<p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">' +
+            comp.tierMessage +
+          '</p>' +
+        '</div>';
+
+      // 3. Quick Section Jump Pills
+      const quickJumpHtml = 
+        '<div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-basics&apos;)">🪪 Basics</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-about&apos;)">💼 About</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-housing&apos;)">🏡 Housing</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-lifestyle&apos;)">🌿 Lifestyle</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-hosting&apos;)">🎉 Hosting</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-trust&apos;)">⭐ Trust</button>' +
+          '<button class="quick-jump-pill" onclick="jumpToSection(&apos;prof-sec-account&apos;)">⚙️ Account</button>' +
+        '</div>';
+
+      // Suburb Pills for Section 3
+      const allSuburbs = ['KAZHAKKOOTTAM', 'KARIAVATTOM', 'SREEKARYAM', 'ULLOOR', 'PATTOM', 'KOWDIAR', 'MANACAUD', 'VELLAYAMBALAM'];
+      const userSubs = prof.preferredSuburbs || ['KAZHAKKOOTTAM', 'KARIAVATTOM'];
+      let suburbPillsHtml = '';
+      for (const sub of allSuburbs) {
+        const isSel = userSubs.includes(sub);
+        suburbPillsHtml += '<span class="suburb-pill ' + (isSel ? 'selected' : '') + '" data-suburb="' + sub + '" onclick="toggleProfileSuburbPill(this)">' + sub.charAt(0) + sub.slice(1).toLowerCase() + '</span>';
+      }
+
+      // 4. All 6 Section Cards + Section 7 Account Management
+      const sectionsHtml = 
+        // SECTION 1: BASICS
+        '<div class="profile-card" id="prof-sec-basics">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>🪪</span> <span>Basic Information</span>' +
             '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.basics.status.pillClass + '">' + comp.sections.basics.status.label + '</span>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Full Name</label>' +
+            '<input type="text" id="profBasicsName" value="' + (prof.displayName || currentUser.name || '') + '" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+          '</div>' +
+          '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">' +
+            '<div>' +
+              '<label style="font-size: 12.5px; font-weight: 700; color: var(--text); display: block; margin-bottom: 4px;">Gender</label>' +
+              '<select id="profBasicsGender" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+                '<option value="MALE" ' + (prof.gender === 'MALE' ? 'selected' : '') + '>Male</option>' +
+                '<option value="FEMALE" ' + (prof.gender === 'FEMALE' ? 'selected' : '') + '>Female</option>' +
+                '<option value="NON_BINARY" ' + (prof.gender === 'NON_BINARY' ? 'selected' : '') + '>Non-Binary</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="font-size: 12.5px; font-weight: 700; color: var(--text); display: block; margin-bottom: 4px;">Date of Birth (18+)</label>' +
+              '<input type="date" id="profBasicsBirthDate" value="' + birthDateStr + '" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Profile Photo URL</label>' +
+            '<div style="display: flex; gap: 10px; align-items: center;">' +
+              '<input type="text" id="profBasicsPhotoUrl" value="' + (currentUser.avatar || '') + '" placeholder="https://..." oninput="document.getElementById(&apos;profBasicsPreview&apos;).src = this.value" style="flex: 1; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+              '<img id="profBasicsPreview" src="' + (currentUser.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80') + '" alt="Preview" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileBasics()">' +
+            'Save Basic Information ✔' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 2: ABOUT & WORK
+        '<div class="profile-card" id="prof-sec-about">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>💼</span> <span>About & Professional Life</span>' +
+            '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.about.status.pillClass + '">' + comp.sections.about.status.label + '</span>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Occupation / Role</label>' +
+            '<input type="text" id="profAboutOccupation" value="' + (prof.occupation || currentUser.work || '') + '" placeholder="e.g. Senior Backend Engineer" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Company or University</label>' +
+            '<input type="text" id="profAboutCompany" value="' + (prof.collegeOrCompany || '') + '" placeholder="e.g. TCS Technopark Phase I / CET" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">About Me / Bio</label>' +
+            '<textarea id="profAboutBio" rows="3" placeholder="Tell potential flatmates about your work rhythm, cleanliness habits, hobbies..." style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; resize: vertical; background: white;">' + (prof.bio || '') + '</textarea>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileAbout()">' +
+            'Save About & Work ✔' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 3: HOUSING & CRITERIA
+        '<div class="profile-card" id="prof-sec-housing">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>🏡</span> <span>Housing & Living Criteria</span>' +
+            '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.housing.status.pillClass + '">' + comp.sections.housing.status.label + '</span>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Living Modality</label>' +
+            '<select id="profHousingModality" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="MODALITY_1" ' + (prof.modality === 'MODALITY_1' ? 'selected' : '') + '>Has Room Available (Seeking Flatmate)</option>' +
+              '<option value="MODALITY_2" ' + (prof.modality === 'MODALITY_2' ? 'selected' : '') + '>Seeking Room in Existing Flat</option>' +
+              '<option value="MODALITY_3" ' + (prof.modality === 'MODALITY_3' ? 'selected' : '') + '>Has Flat, Relocating with New Roommate</option>' +
+              '<option value="MODALITY_4" ' + (prof.modality === 'MODALITY_4' || !prof.modality ? 'selected' : '') + '>Team-Up First to Search Together</option>' +
+            '</select>' +
+          '</div>' +
+          '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">' +
+            '<div>' +
+              '<label style="font-size: 12.5px; font-weight: 700; color: var(--text); display: block; margin-bottom: 4px;">Flatmate Gender Preference</label>' +
+              '<select id="profHousingPrefGender" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+                '<option value="ANY" ' + (prof.preferredGender === 'ANY' ? 'selected' : '') + '>Any Gender Welcome</option>' +
+                '<option value="MALE" ' + (prof.preferredGender === 'MALE' ? 'selected' : '') + '>Male Only</option>' +
+                '<option value="FEMALE" ' + (prof.preferredGender === 'FEMALE' ? 'selected' : '') + '>Female Only</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="font-size: 12.5px; font-weight: 700; color: var(--text); display: block; margin-bottom: 4px;">Max Monthly Rent (₹)</label>' +
+              '<input type="number" id="profHousingBudget" value="' + (prof.maxBudget || 9500) + '" step="500" min="2000" max="35000" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Move-in Flexibility</label>' +
+            '<select id="profHousingFlexibility" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="WITHIN_15_DAYS" ' + (prof.moveInFlexibility === 'WITHIN_15_DAYS' ? 'selected' : '') + '>Immediate (Within 15 Days)</option>' +
+              '<option value="WITHIN_1_MONTH" ' + (prof.moveInFlexibility === 'WITHIN_1_MONTH' || !prof.moveInFlexibility ? 'selected' : '') + '>Within 1 Month</option>' +
+              '<option value="TWO_MONTHS" ' + (prof.moveInFlexibility === 'TWO_MONTHS' ? 'selected' : '') + '>Within 2 Months</option>' +
+              '<option value="FLEXIBLE" ' + (prof.moveInFlexibility === 'FLEXIBLE' ? 'selected' : '') + '>Flexible Timeline</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: block;">Preferred Trivandrum Micro-Markets (Click to toggle)</label>' +
+            '<div id="profHousingSuburbsWrap" style="display: flex; flex-wrap: wrap; gap: 6px;">' +
+              suburbPillsHtml +
+            '</div>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileHousing()">' +
+            'Save Housing Criteria ✔' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 4: LIFESTYLE & HABITS
+        '<div class="profile-card" id="prof-sec-lifestyle">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>🌿</span> <span>Lifestyle & Daily Habits</span>' +
+            '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.lifestyle.status.pillClass + '">' + comp.sections.lifestyle.status.label + '</span>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Sleep Rhythm</label>' +
+            '<select id="profLifeSleep" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="EARLY_BIRD" ' + ((l.sleep && l.sleep.sleepPattern === 'EARLY_BIRD') ? 'selected' : '') + '>Early Bird (Sleep by 10:30 PM, Awake by 6:30 AM)</option>' +
+              '<option value="NIGHT_OWL" ' + ((l.sleep && l.sleep.sleepPattern === 'NIGHT_OWL') ? 'selected' : '') + '>Night Owl (Sleep 1:00 AM+, Awake 9:00 AM+)</option>' +
+              '<option value="FLEXIBLE" ' + ((l.sleep && l.sleep.sleepPattern === 'FLEXIBLE') || !l.sleep ? 'selected' : '') + '>Flexible Schedule</option>' +
+            '</select>' +
+            '<label style="font-size: 12px; color: #92400E; display: flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer;">' +
+              '<input type="checkbox" id="profLifeSleepDb" ' + ((l.sleep && l.sleep.isDealbreaker) ? 'checked' : '') + '> Strict Chronotype Dealbreaker' +
+            '</label>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Cleanliness Level</label>' +
+            '<select id="profLifeClean" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="METICULOUS" ' + ((l.cleanliness && l.cleanliness.cleanlinessLevel === 'METICULOUS') ? 'selected' : '') + '>Meticulous (Dishes washed immediately, spotless)</option>' +
+              '<option value="MODERATE" ' + ((l.cleanliness && l.cleanliness.cleanlinessLevel === 'MODERATE') || !l.cleanliness ? 'selected' : '') + '>Moderate (Tidy, cleaned daily)</option>' +
+              '<option value="RELAXED" ' + ((l.cleanliness && l.cleanliness.cleanlinessLevel === 'RELAXED') ? 'selected' : '') + '>Relaxed (Casual housekeeping)</option>' +
+            '</select>' +
+            '<label style="font-size: 12px; color: #92400E; display: flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer;">' +
+              '<input type="checkbox" id="profLifeCleanDb" ' + ((l.cleanliness && l.cleanliness.isDealbreaker) ? 'checked' : '') + '> Strict Cleanliness Dealbreaker' +
+            '</label>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Food & Dietary Habits</label>' +
+            '<select id="profLifeDiet" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="NON_VEGETARIAN" ' + ((l.dietary && l.dietary.dietType === 'NON_VEGETARIAN') || !l.dietary ? 'selected' : '') + '>Non-Vegetarian (Comfortable with all food)</option>' +
+              '<option value="EGGETARIAN" ' + ((l.dietary && l.dietary.dietType === 'EGGETARIAN') ? 'selected' : '') + '>Eggetarian (Eggs allowed, no meat)</option>' +
+              '<option value="STRICT_VEGETARIAN" ' + ((l.dietary && l.dietary.dietType === 'STRICT_VEGETARIAN') ? 'selected' : '') + '>Strict Vegetarian (Pure veg home)</option>' +
+              '<option value="HALAL_ONLY" ' + ((l.dietary && l.dietary.dietType === 'HALAL_ONLY') ? 'selected' : '') + '>Halal Food Only</option>' +
+            '</select>' +
+            '<label style="font-size: 12px; color: #92400E; display: flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer;">' +
+              '<input type="checkbox" id="profLifeDietDb" ' + ((l.dietary && l.dietary.isDealbreaker) ? 'checked' : '') + '> Strict Dietary Dealbreaker' +
+            '</label>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Smoking & Substances</label>' +
+            '<select id="profLifeSmoke" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="NON_SMOKER_STRICT" ' + ((l.substances && l.substances.smokingHabit === 'NON_SMOKER_STRICT') || !l.substances ? 'selected' : '') + '>Strict Non-Smoker (Zero smoking inside or balcony)</option>' +
+              '<option value="BALCONY_ONLY" ' + ((l.substances && l.substances.smokingHabit === 'BALCONY_ONLY') ? 'selected' : '') + '>Balcony Only (Permitted on open balcony only)</option>' +
+              '<option value="SMOKER" ' + ((l.substances && l.substances.smokingHabit === 'SMOKER') ? 'selected' : '') + '>Smoker Friendly</option>' +
+            '</select>' +
+            '<label style="font-size: 12px; color: #92400E; display: flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer;">' +
+              '<input type="checkbox" id="profLifeSmokeDb" ' + ((l.substances && l.substances.isDealbreaker) || !l.substances ? 'checked' : '') + '> Strict Non-Smoker Dealbreaker' +
+            '</label>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileLifestyle()">' +
+            'Save Lifestyle Habits ✔' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 5: HOUSEHOLD VIBE & HOSTING
+        '<div class="profile-card" id="prof-sec-hosting">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>🎉</span> <span>Household Vibe & Hosting</span>' +
+            '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.hosting.status.pillClass + '">' + comp.sections.hosting.status.label + '</span>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 12px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Household Atmosphere</label>' +
+            '<select id="profHostVibe" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="QUIET_SANCTUARY" ' + ((l.household && l.household.householdVibe === 'QUIET_SANCTUARY') ? 'selected' : '') + '>Quiet Sanctuary (Restful, low noise, work from home focus)</option>' +
+              '<option value="BALANCED_CASUAL" ' + ((l.household && l.household.householdVibe === 'BALANCED_CASUAL') || !l.household ? 'selected' : '') + '>Balanced & Casual (Friendly chats, easygoing)</option>' +
+              '<option value="SOCIALLY_ACTIVE" ' + ((l.household && l.household.householdVibe === 'SOCIALLY_ACTIVE') ? 'selected' : '') + '>Socially Active (Frequent weekend gatherings, dinners)</option>' +
+            '</select>' +
+            '<label style="font-size: 12px; color: #92400E; display: flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer;">' +
+              '<input type="checkbox" id="profHostVibeDb" ' + ((l.household && l.household.isDealbreaker) ? 'checked' : '') + '> Strict Vibe Dealbreaker' +
+            '</label>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Guest & Visitor Frequency</label>' +
+            '<select id="profHostGuest" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; background: white;">' +
+              '<option value="NO_GUESTS" ' + ((l.social && l.social.guestFrequency === 'NO_GUESTS') ? 'selected' : '') + '>Rarely or Never (No outside overnight visitors)</option>' +
+              '<option value="OCCASIONAL_FRIENDS" ' + ((l.social && l.social.guestFrequency === 'OCCASIONAL_FRIENDS') || !l.social ? 'selected' : '') + '>Weekends Only (Advance notice preferred)</option>' +
+              '<option value="FREQUENT_GUESTS" ' + ((l.social && l.social.guestFrequency === 'FREQUENT_GUESTS') ? 'selected' : '') + '>Regular Guests (Friends welcome anytime)</option>' +
+            '</select>' +
+          '</div>' +
+          '<button class="btn btn-primary" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileHosting()">' +
+            'Save Household Preferences ✔' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 6: TRUST & VERIFICATION
+        '<div class="profile-card" id="prof-sec-trust">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">' +
+            '<div style="font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;">' +
+              '<span>⭐</span> <span>Trust & Verification Badge</span>' +
+            '</div>' +
+            '<span class="comp-status-pill ' + comp.sections.trust.status.pillClass + '">' + comp.sections.trust.status.label + '</span>' +
+          '</div>' +
+          '<div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px;">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">' +
+              '<span style="font-size: 13px; font-weight: 800; color: var(--text);">Status</span>' +
+              ((prof.verificationBadge && prof.verificationBadge !== 'UNVERIFIED') 
+                ? '<span style="font-size: 12px; font-weight: 800; color: #0369A1; background: #E0F2FE; padding: 2px 8px; border-radius: 10px;">⭐ ' + prof.verificationBadge + '</span>'
+                : '<span style="font-size: 12px; font-weight: 800; color: var(--text-muted); background: #F1F5F9; padding: 2px 8px; border-radius: 10px;">Unverified</span>'
+              ) +
+            '</div>' +
+            '<p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">' +
+              'Verified members receive the Blue Trust Badge on discovery cards, generating 3x more roommate inquiries in Trivandrum.' +
+            '</p>' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 10px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Official Institutional / Company Email</label>' +
+            '<input type="email" id="profTrustEmail" placeholder="e.g. name@technopark-company.com or name@cet.ac.in" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom: 14px;">' +
+            '<label style="font-size: 12.5px; font-weight: 700; color: var(--text);">Institution Type</label>' +
+            '<select id="profTrustType" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
+              '<option value="CORPORATE">Technopark / Corporate IT Professional</option>' +
+              '<option value="ACADEMIC">College / University Student (.edu / .ac.in)</option>' +
+            '</select>' +
+          '</div>' +
+          '<button class="btn btn-outline" style="width: 100%; border-radius: 12px; padding: 11px; font-weight: 800; justify-content: center;" onclick="saveProfileTrust()">' +
+            'Request Verification Link ✉️' +
+          '</button>' +
+        '</div>' +
+
+        // SECTION 7: ACCOUNT MANAGEMENT
+        '<div class="profile-card profile-actions-bar" id="prof-sec-account">' +
+          '<div>' +
+            '<div style="font-size: 14px; font-weight: 800; color: var(--text);">⚙️ Account Management</div>' +
+            '<div style="font-size: 12px; color: var(--text-muted);">Signed in as ' + (currentUser.phone || '') + '</div>' +
+          '</div>' +
+          '<div style="display: flex; gap: 8px;">' +
+            '<button class="btn btn-secondary" style="border-radius: 10px; font-size: 13px;" onclick="cyclePersona()">' +
+              'Switch Persona' +
+            '</button>' +
             '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
               'Log Out' +
             '</button>' +
-          '</div>';
-        return;
-      }
-
-      // LOGGED IN, REGISTRATION COMPLETE
-      container.innerHTML = 
-        '<div class="profile-header-card">' +
-          '<img id="myProfAvatar" class="profile-header-avatar" src="' + (currentUser.avatar || '') + '" alt="' + (currentUser.name || 'User') + '">' +
-          '<div class="profile-header-details">' +
-            '<div class="profile-name-row">' +
-              '<h2 id="myProfName" class="profile-name-title">' + (currentUser.name || 'Buddy User') + '</h2>' +
-              '<div class="profile-badge-active">' +
-                '✔ Active Member' +
-              '</div>' +
-            '</div>' +
-            '<p id="myProfWork" class="profile-subtext">' + (currentUser.work || 'Trivandrum Community Member') + '</p>' +
-            '<div class="profile-phone-text">📱 ' + (currentUser.phone || '') + '</div>' +
           '</div>' +
-          '<div class="profile-header-action">' +
-            '<button class="btn btn-outline" style="border-radius: 12px; font-size: 13px;" onclick="startNewRegistration()">' +
-              '✏️ Edit Preferences' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
-        '<div class="profile-card" style="padding: 20px;">' +
-          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
-            '<span style="font-size: 14px; font-weight: 800; color: var(--text);">Profile Strength</span>' +
-            '<span style="font-size: 13px; font-weight: 800; color: var(--primary);">85% • Strong</span>' +
-          '</div>' +
-          '<div style="width: 100%; height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">' +
-            '<div style="width: 85%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px;"></div>' +
-          '</div>' +
-          '<p style="font-size: 12px; color: var(--text-muted);">' +
-            'Complete optional hosting and verification details below to stand out to 3x more potential roommates!' +
-          '</p>' +
-        '</div>' +
-        '<div class="profile-card" style="display: flex; flex-direction: column; gap: 18px;">' +
-          '<div style="display: flex; align-items: center; justify-content: space-between;">' +
-            '<div>' +
-              '<h3 style="font-size: 16px; font-weight: 800; color: var(--text);">Optional Profile Enhancements</h3>' +
-              '<p style="font-size: 12px; color: var(--text-muted);">Customize your profile bio, hosting habits, and trust verification.</p>' +
-            '</div>' +
-            '<span style="font-size: 11px; background: #EEF2FF; color: #4F46E5; font-weight: 800; padding: 3px 8px; border-radius: 10px;">Optional</span>' +
-          '</div>' +
-          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
-            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">📸 Profile Photos & Bio</div>' +
-            '<div class="form-group" style="margin-bottom: 10px;">' +
-              '<label style="font-size: 12px;">Photo Avatar URL</label>' +
-              '<input type="text" id="profAvatarInput" value="' + (currentUser.avatar || '') + '" style="background: white; font-size: 13px;">' +
-            '</div>' +
-            '<div class="form-group">' +
-              '<label style="font-size: 12px;">About Me / Bio</label>' +
-              '<textarea id="profBioInput" rows="2" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; resize: vertical;" placeholder="Tell roommates about yourself, your hobbies, or workplace...">Friendly, clean, and respectful professional looking for a quiet and cooperative living environment in Trivandrum.</textarea>' +
-            '</div>' +
-          '</div>' +
-          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
-            '<div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🏠 Household Vibe & Hosting Policy</div>' +
-            '<div class="form-group" style="margin-bottom: 10px;">' +
-              '<label style="font-size: 12px;">Household Atmosphere</label>' +
-              '<select id="profHouseholdVibe" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
-                '<option value="QUIET_SANCTUARY">Quiet Sanctuary (Focus on restful living, minimal noise)</option>' +
-                '<option value="BALANCED_CASUAL" selected>Balanced & Casual (Friendly & easygoing, occasional chats)</option>' +
-                '<option value="SOCIALLY_ACTIVE">Socially Active (Enjoys hosting, frequent friendly gatherings)</option>' +
-              '</select>' +
-            '</div>' +
-            '<div class="form-group">' +
-              '<label style="font-size: 12px;">Guest & Visitor Frequency</label>' +
-              '<select id="profGuestPolicy" style="width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
-                '<option value="NEVER">Rarely or Never (No outside overnight visitors)</option>' +
-                '<option value="OCCASIONAL_FRIENDS" selected>Weekends Only (Advance notice preferred)</option>' +
-                '<option value="REGULAR_GUESTS">Anytime (Friends and guests are always welcome)</option>' +
-              '</select>' +
-            '</div>' +
-          '</div>' +
-          '<div style="border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: #F8FAFC;">' +
-            '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">' +
-              '<div style="font-size: 13.5px; font-weight: 700; color: var(--text);">🛡️ Verified Trust Badge</div>' +
-              '<span style="font-size: 11px; background: #E0F2FE; color: #0369A1; font-weight: 800; padding: 2px 8px; border-radius: 10px;">Blue Check</span>' +
-            '</div>' +
-            '<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">' +
-              'Verify with your official Technopark company email or College ID (.edu/.ac.in) for verified badge.' +
-            '</p>' +
-            '<div style="display: flex; gap: 8px; flex-wrap: wrap;">' +
-              '<input type="text" id="profEmailVerifyInput" placeholder="name@technopark-company.com" style="flex: 1 1 200px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; background: white;">' +
-              '<button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; border-radius: 10px;" onclick="showToast(&apos;Verification link sent to institutional email!&apos;)">' +
-                'Verify' +
-              '</button>' +
-            '</div>' +
-          '</div>' +
-          '<button class="btn btn-primary" style="border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 800; justify-content: center;" onclick="saveOptionalProfileDetails()">' +
-            'Save Optional Details ✔' +
-          '</button>' +
-        '</div>' +
-        '<div class="profile-card profile-actions-bar">' +
-          '<button class="btn btn-secondary" style="border-radius: 10px; font-size: 13px;" onclick="cyclePersona()">' +
-            'Switch Demo Persona' +
-          '</button>' +
-          '<button class="btn btn-outline" style="border-radius: 10px; font-size: 13px; color: #EF4444; border-color: #FECACA;" onclick="handleLogout()">' +
-            'Log Out' +
-          '</button>' +
         '</div>';
-    }
 
-    async function saveOptionalProfileDetails() {
-      const avatarInput = document.getElementById('profAvatarInput');
-      const avatar = avatarInput ? avatarInput.value : '';
-      const vibe = document.getElementById('profHouseholdVibe')?.value || 'BALANCED_CASUAL';
-      const guest = document.getElementById('profGuestPolicy')?.value || 'OCCASIONAL_FRIENDS';
-
-      if (avatar && currentUser) {
-        currentUser.avatar = avatar;
-        updateHeaderUser(currentUser);
-      }
-
-      try {
-        await fetch('/api/v1/lifestyle/me', {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'Bearer ' + currentToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            social: {
-              guestFrequency: guest,
-              overnightGuestPolicy: 'SAME_GENDER_ONLY',
-              partyPreference: vibe === 'SOCIALLY_ACTIVE' ? 'WEEKEND_GATHERINGS' : 'NO_PARTIES',
-              isDealbreaker: false
-            }
-          })
-        });
-        showToast('Optional profile details updated successfully! ✔');
-      } catch (e) {
-        showToast('Profile updated locally.');
-      }
+      container.innerHTML = 
+        topHtml + 
+        completionHtml + 
+        quickJumpHtml + 
+        sectionsHtml;
     }
 
     // Navigation Switcher
@@ -3020,6 +3946,11 @@ export function renderClientAppHtml(): string {
       if (tabName === 'profile') {
         renderProfileView();
       }
+      if (tabName === 'profile-completion') {
+        const mnavProf = document.getElementById('mnav-profile');
+        if (mnavProf) mnavProf.classList.add('active');
+        renderProfileCompletionDashboard();
+      }
     }
 
     // App Initialization
@@ -3038,21 +3969,8 @@ export function renderClientAppHtml(): string {
       if (savedToken) {
         currentToken = savedToken;
         try {
-          const profRes = await fetch('/api/v1/profiles/me', {
-            headers: { 'Authorization': 'Bearer ' + currentToken }
-          });
-          if (profRes.ok) {
-            const prof = await profRes.json();
-            currentUser = {
-              id: prof.userId,
-              phone: localStorage.getItem('buddy_phone') || '+919876543210',
-              name: prof.displayName,
-              avatar: prof.photos && prof.photos[0] ? prof.photos[0].photoUrl : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-              work: prof.occupation,
-              modality: prof.modality,
-              isOnboardingCompleted: prof.isOnboardingCompleted
-            };
-            updateHeaderUser(currentUser);
+          await loadUserProfile();
+          if (currentUser) {
             await loadFeed();
             await loadMatches();
             navigateTab(requestedView && requestedView !== 'registration' && requestedView !== 'login' ? requestedView : 'discover');
